@@ -1,22 +1,23 @@
-public class Laptop implements IProduct {
-    private IProductPart[] components;
+package AssemblyLaptop;
 
-    Laptop() {
-        this.components = new IProductPart[3];
-    }
+public class Laptop implements IProduct {
+    private IProductPart firstPart;
+    private IProductPart secondPart;
+    private IProductPart thirdPart;
+
 
     @Override
     public void installFirstPart(IProductPart productPart) {
-        components[0] = productPart;
+        this.firstPart = productPart;
     }
 
     @Override
     public void installSecondPart(IProductPart productPart) {
-        components[1] = productPart;
+        this.secondPart = productPart;
     }
 
     @Override
     public void installThirdPart(IProductPart productPart) {
-        components[2] = productPart;
+        this.thirdPart = productPart;
     }
 }

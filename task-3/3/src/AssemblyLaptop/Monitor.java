@@ -1,3 +1,5 @@
+package AssemblyLaptop;
+
 public class Monitor implements IProductPart{
     private String displayType;
     private float screenSize;

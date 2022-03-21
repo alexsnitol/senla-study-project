@@ -1,9 +1,11 @@
-public class AssemblyLineLaptop implements IAssemblyLine {
-    private LineStepCase lineStepLaptopCase;
-    private LineStepMotherboard lineStepMotherboard;
-    private LineStepMonitor lineStepMonitor;
+package AssemblyLaptop;
 
-    AssemblyLineLaptop(LineStepCase lineStepLaptopCase, LineStepMotherboard lineStepMotherboard, LineStepMonitor lineStepMonitor) {
+public class AssemblyLineLaptop implements IAssemblyLine {
+    private ILineStep lineStepLaptopCase;
+    private ILineStep lineStepMotherboard;
+    private ILineStep lineStepMonitor;
+
+    public AssemblyLineLaptop(ILineStep lineStepLaptopCase, ILineStep lineStepMotherboard, ILineStep lineStepMonitor) {
         this.lineStepLaptopCase = lineStepLaptopCase;
         this.lineStepMotherboard = lineStepMotherboard;
         this.lineStepMonitor = lineStepMonitor;

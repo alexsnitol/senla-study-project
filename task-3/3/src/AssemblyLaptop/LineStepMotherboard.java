@@ -1,3 +1,5 @@
+package AssemblyLaptop;
+
 public class LineStepMotherboard implements ILineStep {
     private int maxRAM;
     private int numberOfSlotsForRAM;

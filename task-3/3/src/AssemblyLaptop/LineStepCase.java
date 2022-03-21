@@ -1,8 +1,10 @@
+package AssemblyLaptop;
+
 public class LineStepCase implements ILineStep {
     private String material;
     private String color;
 
-    LineStepCase(String material, String color) {
+    public LineStepCase(String material, String color) {
         this.material = material;
         this.color = color;
         System.out.println("line step with laptop cases (" + this.material + ", " + this.color + ") prepared");

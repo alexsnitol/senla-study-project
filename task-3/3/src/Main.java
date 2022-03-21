@@ -1,3 +1,5 @@
+import AssemblyLaptop.*;
+
 public class Main {
     public static void main(String[] argv) {
         Laptop laptop1 = new Laptop();
@@ -8,12 +10,12 @@ public class Main {
         AssemblyLineLaptop assemblyLineLaptopType2;
         AssemblyLineLaptop assemblyLineLaptopType3;
 
-        LineStepCase        lineStepCasePlasticBlack         = new LineStepCase("plastic", "black");
+        LineStepCase lineStepCasePlasticBlack         = new LineStepCase("plastic", "black");
         LineStepCase        lineStepCasePlasticAndMetalBlack = new LineStepCase("plastic and metal", "black");
         LineStepMotherboard lineStepMotherboardFP6           = new LineStepMotherboard(64,2,"FP6");
         LineStepMotherboard lineStepMotherboardFCBGA1296     = new LineStepMotherboard(16,2,"FCBGA1296");
         LineStepMotherboard lineStepMotherboardFCBGA1787     = new LineStepMotherboard(64,2,"FCBGA1787");
-        LineStepMonitor     lineStepMonitorIPS               = new LineStepMonitor("IPS", 15.6f, 60);
+        LineStepMonitor lineStepMonitorIPS               = new LineStepMonitor("IPS", 15.6f, 60);
         LineStepMonitor     lineStepMonitorAMOLED            = new LineStepMonitor("AMOLED", 15.6f, 60);
 
         assemblyLineLaptopType1 = new AssemblyLineLaptop(lineStepCasePlasticBlack, lineStepMotherboardFP6, lineStepMonitorIPS);

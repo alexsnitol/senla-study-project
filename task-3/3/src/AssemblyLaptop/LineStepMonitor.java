@@ -1,9 +1,11 @@
+package AssemblyLaptop;
+
 public class LineStepMonitor implements ILineStep {
     private String displayType;
     private float screenSize;
     private float refreshRate;
 
-    LineStepMonitor(String displayType, float screenSize, float refreshRate) {
+    public LineStepMonitor(String displayType, float screenSize, float refreshRate) {
         this.displayType = displayType;
         this.screenSize = screenSize;
         this.refreshRate = refreshRate;

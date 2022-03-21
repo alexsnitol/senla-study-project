@@ -1,3 +1,5 @@
+package AssemblyLaptop;
+
 public class Motherboard implements IProductPart {
     private int maxRAM;
     private int numberOfSlotsForRAM;
