@@ -1,3 +1,5 @@
+package storage;
+
 public class Device extends Product {
     protected String brand;
     protected String model;
@@ -36,7 +38,7 @@ public class Device extends Product {
 
     @Override
     public String toString() {
-        return "Device{" +
+        return "storage.Device{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +

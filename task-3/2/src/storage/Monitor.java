@@ -1,3 +1,5 @@
+package storage;
+
 public class Monitor extends Device {
     private String displayType;
     private float screenSize;
@@ -8,7 +10,7 @@ public class Monitor extends Device {
         super(name, weight, cost, brand, model, color);
     }
 
-    Monitor(String name, float weight, float cost, String brand, String model, String color, String displayType, float screenSize, float refreshRate) {
+    public Monitor(String name, float weight, float cost, String brand, String model, String color, String displayType, float screenSize, float refreshRate) {
         super(name, weight, cost, brand, model, color);
         this.displayType = displayType;
         this.screenSize = screenSize;
@@ -41,7 +43,7 @@ public class Monitor extends Device {
 
     @Override
     public String toString() {
-        return "Monitor{" +
+        return "storage.Monitor{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +

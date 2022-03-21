@@ -1,3 +1,5 @@
+package storage;
+
 public class Product {
     protected String name;
     protected float weight;
@@ -35,7 +37,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "Product{" +
+        return "storage.Product{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +

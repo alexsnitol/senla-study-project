@@ -1,3 +1,5 @@
+package storage;
+
 public class SmartWatch extends Device {
     private String sensor;
 
@@ -6,7 +8,7 @@ public class SmartWatch extends Device {
         super(name, weight, cost, brand, model, color);
     }
 
-    SmartWatch(String name, float weight, float cost, String brand, String model, String color, String sensor) {
+    public SmartWatch(String name, float weight, float cost, String brand, String model, String color, String sensor) {
         super(name, weight, cost, brand, model, color);
         this.sensor = sensor;
     }
@@ -21,7 +23,7 @@ public class SmartWatch extends Device {
 
     @Override
     public String toString() {
-        return "SmartWatch{" +
+        return "storage.SmartWatch{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +

@@ -1,3 +1,5 @@
+package storage;
+
 public class Microwave extends Device {
     private boolean programmedCookingModes;
 
@@ -5,7 +7,7 @@ public class Microwave extends Device {
         super(name, weight, cost, brand, model, color);
     }
 
-    Microwave(String name, float weight, float cost, String brand, String model, String color, boolean programmedCookingModes) {
+    public Microwave(String name, float weight, float cost, String brand, String model, String color, boolean programmedCookingModes) {
         super(name, weight, cost, brand, model, color);
         this.programmedCookingModes = programmedCookingModes;
     }
@@ -20,7 +22,7 @@ public class Microwave extends Device {
 
     @Override
     public String toString() {
-        return "Microwave{" +
+        return "storage.Microwave{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +

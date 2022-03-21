@@ -1,3 +1,5 @@
+package storage;
+
 public class Refrigerator extends Device {
     private String type;
     private String doorStyle;
@@ -6,7 +8,7 @@ public class Refrigerator extends Device {
         super(name, weight, cost, brand, model, color);
     }
     
-    Refrigerator(String name, float weight, float cost, String brand, String model, String color, String type, String doorStyle) {
+    public Refrigerator(String name, float weight, float cost, String brand, String model, String color, String type, String doorStyle) {
         super(name, weight, cost, brand, model, color);
         this.type = type;
         this.doorStyle = doorStyle;
@@ -30,7 +32,7 @@ public class Refrigerator extends Device {
 
     @Override
     public String toString() {
-        return "Refrigerator{" +
+        return "storage.Refrigerator{" +
                 "name='" + name + '\'' +
                 ", weight=" + weight +
                 ", cost=" + cost +
