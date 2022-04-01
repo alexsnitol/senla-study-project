@@ -1,15 +1,25 @@
-package autoservice;
+package autoservice.Repositories;
 
 public class Master {
 
+    private int id;
     private String lastName;
     private String firstName;
     private String patronymic;
+    private int numberOfActiveOrders = 0;
 
     public Master(String lastName, String firstName, String patronymic) {
         this.lastName = lastName;
         this.firstName = firstName;
         this.patronymic = patronymic;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getLastName() {
@@ -36,12 +46,22 @@ public class Master {
         this.patronymic = patronymic;
     }
 
+    public int getNumberOfActiveOrders() {
+        return numberOfActiveOrders;
+    }
+
+    public void setNumberOfActiveOrders(int numberOfActiveOrders) {
+        this.numberOfActiveOrders = numberOfActiveOrders;
+    }
+
     @Override
     public String toString() {
-        return "autoservice.Master{" +
-                "lastName='" + lastName + '\'' +
+        return "Master{" +
+                "id=" + id +
+                ", lastName='" + lastName + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", patronymic='" + patronymic + '\'' +
+                ", numberOfActiveOrders=" + numberOfActiveOrders +
                 '}';
     }
 }
