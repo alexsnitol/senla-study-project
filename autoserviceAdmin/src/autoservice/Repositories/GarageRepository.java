@@ -1,22 +1,21 @@
-package autoservice;
+package autoservice.Repositories;
 
 import java.util.ArrayList;
+import java.util.List;
 
-import static java.lang.System.*;
-
-public class Garage {
+public class GarageRepository {
     // true - place is taken
     // false - place is free
     private ArrayList<Boolean> places = new ArrayList<>();
 
 
-    Garage() {
+    GarageRepository() {
     }
 
     /**
      * @param sizeOfPlaces
      */
-    Garage(int sizeOfPlaces) {
+    GarageRepository(int sizeOfPlaces) {
         addPlace(sizeOfPlaces);
     }
 
@@ -81,5 +80,16 @@ public class Garage {
                 result += "\n";
         }
         return result;
+    }
+
+    public List<Integer> getPlacesFilteredByAvailability(boolean isTaken) {
+        List<Integer> arrayOfIndex = new ArrayList<>();
+
+        for (int i = 0; i < this.places.size(); i++) {
+            if (this.places.get(i) == isTaken)
+                arrayOfIndex.add(i);
+        }
+
+        return arrayOfIndex;
     }
 }
