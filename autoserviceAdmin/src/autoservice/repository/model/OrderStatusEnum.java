@@ -1,6 +1,6 @@
-package autoservice.Repositories;
+package autoservice.repository.model;
 
-public enum OrderStatus {
+public enum OrderStatusEnum {
     COMPLETED,
     IN_PROCESS,
     POSTPONED,

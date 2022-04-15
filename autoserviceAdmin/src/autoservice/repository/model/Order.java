@@ -1,19 +1,18 @@
-package autoservice.Repositories;
+package autoservice.repository.model;
 
-import autoservice.Repositories.OrderStatus;
-
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.List;
 
-public class Order {
+public class Order extends AbstractModel {
 
-    private int id;
     private Calendar timeOfCreated = new GregorianCalendar();
     private Calendar timeOfBegin;
     private Calendar timeOfCompletion;
-    private OrderMasterRepository masters = new OrderMasterRepository(this);
+    private List<Master> masters = new ArrayList<>();
     private float price = 0;
-    private OrderStatus status = OrderStatus.IN_PROCESS;
+    private OrderStatusEnum status = OrderStatusEnum.IN_PROCESS;
 
     public Order() {}
 
@@ -31,14 +30,6 @@ public class Order {
     public Order(Calendar timeOfBegin, Calendar timeOfCompletion) {
         this.timeOfBegin = timeOfBegin;
         this.timeOfCompletion = timeOfCompletion;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public Calendar getTimeOfCreated() {
@@ -61,16 +52,12 @@ public class Order {
         this.timeOfCompletion = timeOfCompletion;
     }
 
-    public void setTimeOfCompletion(int minutes) {
-        if (this.timeOfBegin == null)
-            return;
-
-        this.timeOfCompletion = (Calendar) this.timeOfBegin.clone();
-        this.timeOfCompletion.add(Calendar.MINUTE, minutes);
+    public List<Master> getMasters() {
+        return masters;
     }
 
-    public OrderMasterRepository getMasters() {
-        return masters;
+    public void setMasters(List<Master> masters) {
+        this.masters = masters;
     }
 
     public float getPrice() {
@@ -81,38 +68,15 @@ public class Order {
         this.price = price;
     }
 
-    public OrderStatus getStatus() {
+    public OrderStatusEnum getStatus() {
         return this.status;
     }
 
-    public void setStatus(OrderStatus status) {
-        if (this.status != OrderStatus.IN_PROCESS && this.status != OrderStatus.POSTPONED) {
-            if (status == OrderStatus.IN_PROCESS && status == OrderStatus.POSTPONED) {
-                for (Master master : this.masters.getMasters()) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() + 1);
-                }
-            }
-        } else {
-            if (status != OrderStatus.IN_PROCESS && status != OrderStatus.POSTPONED) {
-                for (Master master : this.masters.getMasters()) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
-                }
-            }
-        }
-
+    public void setStatus(OrderStatusEnum status) {
         this.status = status;
     }
 
-    public void shiftTimeOfOrder(int minutes) {
-        if (this.status == OrderStatus.IN_PROCESS) {
-            this.timeOfCompletion.add(Calendar.MINUTE, minutes);
-        } else if (this.status == OrderStatus.POSTPONED) {
-            this.timeOfBegin.add(Calendar.MINUTE, minutes);
-            this.timeOfCompletion.add(Calendar.MINUTE, minutes);
-        }
-    }
-
-    @Override
+    /*@Override
     public String toString() {
         return "Order{" +
                 "id=" + id +
@@ -123,5 +87,5 @@ public class Order {
                 ", price=" + price +
                 ", status=" + status +
                 '}';
-    }
+    }*/
 }

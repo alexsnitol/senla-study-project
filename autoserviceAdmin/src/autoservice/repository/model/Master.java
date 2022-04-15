@@ -1,8 +1,7 @@
-package autoservice.Repositories;
+package autoservice.repository.model;
 
-public class Master {
+public class Master extends AbstractModel {
 
-    private int id;
     private String lastName;
     private String firstName;
     private String patronymic;
@@ -12,14 +11,6 @@ public class Master {
         this.lastName = lastName;
         this.firstName = firstName;
         this.patronymic = patronymic;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public String getLastName() {
@@ -54,14 +45,4 @@ public class Master {
         this.numberOfActiveOrders = numberOfActiveOrders;
     }
 
-    @Override
-    public String toString() {
-        return "Master{" +
-                "id=" + id +
-                ", lastName='" + lastName + '\'' +
-                ", firstName='" + firstName + '\'' +
-                ", patronymic='" + patronymic + '\'' +
-                ", numberOfActiveOrders=" + numberOfActiveOrders +
-                '}';
-    }
 }
