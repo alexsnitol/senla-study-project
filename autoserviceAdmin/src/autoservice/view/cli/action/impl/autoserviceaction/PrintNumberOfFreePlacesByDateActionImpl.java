@@ -1,10 +1,10 @@
 package autoservice.view.cli.action.impl.autoserviceaction;
 
-import autoservice.controller.AutoserviceController;
+import autoservice.util.AutoserviceUtil;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
-import java.util.GregorianCalendar;
+import java.time.LocalDate;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -20,6 +20,6 @@ public class PrintNumberOfFreePlacesByDateActionImpl implements IAction {
         int month = scanner.nextInt();
         int day = scanner.nextInt();
 
-        out.println(AutoserviceController.getInstance().getNumberOfFreePlacesByDate(new GregorianCalendar(year, month, day)));
+        out.println(AutoserviceUtil.getNumberOfFreePlacesByDate(LocalDate.of(year, month, day)));
     }
 }

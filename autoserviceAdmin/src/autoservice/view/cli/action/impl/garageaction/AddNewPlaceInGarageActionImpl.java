@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.garageaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.GarageController;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -18,6 +19,6 @@ public class AddNewPlaceInGarageActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         Long garageId = scanner.nextLong();
 
-        AutoserviceController.getGarageController().addPlace(garageId);
+        GarageController.getInstance().addPlace(garageId);
     }
 }

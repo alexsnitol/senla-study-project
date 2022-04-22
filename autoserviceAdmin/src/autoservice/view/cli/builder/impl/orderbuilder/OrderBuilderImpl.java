@@ -32,6 +32,9 @@ public class OrderBuilderImpl extends AbstractBuilderImpl implements IBuilder {
         menuItems.add(new MenuItem("print orders", null, orderSortBuilder.buildMenu()));
         menuItems.add(new MenuItem("print in process order of master", new PrintInProcessOrdersFilteredByMasterActionImpl(), null));
 
+        menuItems.add(new MenuItem("export order to json file", new ExportOrderToJsonFile(), null));
+        menuItems.add(new MenuItem("import order from json file", new ImportOrderFromJsonFile(), null));
+
         menu.setMenuItems(menuItems);
 
         return menu;

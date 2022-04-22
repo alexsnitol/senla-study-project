@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.OrderController;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -18,6 +19,6 @@ public class DeleteOrderActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         Long orderId = scanner.nextLong();
 
-        AutoserviceController.getOrderController().deleteById(orderId);
+        OrderController.getInstance().deleteById(orderId);
     }
 }

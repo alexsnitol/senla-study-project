@@ -1,8 +1,9 @@
 package autoservice.view.cli.action.impl.garageaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.GarageController;
 import autoservice.repository.model.Garage;
-import autoservice.utility.IdDistributor;
+import autoservice.util.IdDistributorUtil;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -20,7 +21,7 @@ public class AddNewGarageActionImpl implements IAction {
         int size = scanner.nextInt();
 
         Garage newGarage = new Garage(size);
-        newGarage.setId(IdDistributor.getId());
-        AutoserviceController.getGarageController().add(newGarage);
+        newGarage.setId(IdDistributorUtil.getId());
+        GarageController.getInstance().add(newGarage);
     }
 }

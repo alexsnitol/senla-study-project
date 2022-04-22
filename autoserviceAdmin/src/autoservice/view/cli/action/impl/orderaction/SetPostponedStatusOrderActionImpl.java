@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.OrderController;
 import autoservice.repository.model.OrderStatusEnum;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
@@ -17,6 +18,6 @@ public class SetPostponedStatusOrderActionImpl implements IAction {
         out.println("enter id of order");
         out.print(MenuController.CONSOLE_POINTER);
         Long orderId = scanner.nextLong();
-        AutoserviceController.getOrderController().setStatus(orderId, OrderStatusEnum.POSTPONED);
+        OrderController.getInstance().setStatus(orderId, OrderStatusEnum.POSTPONED);
     }
 }

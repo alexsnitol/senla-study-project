@@ -1,6 +1,6 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
 import autoservice.controller.OrderController;
 import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
@@ -16,7 +16,7 @@ public class PrintInProcessOrdersFilteredByMasterActionImpl implements IAction {
     @Override
     public void execute() {
         Scanner scanner = new Scanner(System.in);
-        OrderController orderController = AutoserviceController.getOrderController();
+        OrderController orderController = OrderController.getInstance();
         List<Order> orders = orderController.getOrdersFilteredByStatus(OrderStatusEnum.IN_PROCESS);
 
         out.println("enter id of master");
