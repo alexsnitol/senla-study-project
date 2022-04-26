@@ -21,6 +21,8 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
         return defaultService.getAll();
     }
 
+    public void update(M oldModel, M newModel) {defaultService.update(oldModel, newModel);}
+
     public Integer size() {
         return this.defaultService.size();
     }

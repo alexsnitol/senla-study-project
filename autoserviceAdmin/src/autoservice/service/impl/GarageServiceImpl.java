@@ -5,6 +5,7 @@ import autoservice.repository.impl.GarageRepositoryImpl;
 import autoservice.repository.model.Garage;
 import autoservice.repository.model.Master;
 import autoservice.service.IGarageService;
+import autoservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -145,23 +146,11 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
 
     public void exportGarageToJsonFile(Long garageId, String fileName) throws IOException {
         Garage garageById = getById(garageId);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(new File(fileName + ".json"), garageById);
+        JsonUtil.exportGarageToJsonFile(garageById, fileName);
     }
 
     public void importGarageFromJsonFile(String path) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode garageJsonNode = objectMapper.readTree(new File(path));
-        Garage garageJson = objectMapper.readValue(new File(path), Garage.class);
-
-        Garage garageByJsonId = getById(garageJsonNode.get("id").asLong());
-
-        if (garageByJsonId != null) {
-            garageRepository.update(garageByJsonId, garageJson);
-        } else {
-            add(garageJson);
-        }
+        JsonUtil.importGarageFromJsonFile(path);
     }
 
 }

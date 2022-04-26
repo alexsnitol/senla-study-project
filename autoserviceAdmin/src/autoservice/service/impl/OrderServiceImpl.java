@@ -9,6 +9,7 @@ import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
 import autoservice.service.IOrderService;
 import autoservice.service.comparator.MapOrderComparator;
+import autoservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -210,25 +211,11 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {
         Order orderById = getById(orderId);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File(fileName + ".json"), orderById);
+        JsonUtil.exportOrderToJsonFile(orderById, fileName);
     }
 
     public void importOrderFromJsonFile(String path) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        JsonNode orderJsonNode = objectMapper.readTree(new File(path));
-        Order orderJson = objectMapper.readValue(new File(path), Order.class);
-
-        Order orderByJsonId = getById(orderJsonNode.get("id").asLong());
-
-        if (orderByJsonId != null) {
-            orderRepository.update(orderByJsonId, orderJson);
-        } else {
-            add(orderJson);
-        }
+        JsonUtil.importOrderFromJsonFile(path);
     }
 
 }

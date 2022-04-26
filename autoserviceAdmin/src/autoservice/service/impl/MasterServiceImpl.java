@@ -6,6 +6,7 @@ import autoservice.repository.impl.MasterRepositoryImpl;
 import autoservice.repository.model.Master;
 import autoservice.service.IMasterService;
 import autoservice.service.comparator.MapMasterComparator;
+import autoservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -76,22 +77,10 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
 
     public void exportMasterToJsonFile(Long masterId, String fileName) throws IOException {
         Master masterById = getById(masterId);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(new File(fileName + ".json"), masterById);
+        JsonUtil.exportMasterToJsonFile(masterById, fileName);
     }
 
     public void importMasterFromJsonFile(String path) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode masterJsonNode = objectMapper.readTree(new File(path));
-        Master masterJson = objectMapper.readValue(new File(path), Master.class);
-
-        Master masterByJsonId = getById(masterJsonNode.get("id").asLong());
-
-        if (masterByJsonId != null) {
-            masterRepository.update(masterByJsonId, masterJson);
-        } else {
-            add(masterJson);
-        }
+        JsonUtil.importMasterFromJsonFile(path);
     }
 }

@@ -37,6 +37,10 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
         this.defaultRepository.add(model);
     }
 
+    public void update(M oldModel, M newModel) {
+        defaultRepository.update(oldModel, newModel);
+    }
+
     public Integer size() {
         return this.defaultRepository.size();
     }

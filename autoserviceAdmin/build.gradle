@@ -1,0 +1,26 @@
+plugins {
+    id 'java'
+}
+
+group ''
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+    }
+}
+dependencies {
+    /*compile 'junit:junit:4.12'*/
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2'
+}
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
