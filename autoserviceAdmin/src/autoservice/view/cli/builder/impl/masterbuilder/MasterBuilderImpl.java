@@ -1,8 +1,6 @@
 package autoservice.view.cli.builder.impl.masterbuilder;
 
-import autoservice.view.cli.action.impl.masteraction.AddNewMasterActionImpl;
-import autoservice.view.cli.action.impl.masteraction.DeleteMasterActionImpl;
-import autoservice.view.cli.action.impl.masteraction.PrintMastersByOrderActionImpl;
+import autoservice.view.cli.action.impl.masteraction.*;
 import autoservice.view.cli.builder.IBuilder;
 import autoservice.view.cli.builder.impl.AbstractBuilderImpl;
 import autoservice.view.cli.menu.Menu;
@@ -26,7 +24,10 @@ public class MasterBuilderImpl extends AbstractBuilderImpl implements IBuilder {
 
         MasterSortBuilderImpl masterSortBuilder = new MasterSortBuilderImpl(menu);
         menuItems.add(new MenuItem("print masters", null, masterSortBuilder.buildMenu()));
+
         menuItems.add(new MenuItem("print masters by order", new PrintMastersByOrderActionImpl(), null));
+        menuItems.add(new MenuItem("export master to json file", new ExportMasterToJsonFile(), null));
+        menuItems.add(new MenuItem("import master from json file", new ImportMasterFromJsonFile(), null));
 
         menu.setMenuItems(menuItems);
 

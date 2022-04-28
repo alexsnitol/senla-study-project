@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Garage extends AbstractModel {
+
     // >=0 - place is taken
     // null - place is free
     private List<Long> places;

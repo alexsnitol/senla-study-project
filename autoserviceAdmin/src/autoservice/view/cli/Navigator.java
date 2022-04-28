@@ -4,6 +4,7 @@ import autoservice.view.cli.action.IAction;
 import autoservice.view.cli.menu.Menu;
 import autoservice.view.cli.menu.MenuItem;
 
+import java.io.IOException;
 import java.util.List;
 
 import static java.lang.System.*;
@@ -55,7 +56,7 @@ public class Navigator {
         out.println("-1" + ". exit");
     }
 
-    public void navigate(Integer index) {
+    public void navigate(Integer index) throws IOException {
         if (index == 0) {
             if (currentMenu.getPreviousMenu() != null) {
                 currentMenu = currentMenu.getPreviousMenu();

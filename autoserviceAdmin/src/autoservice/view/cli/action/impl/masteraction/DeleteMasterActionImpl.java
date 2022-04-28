@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.masteraction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.MasterController;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -18,6 +19,6 @@ public class DeleteMasterActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         Long masterId = scanner.nextLong();
 
-        AutoserviceController.getMasterController().deleteById(masterId);
+        MasterController.getInstance().deleteById(masterId);
     }
 }

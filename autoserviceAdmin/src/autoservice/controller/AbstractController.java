@@ -6,9 +6,10 @@ import autoservice.service.IAbstractService;
 import java.util.List;
 
 public abstract class AbstractController<M extends AbstractModel, S extends IAbstractService<M>> {
+
     protected S defaultService;
 
-    public AbstractController(S defaultService) {
+    protected AbstractController(S defaultService) {
         this.defaultService = defaultService;
     }
 
@@ -20,23 +21,10 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
         return defaultService.getAll();
     }
 
-    public void deleteById(Long id) {
-        this.defaultService.deleteById(id);
-    }
-
-    public void add(M model) {
-        this.defaultService.add(model);
-    }
+    public void update(M oldModel, M newModel) {defaultService.update(oldModel, newModel);}
 
     public Integer size() {
         return this.defaultService.size();
     }
 
-    public List<M> getSorted(String sortType) {
-        return defaultService.getSorted(sortType);
-    }
-
-    public List<M> getSorted(List<M> listOfModel, String sortType) {
-        return defaultService.getSorted(listOfModel, sortType);
-    }
 }

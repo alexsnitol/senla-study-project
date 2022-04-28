@@ -1,8 +1,9 @@
 package autoservice.view.cli.action.impl.masteraction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.MasterController;
 import autoservice.repository.model.Master;
-import autoservice.utility.IdDistributor;
+import autoservice.util.IdDistributorUtil;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -30,8 +31,8 @@ public class AddNewMasterActionImpl implements IAction {
         patronymic = scanner.nextLine();
 
         Master newMaster = new Master(lastName, firstName, patronymic);
-        newMaster.setId(IdDistributor.getId());
+        newMaster.setId(IdDistributorUtil.getId());
 
-        AutoserviceController.getMasterController().add(newMaster);
+        MasterController.getInstance().add(newMaster);
     }
 }

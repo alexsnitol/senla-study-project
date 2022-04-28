@@ -1,6 +1,6 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
 import autoservice.controller.OrderController;
 import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
@@ -17,8 +17,8 @@ public class PrintOrdersSortedByDateTimeOfCreatedFilteredByCustomStatusAndByCust
     @Override
     public void execute() {
         Scanner scanner = new Scanner(System.in);
-        OrderController orderController = AutoserviceController.getOrderController();
-        List<Order> orders = AutoserviceController.getOrderController().getAll();
+        OrderController orderController = OrderController.getInstance();
+        List<Order> orders = OrderController.getInstance().getAll();
 
         out.println("filter by status? (y/n)");
         out.print(MenuController.CONSOLE_POINTER);

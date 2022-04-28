@@ -1,32 +1,85 @@
 package autoservice.controller;
 
+import autoservice.repository.model.Master;
 import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
+import autoservice.service.IGarageService;
+import autoservice.service.IMasterService;
 import autoservice.service.IOrderService;
+import autoservice.service.impl.OrderServiceImpl;
 
-import java.util.Calendar;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderController extends AbstractController<Order, IOrderService> {
 
+    private static OrderController instance;
     private IOrderService orderService;
+    private IGarageService garageService;
+    private IMasterService masterService;
 
 
-    public OrderController(IOrderService defaultService) {
-        super(defaultService);
-        this.orderService = defaultService;
+    private OrderController() {
+        super(new OrderServiceImpl());
     }
 
-    public void shiftOrderTimeOfCompletion(Long orderId, int shiftMinutes) {
-        orderService.shiftTimeOfCompletion(orderId, shiftMinutes);
+    public static OrderController getInstance() {
+        if (instance == null) {
+            instance = new OrderController();
+        }
+        return instance;
+    }
+
+    public void setOrderService(IOrderService orderService) {
+        this.defaultService = orderService;
+        this.orderService = orderService;
+    }
+
+    public void setGarageService(IGarageService garageService) {
+        this.garageService = garageService;
+    }
+
+    public void setMasterService(IMasterService masterService) {
+        this.masterService = masterService;
+    }
+
+    public List<Long> add(Order order) {
+        orderService.add(order);
+        return garageService.takePlace(order.getId());
+    }
+
+    public void deleteById(Long orderId) {
+        orderService.deleteById(orderId);
+        garageService.freePlaceByOrderId(orderId);
     }
 
     public void setTimeOfCompletion(Long orderId, int minutes) {
         orderService.setTimeOfCompletion(orderId, minutes);
     }
 
-    public void setStatus(Long orderId, OrderStatusEnum status) {
-        orderService.setStatus(orderId, status);
+    public void setStatus(Long orderId, OrderStatusEnum newStatus) {
+        Order order = orderService.getById(orderId);
+        OrderStatusEnum currentStatus = order.getStatus();
+        List<Master> mastersByOrder = masterService.getMastersByOrder(orderId);
+
+        if (currentStatus != OrderStatusEnum.IN_PROCESS && currentStatus != OrderStatusEnum.POSTPONED) {
+            if (newStatus == OrderStatusEnum.IN_PROCESS || newStatus == OrderStatusEnum.POSTPONED) {
+                garageService.takePlace(orderId);
+                for (Master master : mastersByOrder) {
+                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() + 1);
+                }
+            }
+        } else {
+            if (newStatus != OrderStatusEnum.IN_PROCESS && newStatus != OrderStatusEnum.POSTPONED) {
+                garageService.freePlaceByOrderId(orderId);
+                for (Master master : mastersByOrder) {
+                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
+                }
+            }
+        }
+
+        orderService.setStatus(orderId, newStatus);
     }
 
     public void assignMasterById(Long orderId, Long masterId) {
@@ -49,12 +102,12 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         return orderService.getInfoOfOrder(order);
     }
 
-    public List<Order> getOrdersFilteredByDate(Calendar from, Calendar to) {
-        return orderService.getOrdersFilteredByDate(orderService.getAll(), from, to);
+    public List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to) {
+        return orderService.getOrdersFilteredByDateTime(orderService.getAll(), from, to);
     }
 
-    public List<Order> getOrdersFilteredByDate(List<Order> orders, Calendar from, Calendar to) {
-        return orderService.getOrdersFilteredByDate(orders, from, to);
+    public List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to) {
+        return orderService.getOrdersFilteredByDateTime(orders, from, to);
     }
 
     public List<Order> getOrdersFilteredByStatus(OrderStatusEnum status) {
@@ -73,7 +126,20 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         return orderService.getOrdersFilteredByMaster(orders, masterId);
     }
 
-    public List<Order> getSorted(List<Order> orders, String sortType) {
-        return orderService.getSorted(orders, sortType);
+    public List<Order> getSorted(String sortType) {
+        return orderService.getSorted(sortType);
     }
+
+    public List<Order> getSorted(List<Order> listOfOrder, String sortType) {
+        return orderService.getSorted(listOfOrder, sortType);
+    }
+
+    public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {
+        orderService.exportOrderToJsonFile(orderId, fileName);
+    }
+
+    public void importOrderFromJsonFile(String path) throws IOException {
+        orderService.importOrderFromJsonFile(path);
+    }
+
 }

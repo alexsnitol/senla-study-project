@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements IAbstractRepository<M> {
+
     protected List<M> repository = new ArrayList<>();
 
     @Override

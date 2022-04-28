@@ -1,6 +1,7 @@
 package autoservice.repository.model;
 
 public abstract class AbstractModel {
+
     protected Long id;
 
     public Long getId() {
@@ -10,4 +11,5 @@ public abstract class AbstractModel {
     public void setId(Long id) {
         this.id = id;
     }
+
 }

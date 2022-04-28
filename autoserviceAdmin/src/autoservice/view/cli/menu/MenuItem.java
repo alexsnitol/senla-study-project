@@ -2,6 +2,8 @@ package autoservice.view.cli.menu;
 
 import autoservice.view.cli.action.IAction;
 
+import java.io.IOException;
+
 public class MenuItem {
 
     private String title;
@@ -38,7 +40,7 @@ public class MenuItem {
         this.nextMenu = nextMenu;
     }
 
-    public void doAction() {
+    public void doAction() throws IOException {
         this.action.execute();
     }
 

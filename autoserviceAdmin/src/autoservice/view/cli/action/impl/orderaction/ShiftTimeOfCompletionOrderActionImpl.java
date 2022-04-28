@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.OrderController;
 import autoservice.repository.model.OrderStatusEnum;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
@@ -22,6 +23,6 @@ public class ShiftTimeOfCompletionOrderActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         int minutes = scanner.nextInt();
 
-        AutoserviceController.getOrderController().shiftTimeOfCompletion(orderId, minutes);
+        OrderController.getInstance().shiftTimeOfCompletion(orderId, minutes);
     }
 }

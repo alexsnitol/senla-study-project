@@ -1,6 +1,6 @@
 package autoservice.view.cli.action.impl.masteraction;
 
-import autoservice.controller.AutoserviceController;
+
 import autoservice.controller.MasterController;
 import autoservice.repository.model.Master;
 import autoservice.view.cli.MenuController;
@@ -14,7 +14,7 @@ import static java.lang.System.out;
 public class PrintMastersByOrderActionImpl implements IAction {
     @Override
     public void execute() {
-        MasterController masterController = AutoserviceController.getMasterController();
+        MasterController masterController = MasterController.getInstance();
         Scanner scanner = new Scanner(System.in);
 
         out.println("enter id of order");

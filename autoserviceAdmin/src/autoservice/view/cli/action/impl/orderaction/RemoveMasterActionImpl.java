@@ -1,6 +1,7 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
+import autoservice.controller.OrderController;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
@@ -21,6 +22,6 @@ public class RemoveMasterActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         Long masterId = scanner.nextLong();
 
-        AutoserviceController.getOrderController().removeMasterById(orderId, masterId);
+        OrderController.getInstance().removeMasterById(orderId, masterId);
     }
 }

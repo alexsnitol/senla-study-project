@@ -1,19 +1,36 @@
 package autoservice.service.impl;
 
 import autoservice.repository.IGarageRepository;
+import autoservice.repository.impl.GarageRepositoryImpl;
 import autoservice.repository.model.Garage;
+import autoservice.repository.model.Master;
 import autoservice.service.IGarageService;
+import autoservice.util.JsonUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageRepository> implements IGarageService {
-    private final IGarageRepository garageRepository;
+
+    private IGarageRepository garageRepository;
+
+    public GarageServiceImpl() {
+        super(new GarageRepositoryImpl());
+    }
 
     public GarageServiceImpl(IGarageRepository defaultRepository) {
         super(defaultRepository);
         this.garageRepository = defaultRepository;
+    }
+
+    public void setGarageRepository(IGarageRepository garageRepository) {
+        this.defaultRepository = garageRepository;
+        this.garageRepository = garageRepository;
     }
 
     /*
@@ -126,4 +143,14 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     public List<Garage> getSorted(List<Garage> garages,String sortType) {
         return null;
     }
+
+    public void exportGarageToJsonFile(Long garageId, String fileName) throws IOException {
+        Garage garageById = getById(garageId);
+        JsonUtil.exportGarageToJsonFile(garageById, fileName);
+    }
+
+    public void importGarageFromJsonFile(String path) throws IOException {
+        JsonUtil.importGarageFromJsonFile(path);
+    }
+
 }

@@ -1,14 +1,14 @@
 package autoservice.view.cli.action.impl.orderaction;
 
-import autoservice.controller.AutoserviceController;
+
 import autoservice.controller.OrderController;
 import autoservice.repository.model.Order;
-import autoservice.utility.IdDistributor;
+import autoservice.util.IdDistributorUtil;
 import autoservice.view.cli.MenuController;
 import autoservice.view.cli.action.IAction;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 import static java.lang.System.out;
@@ -16,11 +16,11 @@ import static java.lang.System.out;
 public class AddNewOrderActionImpl implements IAction {
     @Override
     public void execute() {
-        OrderController orderController = AutoserviceController.getOrderController();
+        OrderController orderController = OrderController.getInstance();
         Scanner scanner = new Scanner(System.in);
 
         Order newOrder = new Order();
-        newOrder.setId(IdDistributor.getId());
+        newOrder.setId(IdDistributorUtil.getId());
 
         Integer year;
         Integer month;
@@ -37,10 +37,10 @@ public class AddNewOrderActionImpl implements IAction {
         hours = scanner.nextInt();
         minutes = scanner.nextInt();
         seconds = scanner.nextInt();
-        Calendar timeOfBegin = new GregorianCalendar(year, month, day, hours, minutes, seconds);
+        LocalDateTime timeOfBegin = LocalDateTime.of(year, month, day, hours, minutes, seconds);
         newOrder.setTimeOfBegin(timeOfBegin);
 
-        orderController.add(newOrder);
+        List<Long> garageIdAndTakenPlace = orderController.add(newOrder);
 
         out.println("enter time of completed order in minutes");
         out.print(MenuController.CONSOLE_POINTER);
@@ -51,5 +51,7 @@ public class AddNewOrderActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         float price = scanner.nextFloat();
         orderController.setPrice(newOrder.getId(), price);
+
+        out.println("order with id of " + newOrder.getId() + " in process and taken in garage with id of " + garageIdAndTakenPlace.get(0) + " place with index of " + garageIdAndTakenPlace.get(1));
     }
 }

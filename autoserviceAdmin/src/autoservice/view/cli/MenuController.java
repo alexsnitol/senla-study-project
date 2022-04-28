@@ -2,6 +2,7 @@ package autoservice.view.cli;
 
 import autoservice.view.cli.builder.impl.BuilderImpl;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class MenuController {
@@ -10,7 +11,7 @@ public class MenuController {
     private Navigator navigator;
     public static final String CONSOLE_POINTER = "> ";
 
-    public void run() {
+    public void run() throws IOException {
         builder = new BuilderImpl(null);
         navigator = new Navigator(builder.buildMenu());
 

@@ -1,63 +1,67 @@
 package autoservice.repository.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 
 public class Order extends AbstractModel {
 
-    private Calendar timeOfCreated = new GregorianCalendar();
-    private Calendar timeOfBegin;
-    private Calendar timeOfCompletion;
-    private List<Master> masters = new ArrayList<>();
+    private LocalDateTime timeOfCreated = LocalDateTime.now();
+    private LocalDateTime timeOfBegin;
+    private LocalDateTime timeOfCompletion;
+    private List<Long> listOfMastersId = new ArrayList<>();
     private float price = 0;
     private OrderStatusEnum status = OrderStatusEnum.IN_PROCESS;
 
     public Order() {}
 
-    public Order(Calendar timeOfCompletion) {
-        this.timeOfBegin = new GregorianCalendar();
+    public Order(LocalDateTime timeOfCompletion) {
+        this.timeOfBegin = LocalDateTime.now();
         this.timeOfCompletion = timeOfCompletion;
     }
 
-    public Order(Calendar timeOfBegin, int minutes) {
-        this.timeOfBegin = timeOfBegin;
-        this.timeOfCompletion = (Calendar) this.timeOfBegin.clone();
-        this.timeOfCompletion.add(Calendar.MINUTE, minutes);
+    public Order(int minutes) {
+        this.timeOfBegin = LocalDateTime.now();
+        this.timeOfCompletion = timeOfBegin.plusMinutes(minutes);
     }
 
-    public Order(Calendar timeOfBegin, Calendar timeOfCompletion) {
+    public Order(LocalDateTime timeOfBegin, int minutes) {
+        this.timeOfBegin = timeOfBegin;
+        this.timeOfCompletion = timeOfBegin.plusSeconds(0);
+        this.timeOfCompletion.plusMinutes(minutes);
+    }
+
+    public Order(LocalDateTime timeOfBegin, LocalDateTime timeOfCompletion) {
         this.timeOfBegin = timeOfBegin;
         this.timeOfCompletion = timeOfCompletion;
     }
 
-    public Calendar getTimeOfCreated() {
+    public LocalDateTime getTimeOfCreated() {
         return timeOfCreated;
     }
 
-    public Calendar getTimeOfBegin() {
+    public LocalDateTime getTimeOfBegin() {
         return timeOfBegin;
     }
 
-    public void setTimeOfBegin(Calendar timeOfBegin) {
+    public void setTimeOfBegin(LocalDateTime timeOfBegin) {
         this.timeOfBegin = timeOfBegin;
     }
 
-    public Calendar getTimeOfCompletion() {
+    public LocalDateTime getTimeOfCompletion() {
         return this.timeOfCompletion;
     }
 
-    public void setTimeOfCompletion(Calendar timeOfCompletion) {
+    public void setTimeOfCompletion(LocalDateTime timeOfCompletion) {
         this.timeOfCompletion = timeOfCompletion;
     }
 
-    public List<Master> getMasters() {
-        return masters;
+    public List<Long> getListOfMastersId() {
+        return listOfMastersId;
     }
 
-    public void setMasters(List<Master> masters) {
-        this.masters = masters;
+    public void setListOfMastersId(List<Long> listOfMastersId) {
+        this.listOfMastersId = listOfMastersId;
     }
 
     public float getPrice() {

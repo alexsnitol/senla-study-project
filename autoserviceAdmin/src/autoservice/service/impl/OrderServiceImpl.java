@@ -3,14 +3,21 @@ package autoservice.service.impl;
 import autoservice.repository.IGarageRepository;
 import autoservice.repository.IMasterRepository;
 import autoservice.repository.IOrderRepository;
+import autoservice.repository.impl.OrderRepositoryImpl;
 import autoservice.repository.model.Master;
 import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
 import autoservice.service.IOrderService;
 import autoservice.service.comparator.MapOrderComparator;
+import autoservice.util.JsonUtil;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,10 +27,27 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     private IMasterRepository masterRepository;
     private IGarageRepository garageRepository;
 
+    public OrderServiceImpl() {
+        super(new OrderRepositoryImpl());
+    }
+
     public OrderServiceImpl(IOrderRepository defaultRepository, IMasterRepository masterRepository, IGarageRepository garageRepository) {
         super(defaultRepository);
         this.orderRepository = defaultRepository;
         this.masterRepository = masterRepository;
+        this.garageRepository = garageRepository;
+    }
+
+    public void setOrderRepository(IOrderRepository orderRepository) {
+        this.defaultRepository = orderRepository;
+        this.orderRepository = orderRepository;
+    }
+
+    public void setMasterRepository(IMasterRepository masterRepository) {
+        this.masterRepository = masterRepository;
+    }
+
+    public void setGarageRepository(IGarageRepository garageRepository) {
         this.garageRepository = garageRepository;
     }
 
@@ -34,28 +58,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
             return;
         }
 
-        orderById.setTimeOfCompletion((Calendar) orderById.getTimeOfBegin().clone());
-        orderById.getTimeOfCompletion().add(Calendar.MINUTE, minutes);
+        orderById.setTimeOfCompletion(orderById.getTimeOfBegin().plusMinutes(minutes));
     }
 
-    public void setStatus(Long orderId, OrderStatusEnum status) {
+    public void setStatus(Long orderId, OrderStatusEnum newStatus) {
         Order order = orderRepository.getById(orderId);
-
-        if (order.getStatus() != OrderStatusEnum.IN_PROCESS && order.getStatus() != OrderStatusEnum.POSTPONED) {
-            if (status == OrderStatusEnum.IN_PROCESS || status == OrderStatusEnum.POSTPONED) {
-                for (Master master : order.getMasters()) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() + 1);
-                }
-            }
-        } else {
-            if (status != OrderStatusEnum.IN_PROCESS && status != OrderStatusEnum.POSTPONED) {
-                for (Master master : order.getMasters()) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
-                }
-            }
-        }
-
-        order.setStatus(status);
+        order.setStatus(newStatus);
     }
 
     public void assignMasterById(Long orderId, Long masterId) {
@@ -67,7 +75,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
                 masterById.setNumberOfActiveOrders(masterById.getNumberOfActiveOrders() + 1);
             }
 
-            orderById.getMasters().add(masterById);
+            orderById.getListOfMastersId().add(masterId);
         }
     }
 
@@ -75,9 +83,9 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         Order orderById = orderRepository.getById(orderId);
         Master masterById = null;
 
-        for (Master tmpMaster : orderById.getMasters()) {
-            if (tmpMaster.getId().equals(masterId)) {
-                masterById = tmpMaster;
+        for (Long tmpMasterId : orderById.getListOfMastersId()) {
+            if (tmpMasterId.equals(masterId)) {
+                masterById = masterRepository.getById(tmpMasterId);
                 break;
             }
         }
@@ -87,16 +95,16 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
                 masterById.setNumberOfActiveOrders(masterById.getNumberOfActiveOrders() - 1);
             }
 
-            orderById.getMasters().remove(masterById);
+            orderById.getListOfMastersId().remove(masterId);
         }
     }
 
     private void shiftTimeOfCompletionOneOrder(Order order, int shiftMinutes) {
         if (order.getStatus() == OrderStatusEnum.IN_PROCESS) {
-            order.getTimeOfCompletion().add(Calendar.MINUTE, shiftMinutes);
+            order.setTimeOfCompletion(order.getTimeOfCompletion().plusMinutes(shiftMinutes));
         } else if (order.getStatus() == OrderStatusEnum.POSTPONED) {
-            order.getTimeOfBegin().add(Calendar.MINUTE, shiftMinutes);
-            order.getTimeOfCompletion().add(Calendar.MINUTE, shiftMinutes);
+            order.setTimeOfBegin(order.getTimeOfBegin().plusMinutes(shiftMinutes));
+            order.setTimeOfCompletion(order.getTimeOfCompletion().plusMinutes(shiftMinutes));
         }
     }
 
@@ -111,12 +119,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
         shiftTimeOfCompletionOneOrder(orderById, shiftMinutes);
 
-        List<Master> masters = orderById.getMasters();
+        List<Long> listOfMastersIdByOrder = orderById.getListOfMastersId();
 
         for (Order order : orderRepository.getAll()) {
             if (order.getStatus() == OrderStatusEnum.POSTPONED) {
-                for (Master master : masters) {
-                    if (order.getMasters().stream().filter(m -> m.getId().equals(master.getId())).findFirst().orElse(null) != null) {
+                for (Long masterId : listOfMastersIdByOrder) {
+                    if (order.getListOfMastersId().stream().filter(m -> m.equals(masterId)).findFirst().orElse(null) != null) {
                         shiftTimeOfCompletionOneOrder(order, shiftMinutes);
                         break;
                     }
@@ -133,9 +141,9 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         return "id: " + order.getId()
                 + "\nprice: " + order.getPrice()
                 + "\nstatus: " + order.getStatus()
-                + "\ntime of created: " + order.getTimeOfCreated().getTime()
-                + "\ntime of begin: " + order.getTimeOfBegin().getTime()
-                + "\ntime of completion: " + order.getTimeOfCompletion().getTime();
+                + "\ntime of created: " + order.getTimeOfCreated().toString()
+                + "\ntime of begin: " + order.getTimeOfBegin().toString()
+                + "\ntime of completion: " + order.getTimeOfCompletion().toString();
     }
 
     @Override
@@ -154,16 +162,16 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     @Override
-    public List<Order> getOrdersFilteredByDate(Calendar from, Calendar to) {
-        return getOrdersFilteredByDate(this.orderRepository.getAll(), from, to);
+    public List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to) {
+        return getOrdersFilteredByDateTime(this.orderRepository.getAll(), from, to);
     }
 
     @Override
-    public List<Order> getOrdersFilteredByDate(List<Order> orders, Calendar from, Calendar to) {
+    public List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to) {
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
-                .filter(o -> o.getTimeOfCompletion().compareTo(from) >= 0 && o.getTimeOfCompletion().compareTo(to) <= 0)
+                .filter(o -> o.getTimeOfCompletion().isAfter(from) && o.getTimeOfCompletion().isBefore(to))
                 .collect(Collectors.toList());
 
         return filteredOrders;
@@ -195,10 +203,19 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
-                .filter(o -> o.getMasters().stream().filter(m -> m.getId().equals(masterId)).findFirst().orElse(null) != null)
+                .filter(o -> o.getListOfMastersId().stream().filter(m -> m.equals(masterId)).findFirst().orElse(null) != null)
                 .collect(Collectors.toList());
 
         return filteredOrders;
+    }
+
+    public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {
+        Order orderById = getById(orderId);
+        JsonUtil.exportOrderToJsonFile(orderById, fileName);
+    }
+
+    public void importOrderFromJsonFile(String path) throws IOException {
+        JsonUtil.importOrderFromJsonFile(path);
     }
 
 }

@@ -7,6 +7,8 @@ public class Master extends AbstractModel {
     private String patronymic;
     private int numberOfActiveOrders = 0;
 
+    public Master() {}
+
     public Master(String lastName, String firstName, String patronymic) {
         this.lastName = lastName;
         this.firstName = firstName;

@@ -1,6 +1,8 @@
 package autoservice.view.cli.builder.impl.garagebuilder;
 
 import autoservice.view.cli.action.impl.garageaction.*;
+import autoservice.view.cli.action.impl.masteraction.ExportMasterToJsonFile;
+import autoservice.view.cli.action.impl.masteraction.ImportMasterFromJsonFile;
 import autoservice.view.cli.builder.impl.AbstractBuilderImpl;
 import autoservice.view.cli.menu.Menu;
 import autoservice.view.cli.menu.MenuItem;
@@ -23,6 +25,8 @@ public class GarageBuilderImpl extends AbstractBuilderImpl {
         menuItems.add(new MenuItem("add new place in garage", new AddNewPlaceInGarageActionImpl(), null));
         menuItems.add(new MenuItem("delete last place in garage", new DeleteLastPlaceInGarageActionImpl(), null));
         menuItems.add(new MenuItem("print list of free places",    new PrintFreePlacesActionImpl(),   null));
+        menuItems.add(new MenuItem("export garage to json file", new ExportGarageToJsonFile(), null));
+        menuItems.add(new MenuItem("import garage from json file", new ImportGarageFromJsonFile(), null));
 
         menu.setMenuItems(menuItems);
 

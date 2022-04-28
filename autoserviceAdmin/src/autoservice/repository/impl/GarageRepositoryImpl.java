@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GarageRepositoryImpl extends AbstractRepositoryImpl<Garage> implements IGarageRepository {
+
     public List<Garage> getPlacesFilteredByAvailability(boolean isTaken) {
         List<Garage> garagesWithNumbersOfFilteredPlaces = new ArrayList<>(this.repository.size());
         List<Long> numbersOfFilteredPlaces;
