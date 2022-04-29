@@ -11,7 +11,7 @@ public class MenuController {
     private Navigator navigator;
     public static final String CONSOLE_POINTER = "> ";
 
-    public void run() throws IOException {
+    public void run() throws Exception {
         builder = new BuilderImpl(null);
         navigator = new Navigator(builder.buildMenu());
 

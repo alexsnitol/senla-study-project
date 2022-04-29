@@ -5,6 +5,9 @@ target/
 !**/src/main/** 
 !**/src/test/**
 META-INF
+
+### GRADLE ###
+.gradle
  
 ### STS ### 
 .apt_generated 

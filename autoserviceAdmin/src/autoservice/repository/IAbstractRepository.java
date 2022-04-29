@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface IAbstractRepository<M extends AbstractModel> {
 
+    void setRepository(List<M> repository);
     List<M> getAll();
     M getById(Long id);
     void deleteById(Long id);

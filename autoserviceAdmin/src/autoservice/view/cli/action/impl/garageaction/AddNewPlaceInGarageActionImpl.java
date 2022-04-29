@@ -12,7 +12,7 @@ import static java.lang.System.out;
 
 public class AddNewPlaceInGarageActionImpl implements IAction {
     @Override
-    public void execute() {
+    public void execute() throws Exception {
         Scanner scanner = new Scanner(in);
 
         out.println("enter id of garage");

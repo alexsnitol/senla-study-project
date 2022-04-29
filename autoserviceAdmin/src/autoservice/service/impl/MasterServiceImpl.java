@@ -4,11 +4,10 @@ import autoservice.repository.IMasterRepository;
 import autoservice.repository.IOrderRepository;
 import autoservice.repository.impl.MasterRepositoryImpl;
 import autoservice.repository.model.Master;
+import autoservice.repository.model.Order;
 import autoservice.service.IMasterService;
 import autoservice.service.comparator.MapMasterComparator;
 import autoservice.util.JsonUtil;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -77,10 +76,26 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
 
     public void exportMasterToJsonFile(Long masterId, String fileName) throws IOException {
         Master masterById = getById(masterId);
-        JsonUtil.exportMasterToJsonFile(masterById, fileName);
+        JsonUtil.exportModelToJsonFile(masterById, fileName);
     }
 
     public void importMasterFromJsonFile(String path) throws IOException {
-        JsonUtil.importMasterFromJsonFile(path);
+        Master masterJson = JsonUtil.importModelFromJsonFile(new Master(), path);
+        Master masterByJsonId = getById(masterJson.getId());
+
+        if (masterByJsonId != null) {
+            update(masterByJsonId, masterJson);
+        } else {
+            add(masterJson);
+        }
+    }
+
+    public void exportAllMastersToJsonFile() throws IOException {
+        JsonUtil.exportModelListToJsonFile(masterRepository.getAll(), JsonUtil.JSON_CONFIGURATION_PATH + "masterList");
+    }
+
+    public void importAllMastersFromJsonFile() throws IOException {
+        List<Master> masterList = JsonUtil.importModelListFromJsonFile(new Master(), JsonUtil.JSON_CONFIGURATION_PATH + "masterList.json");
+        masterRepository.setRepository(masterList);
     }
 }

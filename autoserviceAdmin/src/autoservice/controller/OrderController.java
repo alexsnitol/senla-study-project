@@ -59,26 +59,6 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     }
 
     public void setStatus(Long orderId, OrderStatusEnum newStatus) {
-        Order order = orderService.getById(orderId);
-        OrderStatusEnum currentStatus = order.getStatus();
-        List<Master> mastersByOrder = masterService.getMastersByOrder(orderId);
-
-        if (currentStatus != OrderStatusEnum.IN_PROCESS && currentStatus != OrderStatusEnum.POSTPONED) {
-            if (newStatus == OrderStatusEnum.IN_PROCESS || newStatus == OrderStatusEnum.POSTPONED) {
-                garageService.takePlace(orderId);
-                for (Master master : mastersByOrder) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() + 1);
-                }
-            }
-        } else {
-            if (newStatus != OrderStatusEnum.IN_PROCESS && newStatus != OrderStatusEnum.POSTPONED) {
-                garageService.freePlaceByOrderId(orderId);
-                for (Master master : mastersByOrder) {
-                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
-                }
-            }
-        }
-
         orderService.setStatus(orderId, newStatus);
     }
 
@@ -140,6 +120,14 @@ public class OrderController extends AbstractController<Order, IOrderService> {
 
     public void importOrderFromJsonFile(String path) throws IOException {
         orderService.importOrderFromJsonFile(path);
+    }
+
+    public void exportAllOrdersToJsonFile() throws IOException {
+        orderService.exportAllOrdersToJsonFile();
+    }
+
+    public void importAllOrdersFromJsonFile() throws IOException {
+        orderService.importAllOrdersFromJsonFile();
     }
 
 }

@@ -37,7 +37,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         garageService.add(newGarage);
     }
 
-    public void addPlace(Long garageId) {
+    public void addPlace(Long garageId) throws Exception {
         garageService.addPlace(garageId);
     }
 
@@ -55,6 +55,14 @@ public class GarageController extends AbstractController<Garage, IGarageService>
 
     public void importGarageFromJsonFile(String path) throws IOException {
         garageService.importGarageFromJsonFile(path);
+    }
+
+    public void exportAllGaragesToJsonFile() throws IOException {
+        garageService.exportAllGaragesToJsonFile();
+    }
+
+    public void importAllGaragesFromJsonFile() throws IOException {
+        garageService.importAllGaragesFromJsonFile();
     }
 
 }

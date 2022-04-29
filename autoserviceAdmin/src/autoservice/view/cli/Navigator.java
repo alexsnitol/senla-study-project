@@ -56,7 +56,7 @@ public class Navigator {
         out.println("-1" + ". exit");
     }
 
-    public void navigate(Integer index) throws IOException {
+    public void navigate(Integer index) throws Exception {
         if (index == 0) {
             if (currentMenu.getPreviousMenu() != null) {
                 currentMenu = currentMenu.getPreviousMenu();

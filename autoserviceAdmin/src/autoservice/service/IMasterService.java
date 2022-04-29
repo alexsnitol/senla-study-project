@@ -18,5 +18,7 @@ public interface IMasterService extends IAbstractService<Master> {
 
     void exportMasterToJsonFile(Long masterId, String fileName) throws IOException;
     void importMasterFromJsonFile(String path) throws IOException;
+    void exportAllMastersToJsonFile() throws IOException;
+    void importAllMastersFromJsonFile() throws IOException;
 
 }
