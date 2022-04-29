@@ -1,5 +1,4 @@
-task-0/ignore.txt
-HELP.md 
+HELP.md
 target/ 
 !.mvn/wrapper/maven-wrapper.jar 
 !**/src/main/** 
@@ -7,7 +6,7 @@ target/
 META-INF
 
 ### GRADLE ###
-.gradle
+/autoserviceAdmin/.gradle/
  
 ### STS ### 
 .apt_generated 
