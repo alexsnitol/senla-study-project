@@ -21,7 +21,7 @@ public class AddNewGarageActionImpl implements IAction {
         int size = scanner.nextInt();
 
         Garage newGarage = new Garage(size);
-        newGarage.setId(IdDistributorUtil.getId());
+        newGarage.setId(IdDistributorUtil.getNewId());
         GarageController.getInstance().add(newGarage);
     }
 }

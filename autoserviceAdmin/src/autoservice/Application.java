@@ -19,22 +19,26 @@ import autoservice.service.impl.GarageServiceImpl;
 import autoservice.service.impl.MasterServiceImpl;
 import autoservice.service.impl.OrderServiceImpl;
 import autoservice.util.IdDistributorUtil;
+import autoservice.util.JsonUtil;
 import autoservice.view.cli.MenuController;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static java.lang.System.out;
 
 public class Application {
-    public static void main(String[] args) throws IOException {
-
-        IdDistributorUtil idDistributor = IdDistributorUtil.getInstance();
+    public static void main(String[] args) throws Exception {
 
         IGarageRepository garageRepository = new GarageRepositoryImpl();
         IMasterRepository masterRepository = new MasterRepositoryImpl();
-        IOrderRepository orderRepository = new OrderRepositoryImpl();
+        IOrderRepository  orderRepository = new OrderRepositoryImpl();
 
         IGarageService garageService = new GarageServiceImpl(garageRepository);
         IMasterService masterService = new MasterServiceImpl(masterRepository, orderRepository);
-        IOrderService orderService = new OrderServiceImpl(orderRepository, masterRepository, garageRepository);
+        IOrderService  orderService = new OrderServiceImpl(orderRepository, masterRepository, garageRepository, garageService, masterService);
 
         GarageController garageController = GarageController.getInstance();
         MasterController masterController = MasterController.getInstance();
@@ -46,6 +50,13 @@ public class Application {
         orderController.setGarageService(garageService);
         orderController.setMasterService(masterService);
 
+        garageController.importAllGaragesFromJsonFile();
+        masterController.importAllMastersFromJsonFile();
+        orderController.importAllOrdersFromJsonFile();
+
+        IdDistributorUtil.updateId();
+
+        /*
         Master tmpMaster;
         tmpMaster = new Master("Slotin", "Alexander", "Sergeevich");
         tmpMaster.setId(IdDistributorUtil.getId());
@@ -86,10 +97,14 @@ public class Application {
         tmpOrder.setPrice(5000);
         orderController.add(tmpOrder);
         orderController.assignMasterById(tmpId, tmpMaster.getId());
+        */
 
         MenuController menuController = new MenuController();
 
         menuController.run();
 
+        garageController.exportAllGaragesToJsonFile();
+        masterController.exportAllMastersToJsonFile();
+        orderController.exportAllOrdersToJsonFile();
     }
 }

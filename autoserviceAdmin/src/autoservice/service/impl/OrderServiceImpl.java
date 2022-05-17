@@ -7,19 +7,20 @@ import autoservice.repository.impl.OrderRepositoryImpl;
 import autoservice.repository.model.Master;
 import autoservice.repository.model.Order;
 import autoservice.repository.model.OrderStatusEnum;
+import autoservice.service.IGarageService;
+import autoservice.service.IMasterService;
 import autoservice.service.IOrderService;
 import autoservice.service.comparator.MapOrderComparator;
 import autoservice.util.JsonUtil;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import autoservice.util.PropertyUtil;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.System.err;
 
 public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepository> implements IOrderService {
 
@@ -27,15 +28,20 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     private IMasterRepository masterRepository;
     private IGarageRepository garageRepository;
 
+    private IGarageService garageService;
+    private IMasterService masterService;
+
     public OrderServiceImpl() {
         super(new OrderRepositoryImpl());
     }
 
-    public OrderServiceImpl(IOrderRepository defaultRepository, IMasterRepository masterRepository, IGarageRepository garageRepository) {
+    public OrderServiceImpl(IOrderRepository defaultRepository, IMasterRepository masterRepository, IGarageRepository garageRepository, IGarageService garageService, IMasterService masterService) {
         super(defaultRepository);
         this.orderRepository = defaultRepository;
         this.masterRepository = masterRepository;
         this.garageRepository = garageRepository;
+        this.garageService = garageService;
+        this.masterService = masterService;
     }
 
     public void setOrderRepository(IOrderRepository orderRepository) {
@@ -51,6 +57,14 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         this.garageRepository = garageRepository;
     }
 
+    public void setGarageService(IGarageService garageService) {
+        this.garageService = garageService;
+    }
+
+    public void setMasterService(IMasterService masterService) {
+        this.masterService = masterService;
+    }
+
     public void setTimeOfCompletion(Long orderId, int minutes) {
         Order orderById = orderRepository.getById(orderId);
 
@@ -63,6 +77,25 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public void setStatus(Long orderId, OrderStatusEnum newStatus) {
         Order order = orderRepository.getById(orderId);
+        OrderStatusEnum currentStatus = order.getStatus();
+        List<Master> mastersByOrder = masterService.getMastersByOrder(orderId);
+
+        if (currentStatus != OrderStatusEnum.IN_PROCESS && currentStatus != OrderStatusEnum.POSTPONED) {
+            if (newStatus == OrderStatusEnum.IN_PROCESS || newStatus == OrderStatusEnum.POSTPONED) {
+                garageService.takePlace(orderId);
+                for (Master master : mastersByOrder) {
+                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() + 1);
+                }
+            }
+        } else {
+            if (newStatus != OrderStatusEnum.IN_PROCESS && newStatus != OrderStatusEnum.POSTPONED) {
+                garageService.freePlaceByOrderId(orderId);
+                for (Master master : mastersByOrder) {
+                    master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
+                }
+            }
+        }
+
         order.setStatus(newStatus);
     }
 
@@ -109,6 +142,13 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     public void shiftTimeOfCompletion(Long orderId, int shiftMinutes) {
+        try {
+            PropertyUtil.getPropertyShiftTimeOfCompletion();
+        } catch (Exception e) {
+            err.println(e.getMessage());
+            return;
+        }
+
         Order orderById = orderRepository.getById(orderId);
 
         if (orderById == null)
@@ -135,6 +175,18 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public void setPrice(Long orderId, float price) {
         orderRepository.getById(orderId).setPrice(price);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        try {
+            PropertyUtil.getPropertyDeleteOrder();
+        } catch (Exception e) {
+            err.println(e.getMessage());
+            return;
+        }
+
+        this.orderRepository.deleteById(id);
     }
 
     public String getInfoOfOrder(Order order) {
@@ -211,11 +263,27 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {
         Order orderById = getById(orderId);
-        JsonUtil.exportOrderToJsonFile(orderById, fileName);
+        JsonUtil.exportModelToJsonFile(orderById, fileName);
     }
 
     public void importOrderFromJsonFile(String path) throws IOException {
-        JsonUtil.importOrderFromJsonFile(path);
+        Order orderJson = JsonUtil.importModelFromJsonFile(new Order(), path);
+        Order orderByJsonId = getById(orderJson.getId());
+
+        if (orderByJsonId != null) {
+            update(orderByJsonId, orderJson);
+        } else {
+            add(orderJson);
+        }
+    }
+
+    public void exportAllOrdersToJsonFile() throws IOException {
+        JsonUtil.exportModelListToJsonFile(orderRepository.getAll(), JsonUtil.JSON_CONFIGURATION_PATH + "orderList");
+    }
+
+    public void importAllOrdersFromJsonFile() throws IOException {
+        List<Order> orderList = JsonUtil.importModelListFromJsonFile(new Order(), JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
+        orderRepository.setRepository(orderList);
     }
 
 }

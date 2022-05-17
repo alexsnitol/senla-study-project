@@ -40,7 +40,7 @@ public class MenuItem {
         this.nextMenu = nextMenu;
     }
 
-    public void doAction() throws IOException {
+    public void doAction() throws Exception {
         this.action.execute();
     }
 

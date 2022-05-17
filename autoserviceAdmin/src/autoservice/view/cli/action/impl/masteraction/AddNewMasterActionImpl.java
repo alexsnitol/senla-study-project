@@ -31,7 +31,7 @@ public class AddNewMasterActionImpl implements IAction {
         patronymic = scanner.nextLine();
 
         Master newMaster = new Master(lastName, firstName, patronymic);
-        newMaster.setId(IdDistributorUtil.getId());
+        newMaster.setId(IdDistributorUtil.getNewId());
 
         MasterController.getInstance().add(newMaster);
     }

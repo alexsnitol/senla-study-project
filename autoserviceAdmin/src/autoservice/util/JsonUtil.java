@@ -1,84 +1,86 @@
 package autoservice.util;
 
+import autoservice.controller.AbstractController;
 import autoservice.controller.GarageController;
 import autoservice.controller.MasterController;
 import autoservice.controller.OrderController;
+import autoservice.repository.model.AbstractModel;
 import autoservice.repository.model.Garage;
 import autoservice.repository.model.Master;
 import autoservice.repository.model.Order;
+import autoservice.service.IAbstractService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.AnnotationIntrospector;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.System.err;
 
 public class JsonUtil {
 
+    public static final String ROOT_PATH = Paths.get("").toAbsolutePath().toString() + "\\src\\autoservice";
+    public static final String JSON_CONFIGURATION_PATH =  ROOT_PATH + "\\configuration\\json\\";
+
     private JsonUtil() {}
 
-    public static void exportOrderToJsonFile(Order order, String fileName) throws IOException {
+
+    public static <T> T importModelFromJsonFile(T model, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.writeValue(new File(fileName + ".json"), order);
-    }
 
-    public static void importOrderFromJsonFile(String path) throws IOException {
-        OrderController orderController = OrderController.getInstance();
+        JavaType javaType = objectMapper.getTypeFactory().constructType(model.getClass());
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        JsonNode orderJsonNode = objectMapper.readTree(new File(path));
-        Order orderJson = objectMapper.readValue(new File(path), Order.class);
-
-        Order orderByJsonId = orderController.getById(orderJsonNode.get("id").asLong());
-
-        if (orderByJsonId != null) {
-            orderController.update(orderByJsonId, orderJson);
-        } else {
-            orderController.add(orderJson);
+        try {
+            return objectMapper.readValue(new File(path), javaType);
+        } catch (IOException e) {
+            err.println(e);
+            return null;
         }
     }
 
-    public static void exportMasterToJsonFile(Master master, String fileName) throws IOException {
+    public static <T> void exportModelToJsonFile(T model, String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(new File(fileName + ".json"), master);
-    }
+        objectMapper.registerModule(new JavaTimeModule());
 
-    public static void importMasterFromJsonFile(String path) throws IOException {
-        MasterController masterController = MasterController.getInstance();
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode masterJsonNode = objectMapper.readTree(new File(path));
-        Master masterJson = objectMapper.readValue(new File(path), Master.class);
-
-        Master masterByJsonId = masterController.getById(masterJsonNode.get("id").asLong());
-
-        if (masterByJsonId != null) {
-            masterController.update(masterByJsonId, masterJson);
-        } else {
-            masterController.add(masterJson);
+        try {
+            objectMapper.writeValue(new File(fileName + ".json"), model);
+        } catch (IOException e) {
+            err.println(e);
         }
     }
 
-    public static void exportGarageToJsonFile(Garage garage, String fileName) throws IOException {
+    public static <T> List<T> importModelListFromJsonFile(T model, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.writeValue(new File(fileName + ".json"), garage);
+        objectMapper.registerModule(new JavaTimeModule());
+
+        CollectionType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, model.getClass());
+
+        try {
+            return objectMapper.readValue(new File(path), javaType);
+        } catch (IOException e) {
+            err.println(e);
+            return Collections.emptyList();
+        }
     }
 
-    public static void importGarageFromJsonFile(String path) throws IOException {
-        GarageController garageController = GarageController.getInstance();
-
+    public static <T> void exportModelListToJsonFile(List<T> modelList, String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
-        JsonNode garageJsonNode = objectMapper.readTree(new File(path));
-        Garage garageJson = objectMapper.readValue(new File(path), Garage.class);
+        objectMapper.registerModule(new JavaTimeModule());
 
-        Garage garageByJsonId = garageController.getById(garageJsonNode.get("id").asLong());
-
-        if (garageByJsonId != null) {
-            garageController.update(garageByJsonId, garageJson);
-        } else {
-            garageController.add(garageJson);
+        try {
+            objectMapper.writeValue(new File(fileName + ".json"), modelList);
+        } catch (IOException e) {
+            err.println(e);
         }
     }
 

@@ -65,4 +65,12 @@ public class MasterController extends AbstractController<Master, IMasterService>
         masterService.importMasterFromJsonFile(path);
     }
 
+    public void exportAllMastersToJsonFile() throws IOException {
+        masterService.exportAllMastersToJsonFile();
+    }
+
+    public void importAllMastersFromJsonFile() throws IOException {
+        masterService.importAllMastersFromJsonFile();
+    }
+
 }

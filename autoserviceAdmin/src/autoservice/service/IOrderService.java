@@ -15,6 +15,8 @@ public interface IOrderService extends IAbstractService<Order> {
     void setOrderRepository(IOrderRepository orderRepository);
     void setMasterRepository(IMasterRepository masterRepository);
     void setGarageRepository(IGarageRepository garageRepository);
+    void setGarageService(IGarageService garageService);
+    void setMasterService(IMasterService masterService);
 
     void setTimeOfCompletion(Long orderId, int minutes);
     void setStatus(Long idOrder, OrderStatusEnum newStatus);
@@ -36,5 +38,7 @@ public interface IOrderService extends IAbstractService<Order> {
 
     void exportOrderToJsonFile(Long orderId, String fileName) throws IOException;
     void importOrderFromJsonFile(String path) throws IOException;
+    void exportAllOrdersToJsonFile() throws IOException;
+    void importAllOrdersFromJsonFile() throws IOException;
 
 }

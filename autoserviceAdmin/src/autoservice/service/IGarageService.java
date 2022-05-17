@@ -10,7 +10,7 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     void setGarageRepository(IGarageRepository garageRepository);
 
-    void addPlace(Long garageId);
+    void addPlace(Long garageId) throws Exception;
     int deleteLastPlace(Long garageId);
 
     List<Long> takePlace(Long orderId);
@@ -23,5 +23,7 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     void exportGarageToJsonFile(Long garageId, String fileName) throws IOException;
     void importGarageFromJsonFile(String path) throws IOException;
+    void exportAllGaragesToJsonFile() throws IOException;
+    void importAllGaragesFromJsonFile() throws IOException;
 
 }

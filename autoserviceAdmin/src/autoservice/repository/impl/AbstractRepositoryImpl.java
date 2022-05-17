@@ -10,6 +10,10 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
 
     protected List<M> repository = new ArrayList<>();
 
+    public void setRepository(List<M> repository) {
+        this.repository = repository;
+    }
+
     @Override
     public List<M> getAll() {
         return repository;

@@ -20,7 +20,7 @@ public class AddNewOrderActionImpl implements IAction {
         Scanner scanner = new Scanner(System.in);
 
         Order newOrder = new Order();
-        newOrder.setId(IdDistributorUtil.getId());
+        newOrder.setId(IdDistributorUtil.getNewId());
 
         Integer year;
         Integer month;
