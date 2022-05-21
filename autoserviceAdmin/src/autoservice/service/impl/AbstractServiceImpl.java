@@ -8,6 +8,7 @@ import autoservice.service.IAbstractService;
 import autoservice.util.JsonUtil;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import configuremodule.annotation.Autowired;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,8 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
 
     protected R defaultRepository = null;
 
+
+    public AbstractServiceImpl() {}
 
     protected AbstractServiceImpl(R defaultRepository) {
         this.defaultRepository = defaultRepository;

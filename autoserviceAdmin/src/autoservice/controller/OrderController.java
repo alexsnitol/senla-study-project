@@ -7,28 +7,38 @@ import autoservice.service.IGarageService;
 import autoservice.service.IMasterService;
 import autoservice.service.IOrderService;
 import autoservice.service.impl.OrderServiceImpl;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Singleton
 public class OrderController extends AbstractController<Order, IOrderService> {
 
     private static OrderController instance;
+    @Autowired
     private IOrderService orderService;
+    @Autowired
     private IGarageService garageService;
+    @Autowired
     private IMasterService masterService;
 
 
-    private OrderController() {
-        super(new OrderServiceImpl());
+    @PostConstruct
+    public void setInstance() {
+        instance = this;
     }
 
     public static OrderController getInstance() {
-        if (instance == null) {
-            instance = new OrderController();
-        }
         return instance;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.defaultService = orderService;
     }
 
     public void setOrderService(IOrderService orderService) {
@@ -126,6 +136,7 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         orderService.exportAllOrdersToJsonFile();
     }
 
+    @PostConstruct
     public void importAllOrdersFromJsonFile() throws IOException {
         orderService.importAllOrdersFromJsonFile();
     }

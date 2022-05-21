@@ -1,0 +1,3 @@
+//rootProject.name = "alexander_slotin"
+include ':autoserviceAdmin'
+include ':configureModule'

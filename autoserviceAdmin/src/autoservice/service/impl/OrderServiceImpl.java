@@ -13,6 +13,9 @@ import autoservice.service.IOrderService;
 import autoservice.service.comparator.MapOrderComparator;
 import autoservice.util.JsonUtil;
 import autoservice.util.PropertyUtil;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -22,26 +25,25 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.err;
 
+@Singleton
 public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepository> implements IOrderService {
 
+    @Autowired
     private IOrderRepository orderRepository;
+    @Autowired
     private IMasterRepository masterRepository;
+    @Autowired
     private IGarageRepository garageRepository;
 
+    @Autowired
     private IGarageService garageService;
+    @Autowired
     private IMasterService masterService;
 
-    public OrderServiceImpl() {
-        super(new OrderRepositoryImpl());
-    }
 
-    public OrderServiceImpl(IOrderRepository defaultRepository, IMasterRepository masterRepository, IGarageRepository garageRepository, IGarageService garageService, IMasterService masterService) {
-        super(defaultRepository);
-        this.orderRepository = defaultRepository;
-        this.masterRepository = masterRepository;
-        this.garageRepository = garageRepository;
-        this.garageService = garageService;
-        this.masterService = masterService;
+    @PostConstruct
+    public void init() {
+        this.defaultRepository = orderRepository;
     }
 
     public void setOrderRepository(IOrderRepository orderRepository) {

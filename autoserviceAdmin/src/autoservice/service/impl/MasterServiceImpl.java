@@ -8,25 +8,27 @@ import autoservice.repository.model.Order;
 import autoservice.service.IMasterService;
 import autoservice.service.comparator.MapMasterComparator;
 import autoservice.util.JsonUtil;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterRepository> implements IMasterService {
 
+    @Autowired
     private IMasterRepository masterRepository;
+    @Autowired
     private IOrderRepository orderRepository;
 
-    public MasterServiceImpl() {
-        super(new MasterRepositoryImpl());
-    }
 
-    public MasterServiceImpl(IMasterRepository defaultRepository, IOrderRepository orderRepository) {
-        super(defaultRepository);
-        this.masterRepository = defaultRepository;
-        this.orderRepository = orderRepository;
+    @PostConstruct
+    public void init() {
+        this.defaultRepository = masterRepository;
     }
 
     public void setMasterRepository(IMasterRepository masterRepository) {

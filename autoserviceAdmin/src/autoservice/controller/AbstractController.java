@@ -2,6 +2,7 @@ package autoservice.controller;
 
 import autoservice.repository.model.AbstractModel;
 import autoservice.service.IAbstractService;
+import configuremodule.annotation.Autowired;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
 
     protected S defaultService;
 
+    public AbstractController() {}
     protected AbstractController(S defaultService) {
         this.defaultService = defaultService;
     }

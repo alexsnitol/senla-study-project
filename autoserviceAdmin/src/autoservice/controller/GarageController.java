@@ -3,25 +3,33 @@ package autoservice.controller;
 import autoservice.repository.model.Garage;
 import autoservice.service.IGarageService;
 import autoservice.service.impl.GarageServiceImpl;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.IOException;
 import java.util.List;
 
+@Singleton
 public class GarageController extends AbstractController<Garage, IGarageService> {
 
-    private static GarageController instance;
+    public static GarageController instance;
+    @Autowired
     private IGarageService garageService;
 
 
-    private GarageController() {
-        super(new GarageServiceImpl());
+    @PostConstruct
+    public void setInstance() {
+        instance = this;
     }
 
     public static GarageController getInstance() {
-        if (instance == null) {
-            instance = new GarageController();
-        }
         return instance;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.defaultService = garageService;
     }
 
     public void setGarageService(IGarageService garageService) {
@@ -61,6 +69,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         garageService.exportAllGaragesToJsonFile();
     }
 
+    @PostConstruct
     public void importAllGaragesFromJsonFile() throws IOException {
         garageService.importAllGaragesFromJsonFile();
     }
