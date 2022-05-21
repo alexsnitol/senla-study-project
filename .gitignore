@@ -6,7 +6,7 @@ target/
 META-INF
 
 ### GRADLE ###
-/autoserviceAdmin/.gradle/
+.gradle/
  
 ### STS ### 
 .apt_generated 
