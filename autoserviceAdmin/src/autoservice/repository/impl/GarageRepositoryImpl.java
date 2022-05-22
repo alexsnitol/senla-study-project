@@ -2,10 +2,12 @@ package autoservice.repository.impl;
 
 import autoservice.repository.IGarageRepository;
 import autoservice.repository.model.Garage;
+import configuremodule.annotation.Singleton;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Singleton
 public class GarageRepositoryImpl extends AbstractRepositoryImpl<Garage> implements IGarageRepository {
 
     public List<Garage> getPlacesFilteredByAvailability(boolean isTaken) {

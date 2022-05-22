@@ -8,6 +8,7 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenCentral()
 }
+
 sourceSets {
     main {
         java {
@@ -15,11 +16,14 @@ sourceSets {
         }
     }
 }
+
 dependencies {
     /*compile 'junit:junit:4.12'*/
     implementation 'com.fasterxml.jackson.core:jackson-core:2.13.2'
     implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.13.2'
+    implementation project(':configureModule')
 }
+
 java {
     sourceCompatibility = JavaVersion.toVersion("11")
     targetCompatibility = JavaVersion.toVersion("11")

@@ -3,25 +3,33 @@ package autoservice.controller;
 import autoservice.repository.model.Master;
 import autoservice.service.IMasterService;
 import autoservice.service.impl.MasterServiceImpl;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.IOException;
 import java.util.List;
 
+@Singleton
 public class MasterController extends AbstractController<Master, IMasterService> {
 
     private static MasterController instance;
+    @Autowired
     private IMasterService masterService;
 
 
-    private MasterController() {
-        super(new MasterServiceImpl());
+    @PostConstruct
+    public void setInstance() {
+        instance = this;
     }
 
     public static MasterController getInstance() {
-        if (instance == null) {
-            instance = new MasterController();
-        }
         return instance;
+    }
+
+    @PostConstruct
+    public void init() {
+        this.defaultService = masterService;
     }
 
     public void setMasterService(IMasterService masterService) {
@@ -69,6 +77,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
         masterService.exportAllMastersToJsonFile();
     }
 
+    @PostConstruct
     public void importAllMastersFromJsonFile() throws IOException {
         masterService.importAllMastersFromJsonFile();
     }

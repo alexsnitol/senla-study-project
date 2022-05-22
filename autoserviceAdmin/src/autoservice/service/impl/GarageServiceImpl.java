@@ -8,6 +8,9 @@ import autoservice.repository.model.Order;
 import autoservice.service.IGarageService;
 import autoservice.util.JsonUtil;
 import autoservice.util.PropertyUtil;
+import configuremodule.annotation.Autowired;
+import configuremodule.annotation.PostConstruct;
+import configuremodule.annotation.Singleton;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,17 +21,16 @@ import java.util.List;
 
 import static java.lang.System.err;
 
+@Singleton
 public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageRepository> implements IGarageService {
 
+    @Autowired
     private IGarageRepository garageRepository;
 
-    public GarageServiceImpl() {
-        super(new GarageRepositoryImpl());
-    }
 
-    public GarageServiceImpl(IGarageRepository defaultRepository) {
-        super(defaultRepository);
-        this.garageRepository = defaultRepository;
+    @PostConstruct
+    public void init() {
+        this.defaultRepository = garageRepository;
     }
 
     public void setGarageRepository(IGarageRepository garageRepository) {
