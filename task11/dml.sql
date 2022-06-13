@@ -5,16 +5,16 @@ VALUES (10),
 ;
 
 INSERT INTO masters(last_name, first_name, patronymic)
-VALUES ('Иванов', 'Иван', 'Иванович'),
-       ('Набережнева', 'Мила', 'Евгеньевна'),
-       ('Мерзлякова', 'Марьямна', 'Егоровна'),
-       ('Баева', 'Серафим', 'Павлович'),
-       ('Ягунов', 'Феликс', 'Александрович'),
-       ('Лобачёв', 'Семен', 'Евгениевич'),
-       ('Юшакова', 'Марианна', 'Климентьевна'),
-       ('Волошин', 'Трофим', 'Федорович'),
-       ('Хитрово', 'Тамара', 'Кирилловна'),
-       ('Эйлер', 'Виктория', 'Константиновна')
+VALUES ('Ivanov',       'Ivan',     'Ivanovich'),
+       ('Naberezhneva', 'Mila',     'Evgenevna'),
+       ('Merzlyakova',  'Maryana',  'Egorovna'),
+       ('Baev',         'Serafim',  'Pavlovich'),
+       ('YAgunov',      'Feliks',   'Aleksandrovich'),
+       ('Lobachev',     'Semen',    'Evgenievich'),
+       ('YUshakova',    'Marianna', 'Klimentevna'),
+       ('Voloshin',     'Trofim',   'Fedorovich'),
+       ('Hitrovo',      'Tamara',   'Kirillovna'),
+       ('Ejler',        'Viktoriya','Konstantinovna')
 ;
 
 INSERT INTO orders(time_of_created, time_of_begin, time_of_completion, status, price)
@@ -26,19 +26,19 @@ VALUES ('2022-05-31 18:29:06', '2022-05-31 18:29:06', '2022-06-01 18:29:06', 'CO
 ;
 
 INSERT INTO order_garage(orders_id, garages_id, place)
-VALUES (0, 0, 0),
-       (1, 0, 1),
-       (2, 0, 2),
-       (3, 0, 3),
-       (4, 1, 0)
+VALUES (1, 1, 0),
+       (2, 1, 1),
+       (3, 1, 2),
+       (4, 1, 3),
+       (5, 2, 0)
 ;
 
 INSERT INTO order_master(orders_id, masters_id)
-VALUES (0, 0),
-       (0, 1),
-       (0, 2),
+VALUES (1, 1),
+       (1, 2),
        (1, 3),
        (2, 4),
        (3, 5),
-       (4, 6)
+       (4, 6),
+       (5, 7)
 ;
