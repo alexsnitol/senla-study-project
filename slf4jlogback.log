@@ -1,0 +1,207 @@
+17.06.2022 12:18:16.580 [main] INFO   o.r.Reflections - Reflections took 138 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 12:18:16.618 [main] INFO   o.r.Reflections - Reflections took 7 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 12:18:16.935 [main] INFO   r.s.a.c.GarageController - import all garages from json file
+17.06.2022 12:21:26.401 [main] INFO   o.r.Reflections - Reflections took 115 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 12:21:26.430 [main] INFO   o.r.Reflections - Reflections took 7 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 12:21:26.676 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 12:21:26.680 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 12:26:29.414 [main] INFO   o.r.Reflections - Reflections took 104 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 12:26:29.445 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 12:26:29.487 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 12:26:29.704 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 12:26:29.705 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 12:26:29.707 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 12:26:29.708 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 12:26:29.710 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 12:27:45.382 [main] INFO   r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 12:27:45.394 [main] INFO   r.s.a.c.GarageController - All garages successful exported
+17.06.2022 12:27:45.395 [main] INFO   r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 12:27:45.396 [main] INFO   r.s.a.c.MasterController - All masters successful exported
+17.06.2022 12:27:45.397 [main] INFO   r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 12:27:45.401 [main] INFO   r.s.a.c.OrderController - All orders successful exported
+17.06.2022 13:17:10.133 [main] INFO   o.r.Reflections - Reflections took 91 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 13:17:10.161 [main] INFO   o.r.Reflections - Reflections took 5 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 13:17:10.194 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 13:17:10.395 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 13:17:10.396 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 13:17:10.397 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 13:17:10.398 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 13:17:10.399 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 13:17:17.654 [main] INFO   r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 13:17:17.667 [main] INFO   r.s.a.c.GarageController - All garages successful exported
+17.06.2022 13:17:17.667 [main] INFO   r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 13:17:17.668 [main] INFO   r.s.a.c.MasterController - All masters successful exported
+17.06.2022 13:17:17.668 [main] INFO   r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 13:17:17.674 [main] INFO   r.s.a.c.OrderController - All orders successful exported
+17.06.2022 13:23:51.468 [main] INFO   o.r.Reflections - Reflections took 88 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 13:23:51.498 [main] INFO   o.r.Reflections - Reflections took 8 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 13:23:51.535 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 13:23:51.753 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 13:23:51.753 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 13:23:51.755 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 13:23:51.756 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 13:23:51.757 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 14:02:16.350 [main] INFO   o.r.Reflections - Reflections took 96 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 14:02:16.386 [main] INFO   o.r.Reflections - Reflections took 8 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 14:02:16.431 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 14:02:16.677 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 14:02:16.678 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 14:02:16.680 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 14:02:16.681 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 14:02:16.682 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 14:03:06.269 [main] INFO   r.s.a.c.GarageController - Deleting last place in garage with id 8
+17.06.2022 14:04:18.864 [main] INFO   o.r.Reflections - Reflections took 95 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 14:04:18.894 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 14:04:18.931 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 14:04:19.138 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 14:04:19.139 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 14:04:19.141 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 14:04:19.142 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 14:04:19.143 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 14:04:36.373 [main] INFO   r.s.a.c.GarageController - Deleting last place in garage with id 8
+17.06.2022 14:04:36.381 [main] INFO   r.s.a.s.i.GarageServiceImpl - In garage with id 8 last place successful deleted
+17.06.2022 14:05:06.680 [main] INFO   r.s.a.c.GarageController - Export garage with id 8 to json file: test
+17.06.2022 14:05:06.692 [main] INFO   r.s.a.c.GarageController - Garage with id 8 successful exported
+17.06.2022 16:56:50.133 [main] INFO   o.r.Reflections - Reflections took 968 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 16:56:50.214 [main] INFO   o.r.Reflections - Reflections took 18 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 16:56:50.306 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 16:56:50.712 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 16:56:50.713 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 16:56:50.718 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 16:56:50.720 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 16:56:50.722 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 16:57:54.810 [main] INFO   r.s.a.c.MasterController - Adding new master with id 11
+17.06.2022 16:57:54.810 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model with id 11 successful added
+17.06.2022 16:59:44.771 [main] INFO   o.r.Reflections - Reflections took 97 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 16:59:44.798 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 16:59:44.831 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 16:59:45.050 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 16:59:45.051 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 16:59:45.053 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 16:59:45.053 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 16:59:45.055 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 16:59:58.145 [main] INFO   r.s.a.c.MasterController - Adding new master with id 11
+17.06.2022 16:59:58.145 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Master with id 11 successful added
+17.06.2022 17:02:42.516 [main] INFO   o.r.Reflections - Reflections took 96 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 17:02:42.544 [main] INFO   o.r.Reflections - Reflections took 5 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 17:02:42.579 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 17:02:42.795 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 17:02:42.795 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 17:02:42.797 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 17:02:42.798 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 17:02:42.799 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 17:03:33.339 [main] INFO   r.s.a.c.MasterController - Deleting master with id 1
+17.06.2022 17:14:39.263 [main] INFO   o.r.Reflections - Reflections took 94 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 17:14:39.290 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 17:14:39.325 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 17:14:39.534 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 17:14:39.535 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 17:14:39.537 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 17:14:39.538 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 17:14:39.539 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 17:14:49.623 [main] INFO   r.s.a.c.MasterController - Deleting master with id 1
+17.06.2022 17:14:49.624 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Master with id 1 successful deleted
+17.06.2022 17:36:45.587 [main] INFO   o.r.Reflections - Reflections took 189 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 17:36:45.711 [main] INFO   o.r.Reflections - Reflections took 17 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 17:36:45.759 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 17:36:46.003 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 17:36:46.004 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 17:36:46.006 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 17:36:46.007 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 17:36:46.008 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 17:37:02.785 [main] INFO   r.s.a.c.MasterController - Adding new master with id 11
+17.06.2022 17:37:02.786 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Master with id 11 successful added
+17.06.2022 17:37:17.912 [main] INFO   r.s.a.c.MasterController - Deleting master with id 11
+17.06.2022 17:37:17.913 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Master with id 11 successful deleted
+17.06.2022 17:37:35.086 [main] INFO   r.s.a.c.MasterController - Adding new master with id 12
+17.06.2022 17:37:35.086 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Master with id 12 successful added
+17.06.2022 17:38:17.494 [main] INFO   r.s.a.c.OrderController - Adding new order with id 13
+17.06.2022 17:38:17.494 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Order with id 13 successful added
+17.06.2022 17:38:17.495 [main] INFO   r.s.a.s.i.GarageServiceImpl - Place in garage with id 6 successful taken on index 1
+17.06.2022 17:39:57.394 [main] INFO   r.s.a.c.OrderController - Assign master with id 12 on order with id 13
+17.06.2022 17:39:57.395 [main] INFO   r.s.a.s.i.OrderServiceImpl - Assigning master with id 12 for order with id 13 successful completed
+17.06.2022 17:40:36.771 [main] INFO   r.s.a.c.OrderController - Remove master with id 12 from order with id 13
+17.06.2022 17:40:36.772 [main] INFO   r.s.a.s.i.OrderServiceImpl - Removing master with id 12 for order with id 13 successful completed
+17.06.2022 17:40:45.865 [main] INFO   r.s.a.c.OrderController - Deleting order with id 13
+17.06.2022 17:40:45.874 [main] INFO   r.s.a.s.i.GarageServiceImpl - Place with index 1 in garage with id 6 successful freed
+17.06.2022 17:44:07.131 [main] INFO   o.r.Reflections - Reflections took 94 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 17:44:07.161 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 17:44:07.196 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 17:44:07.419 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 17:44:07.420 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 17:44:07.422 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 17:44:07.423 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 17:44:07.424 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 17:44:37.729 [main] INFO   r.s.a.c.OrderController - Adding new order with id 11
+17.06.2022 17:44:37.729 [main] INFO   r.s.a.s.i.AbstractServiceImpl - Model class ru.senla.autoservice.repository.model.Order with id 11 successful added
+17.06.2022 17:44:37.729 [main] INFO   r.s.a.s.i.GarageServiceImpl - Place in garage with id 6 successful taken on index 1
+17.06.2022 17:44:51.869 [main] INFO   r.s.a.c.OrderController - Assign master with id 11 on order with id 1
+17.06.2022 17:44:51.869 [main] ERROR  r.s.a.s.i.OrderServiceImpl - Assigning master for order with id 1 cancelled, because master with id 11 not exist
+17.06.2022 17:45:27.237 [main] INFO   r.s.a.c.OrderController - Assign master with id 1 on order with id 11
+17.06.2022 17:45:27.238 [main] INFO   r.s.a.s.i.OrderServiceImpl - Assigning master with id 1 for order with id 11 successful completed
+17.06.2022 17:45:39.347 [main] INFO   r.s.a.c.OrderController - Deleting order with id 11
+17.06.2022 17:45:39.353 [main] INFO   r.s.a.s.i.GarageServiceImpl - Place with index 1 in garage with id 6 successful freed
+17.06.2022 18:12:32.382 [main] INFO   o.r.Reflections - Reflections took 120 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 18:12:32.415 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 18:12:32.454 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 18:12:32.673 [main] INFO   r.s.a.c.OrderController - All orders successful imported
+17.06.2022 18:12:32.674 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 18:12:32.675 [main] INFO   r.s.a.c.GarageController - All garages successful imported
+17.06.2022 18:12:32.676 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 18:12:32.679 [main] INFO   r.s.a.c.MasterController - All masters successful imported
+17.06.2022 18:12:39.727 [main] INFO   r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 18:12:39.741 [main] INFO   r.s.a.c.GarageController - All garages successful exported
+17.06.2022 18:12:39.741 [main] INFO   r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 18:12:39.744 [main] INFO   r.s.a.c.MasterController - All masters successful exported
+17.06.2022 18:12:39.745 [main] INFO   r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 18:12:39.748 [main] INFO   r.s.a.c.OrderController - All orders successful exported
+17.06.2022 18:38:27.143 [main] INFO   o.r.Reflections - Reflections took 95 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 18:38:27.172 [main] INFO   o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 18:38:27.207 [main] INFO   r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 18:38:27.424 [main] INFO   r.s.a.s.i.OrderServiceImpl - All orders successful imported
+17.06.2022 18:38:27.425 [main] INFO   r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 18:38:27.426 [main] INFO   r.s.a.s.i.GarageServiceImpl - All garages successful imported
+17.06.2022 18:38:27.427 [main] INFO   r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 18:38:27.429 [main] INFO   r.s.a.s.i.MasterServiceImpl - All masters successful imported
+17.06.2022 18:38:31.660 [main] INFO   r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 18:38:31.674 [main] INFO   r.s.a.s.i.GarageServiceImpl - All garages successful exported
+17.06.2022 18:38:31.675 [main] INFO   r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 18:38:31.676 [main] INFO   r.s.a.s.i.MasterServiceImpl - All masters successful exported
+17.06.2022 18:38:31.677 [main] INFO   r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 18:38:31.681 [main] INFO   r.s.a.s.i.OrderServiceImpl - All orders successful exported
+17.06.2022 19:35:21.277 [main] INFO  o.r.Reflections - Reflections took 97 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 19:35:21.308 [main] INFO  o.r.Reflections - Reflections took 6 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 19:35:21.346 [main] INFO  r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 19:35:21.585 [main] INFO  r.s.a.s.i.OrderServiceImpl - All orders successful imported
+17.06.2022 19:35:21.586 [main] INFO  r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 19:35:21.588 [main] INFO  r.s.a.s.i.GarageServiceImpl - All garages successful imported
+17.06.2022 19:35:21.589 [main] INFO  r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 19:35:21.590 [main] INFO  r.s.a.s.i.MasterServiceImpl - All masters successful imported
+17.06.2022 19:35:29.552 [main] INFO  r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 19:35:29.572 [main] INFO  r.s.a.s.i.GarageServiceImpl - All garages successful exported
+17.06.2022 19:35:29.572 [main] INFO  r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 19:35:29.575 [main] INFO  r.s.a.s.i.MasterServiceImpl - All masters successful exported
+17.06.2022 19:35:29.576 [main] INFO  r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 19:35:29.582 [main] INFO  r.s.a.s.i.OrderServiceImpl - All orders successful exported
+17.06.2022 19:42:35.466 [main] INFO  o.r.Reflections - Reflections took 104 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 19:42:35.499 [main] INFO  o.r.Reflections - Reflections took 7 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 19:42:35.537 [main] INFO  r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 19:42:35.756 [main] INFO  r.s.a.s.i.OrderServiceImpl - All orders successful imported
+17.06.2022 19:42:35.757 [main] INFO  r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 19:42:35.759 [main] INFO  r.s.a.s.i.GarageServiceImpl - All garages successful imported
+17.06.2022 19:42:35.759 [main] INFO  r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 19:42:35.761 [main] INFO  r.s.a.s.i.MasterServiceImpl - All masters successful imported
+17.06.2022 19:42:41.930 [main] INFO  r.s.a.c.GarageController - Export all garages to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 19:42:41.944 [main] INFO  r.s.a.s.i.GarageServiceImpl - All garages successful exported
+17.06.2022 19:42:41.944 [main] INFO  r.s.a.c.MasterController - Export all masters to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 19:42:41.947 [main] INFO  r.s.a.s.i.MasterServiceImpl - All masters successful exported
+17.06.2022 19:42:41.948 [main] INFO  r.s.a.c.OrderController - Export all orders to json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 19:42:41.953 [main] INFO  r.s.a.s.i.OrderServiceImpl - All orders successful exported
+17.06.2022 19:43:10.448 [main] INFO  o.r.Reflections - Reflections took 142 ms to scan 1 urls, producing 21 keys and 91 values
+17.06.2022 19:43:10.492 [main] INFO  o.r.Reflections - Reflections took 9 ms to scan 1 urls, producing 4 keys and 11 values
+17.06.2022 19:43:10.556 [main] INFO  r.s.a.c.OrderController - Import all orders from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\orderList.json
+17.06.2022 19:43:10.849 [main] INFO  r.s.a.s.i.OrderServiceImpl - All orders successful imported
+17.06.2022 19:43:10.850 [main] INFO  r.s.a.c.GarageController - Import all garages from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\garageList.json
+17.06.2022 19:43:10.852 [main] INFO  r.s.a.s.i.GarageServiceImpl - All garages successful imported
+17.06.2022 19:43:10.854 [main] INFO  r.s.a.c.MasterController - Import all masters from json file: D:\project\gitlab\alexander_slotin\autoserviceAdmin\src\main\java\ru\senla\autoservice\configuration\json\masterList.json
+17.06.2022 19:43:10.857 [main] INFO  r.s.a.s.i.MasterServiceImpl - All masters successful imported

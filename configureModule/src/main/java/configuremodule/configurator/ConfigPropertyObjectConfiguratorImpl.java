@@ -1,14 +1,13 @@
 package configuremodule.configurator;
 
 import configuremodule.ApplicationContext;
-import configuremodule.annotation.ConfigProperty;
+import configuremodule.ConfigProperty;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -42,7 +41,8 @@ public class ConfigPropertyObjectConfiguratorImpl implements ObjectConfigurator 
         for (Field field : implClass.getDeclaredFields()) {
             ConfigProperty annotation = field.getAnnotation(ConfigProperty.class);
             if (annotation != null) {
-                String value = annotation.value().isEmpty() ? propertiesMap.get(field.getName()) : propertiesMap.get(annotation.value());
+                String value = annotation.value()
+                        .isEmpty() ? propertiesMap.get(field.getName()) : propertiesMap.get(annotation.value());
                 field.setAccessible(true);
                 field.set(obj, value);
             }

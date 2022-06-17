@@ -20,7 +20,8 @@ public class JavaConfig implements Config {
         return ifc2Impl.computeIfAbsent(ifc, aClass -> {
            Set<Class<? extends T>> classes = scanner.getSubTypesOf(ifc);
            if (classes.size() != 1) {
-               throw new RuntimeException(ifc + " has 0 or more than one implementations. Please update your configuration.");
+               throw new RuntimeException(ifc + " has 0 or more than one implementations." +
+                       "Please update your configuration.");
            }
            return classes.iterator().next();
         });
