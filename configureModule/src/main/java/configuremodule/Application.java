@@ -3,10 +3,8 @@ package configuremodule;
 import configuremodule.annotation.Singleton;
 import configuremodule.config.JavaConfig;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 
 public class Application {
     public static ApplicationContext run(String packageToScan, Map<Class, Class> ifc2Impl) throws Exception {
