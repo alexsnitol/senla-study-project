@@ -1,4 +1,4 @@
-package configuremodule;
+package configuremodule.annotation;
 
 import java.lang.annotation.Retention;
 

@@ -56,8 +56,17 @@ public class OrderController extends AbstractController<Order, IOrderService> {
 
     public List<Long> add(Order order) {
         log.info("Adding new order with id {}", order.getId());
-        orderService.add(order);
-        return garageService.takePlace(order.getId());
+        return orderService.addOrderAndTakePlace(order);
+    }
+
+    public void deleteByIdAndFreePlace(Long orderId) {
+        log.info("Deleting order with id {}", orderId);
+        try {
+            orderService.deleteByIdAndFreePlace(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
     }
 
     public void deleteById(Long orderId) {
@@ -68,35 +77,81 @@ public class OrderController extends AbstractController<Order, IOrderService> {
             log.error(e.toString());
             return;
         }
-        garageService.freePlaceByOrderId(orderId);
     }
 
     public void setTimeOfCompletion(Long orderId, int minutes) {
-        orderService.setTimeOfCompletion(orderId, minutes);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        order = orderService.setTimeOfCompletion(order, minutes);
+        orderService.update(order);
     }
 
     public void setStatus(Long orderId, OrderStatusEnum newStatus) {
         log.info("Setting new status for order with id {}", orderId);
-        orderService.setStatus(orderId, newStatus);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        order = orderService.setStatus(order, newStatus);
+        orderService.update(order);
     }
 
     public void assignMasterById(Long orderId, Long masterId) {
         log.info("Assign master with id {} on order with id {}", masterId, orderId);
-        orderService.assignMasterById(orderId, masterId);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        order = orderService.assignMasterById(order, masterId);
+        orderService.update(order);
     }
 
     public void removeMasterById(Long orderId, Long masterId) {
         log.info("Remove master with id {} from order with id {}", masterId, orderId);
-        orderService.removeMasterById(orderId, masterId);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        order = orderService.removeMasterById(order, masterId);
+        orderService.update(order);
     }
 
     public void shiftTimeOfCompletion(Long orderId, int shiftMinutes) {
         log.info("Shifting time of completion of order with id {} on {} minutes", orderId, shiftMinutes);
-        orderService.shiftTimeOfCompletion(orderId, shiftMinutes);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        orderService.shiftTimeOfCompletion(order, shiftMinutes);
     }
 
     public void setPrice(Long orderId, float price) {
-        orderService.setPrice(orderId, price);
+        Order order;
+        try {
+            order = orderService.getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        order = orderService.setPrice(order, price);
+        orderService.update(order);
     }
 
     public String getInfoOfOrder(Order order) {
@@ -150,7 +205,7 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         orderService.exportAllOrdersToJsonFile();
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void importAllOrdersFromJsonFile() throws IOException {
         log.info("Import all orders from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
         orderService.importAllOrdersFromJsonFile();

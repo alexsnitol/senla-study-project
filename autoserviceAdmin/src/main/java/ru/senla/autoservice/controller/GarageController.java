@@ -50,12 +50,22 @@ public class GarageController extends AbstractController<Garage, IGarageService>
 
     public void addPlace(Long garageId) throws Exception {
         log.info("Adding new place in garage with id {}", garageId);
-        garageService.addPlace(garageId);
+        Garage garage = garageService.getById(garageId);
+        garage = garageService.addPlace(garage);
+        garageService.update(garage);
     }
 
-    public int deleteLastPlace(Long garageId) {
+    public void deleteLastPlace(Long garageId) {
         log.info("Deleting last place in garage with id {}", garageId);
-        return garageService.deleteLastPlace(garageId);
+        Garage garage;
+        try {
+            garage = garageService.getById(garageId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        garage = garageService.deleteLastPlace(garage);
+        garageService.update(garage);
     }
 
     public List<Garage> getFreePlaces() {
@@ -77,7 +87,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         garageService.exportAllGaragesToJsonFile();
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void importAllGaragesFromJsonFile() throws IOException {
         log.info("Import all garages from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "garageList.json");
         garageService.importAllGaragesFromJsonFile();

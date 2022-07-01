@@ -4,20 +4,14 @@ import java.util.List;
 
 public interface IAbstractService<M> {
 
-    M getById(Long id);
-
+    M getById(Long id) throws Exception;
     List<M> getAll();
-
+    void delete(M model);
     void deleteById(Long id);
-
-    void add(M model);
-
-    void update(M oldModel, M newModel);
-
+    M add(M newModel);
+    void update(M changedModel);
     Integer size();
-
     List<M> getSorted(String sortType);
-
     List<M> getSorted(List<M> listOfModel, String sortType);
 
 }

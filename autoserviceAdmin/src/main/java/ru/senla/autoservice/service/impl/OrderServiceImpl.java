@@ -3,6 +3,9 @@ package ru.senla.autoservice.service.impl;
 import configuremodule.annotation.Autowired;
 import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import ru.senla.autoservice.repository.IGarageRepository;
@@ -21,6 +24,7 @@ import ru.senla.autoservice.util.PropertyUtil;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,20 +58,68 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         this.orderRepository = orderRepository;
     }
 
-    public void setTimeOfCompletion(Long orderId, int minutes) {
-        Order orderById = orderRepository.getById(orderId);
+    @Override
+    public List<Long> addOrderAndTakePlace(Order order) {
+        List<Long> place = Collections.emptyList();
 
-        if (orderById.getTimeOfBegin() == null) {
-            return;
+        EntityManager entityManager = createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+
+            orderRepository.create(order);
+            place = garageService.takePlace(order.getId());
+
+            transaction.commit();
+        } catch (Exception e) {
+            log.error(e.toString());
+            transaction.rollback();
+        } finally {
+            entityManager.close();
         }
 
-        orderById.setTimeOfCompletion(orderById.getTimeOfBegin().plusMinutes(minutes));
+        return place;
     }
 
-    public void setStatus(Long orderId, OrderStatusEnum newStatus) {
-        Order order = orderRepository.getById(orderId);
+    @Override
+    public void deleteByIdAndFreePlace(Long orderId) {
+        EntityManager entityManager = createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            transaction.begin();
+
+            Order order = getById(orderId);
+            order = reducedNumberOfActiveOrdersOfMastersByOrder(order);
+            order.setStatus(OrderStatusEnum.DELETED);
+
+            orderRepository.update(order);
+
+            garageService.freePlaceByOrderId(orderId);
+
+            transaction.commit();
+        } catch (Exception e) {
+            log.error(e.toString());
+            transaction.rollback();
+        } finally {
+            entityManager.close();
+        }
+    }
+
+    public Order setTimeOfCompletion(Order order, int minutes) {
+        if (order.getTimeOfBegin() == null) {
+            log.error("Time of completion of order with id {} not set", order.getId());
+            return order;
+        }
+
+        order.setTimeOfCompletion(order.getTimeOfBegin().plusMinutes(minutes));
+
+        return order;
+    }
+
+    public Order setStatus(Order order, OrderStatusEnum newStatus) {
         OrderStatusEnum currentStatus = order.getStatus();
-        List<Master> mastersByOrder = masterService.getMastersByOrder(orderId);
+        List<Master> mastersByOrder = order.getMasters();
+        Long orderId = order.getId();
 
         if (currentStatus != OrderStatusEnum.IN_PROCESS && currentStatus != OrderStatusEnum.POSTPONED) {
             if (newStatus == OrderStatusEnum.IN_PROCESS || newStatus == OrderStatusEnum.POSTPONED) {
@@ -87,108 +139,131 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
         order.setStatus(newStatus);
         log.info("Order with id {} changed status from {} on {} successful", orderId, currentStatus, newStatus);
+
+        return order;
     }
 
-    public void assignMasterById(Long orderId, Long masterId) {
-        Order orderById = orderRepository.getById(orderId);
-        Master masterById = masterRepository.getById(masterId);
+    public Order assignMasterById(Order order, Long masterId) {
+        Master masterById = masterRepository.findById(masterId);
+        Long orderId = order.getId();
 
         if (masterById != null) {
-            if (orderById.getStatus() == OrderStatusEnum.IN_PROCESS
-                    || orderById.getStatus() == OrderStatusEnum.POSTPONED) {
+            if (order.getStatus() == OrderStatusEnum.IN_PROCESS
+                    || order.getStatus() == OrderStatusEnum.POSTPONED) {
                 masterById.setNumberOfActiveOrders(masterById.getNumberOfActiveOrders() + 1);
             }
 
-            orderById.getListOfMastersId().add(masterId);
+            List<Master> masters = order.getMasters();
+            masters.add(masterById);
+            order.setMasters(masters);
+
             log.info("Assigning master with id {} for order with id {} successful completed",
                     masterId, orderId);
         } else {
             log.error("Assigning master for order with id {} cancelled, because master with id {} not exist",
                     orderId, masterId);
         }
+
+        return order;
     }
 
-    public void removeMasterById(Long orderId, Long masterId) {
-        Order orderById = orderRepository.getById(orderId);
+    public Order removeMasterById(Order order, Long masterId) {
         Master masterById = null;
+        Long orderId = order.getId();
 
-        for (Long tmpMasterId : orderById.getListOfMastersId()) {
-            if (tmpMasterId.equals(masterId)) {
-                masterById = masterRepository.getById(tmpMasterId);
+        for (Master tmpMaster : order.getMasters()) {
+            if (tmpMaster.getId().equals(masterId)) {
+                masterById = tmpMaster;
                 break;
             }
         }
 
         if (masterById != null) {
-            if (orderById.getStatus() == OrderStatusEnum.IN_PROCESS
-                    || orderById.getStatus() == OrderStatusEnum.POSTPONED) {
+            if (order.getStatus() == OrderStatusEnum.IN_PROCESS
+                    || order.getStatus() == OrderStatusEnum.POSTPONED) {
                 masterById.setNumberOfActiveOrders(masterById.getNumberOfActiveOrders() - 1);
             }
 
-            orderById.getListOfMastersId().remove(masterId);
+            List<Master> masters = order.getMasters();
+            masters.remove(masterById);
+            order.setMasters(masters);
+
             log.info("Removing master with id {} for order with id {} successful completed",
                     masterId, orderId);
         } else {
             log.error("Removing master for order with id {} cancelled, because master with id {} not exist",
                     orderId, masterId);
         }
+
+        return order;
     }
 
-    private void shiftTimeOfCompletionOneOrder(Order order, int shiftMinutes) {
-        if (order.getStatus() == OrderStatusEnum.IN_PROCESS) {
-            order.setTimeOfCompletion(order.getTimeOfCompletion().plusMinutes(shiftMinutes));
-        } else if (order.getStatus() == OrderStatusEnum.POSTPONED) {
-            order.setTimeOfBegin(order.getTimeOfBegin().plusMinutes(shiftMinutes));
-            order.setTimeOfCompletion(order.getTimeOfCompletion().plusMinutes(shiftMinutes));
+    private Order shiftTimeOfCompletionOneOrder(Order order, int shiftMinutes) {
+        OrderStatusEnum orderStatus = order.getStatus();
+        LocalDateTime timeOfBegin = order.getTimeOfBegin();
+        LocalDateTime timeOfCompletion = order.getTimeOfCompletion();
+
+        if (orderStatus == OrderStatusEnum.IN_PROCESS) {
+            order.setTimeOfCompletion(timeOfCompletion.plusMinutes(shiftMinutes));
+        } else if (orderStatus == OrderStatusEnum.POSTPONED) {
+            order.setTimeOfBegin(timeOfBegin.plusMinutes(shiftMinutes));
+            order.setTimeOfCompletion(timeOfCompletion.plusMinutes(shiftMinutes));
         }
+
+        return order;
     }
 
-    public void shiftTimeOfCompletion(Long orderId, int shiftMinutes) {
+    public Order shiftTimeOfCompletion(@NonNull Order order, int shiftMinutes) {
         try {
             PropertyUtil.getPropertyShiftTimeOfCompletion();
         } catch (Exception e) {
-            err.println(e.getMessage());
-            return;
+            log.error(e.getMessage());
+            return null;
         }
 
-        Order orderById = orderRepository.getById(orderId);
+        Long orderId = order.getId();
 
-        if (orderById == null) {
-            log.error("Shifting time of completion for order with id {} cancelled," +
-                            "because order not exist",
-                    orderId);
-            return;
-        }
-
-        if (orderById.getStatus() != OrderStatusEnum.IN_PROCESS) {
+        if (order.getStatus() != OrderStatusEnum.IN_PROCESS) {
             log.error("Shifting time of completion for order with id {} cancelled," +
                             "because order has not status IN_PROCESS",
                     orderId);
-            return;
+            return order;
         }
 
-        shiftTimeOfCompletionOneOrder(orderById, shiftMinutes);
+        EntityManager entityManager = createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try {
+            order = shiftTimeOfCompletionOneOrder(order, shiftMinutes);
+            orderRepository.update(order);
 
-        List<Long> listOfMastersIdByOrder = orderById.getListOfMastersId();
+            List<Master> listOfMastersByOrder = order.getMasters();
 
-        for (Order order : orderRepository.getAll()) {
-            if (order.getStatus() == OrderStatusEnum.POSTPONED) {
-                for (Long masterId : listOfMastersIdByOrder) {
-                    if (order.getListOfMastersId().stream()
-                            .filter(m -> m.equals(masterId))
+            for (Order tmpOrder : orderRepository.findOrdersByStatus(OrderStatusEnum.POSTPONED)) {
+                for (Master master : listOfMastersByOrder) {
+                    if (tmpOrder.getMasters().stream()
+                            .filter(m -> m.equals(master))
                             .findFirst().orElse(null) != null) {
-                        shiftTimeOfCompletionOneOrder(order, shiftMinutes);
+                        tmpOrder = shiftTimeOfCompletionOneOrder(tmpOrder, shiftMinutes);
+                        orderRepository.update(tmpOrder);
                         break;
                     }
                 }
             }
+            log.info("Shifting time of completion for order with id {} on {} minutes successful completed",
+                    orderId, shiftMinutes);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            transaction.rollback();
+        } finally {
+            entityManager.close();
         }
-        log.info("Shifting time of completion for order with id {} on {} minutes successful completed",
-                orderId, shiftMinutes);
+
+        return order;
     }
 
-    public void setPrice(Long orderId, float price) {
-        orderRepository.getById(orderId).setPrice(price);
+    public Order setPrice(Order order, float price) {
+        order.setPrice(price);
+        return order;
     }
 
     @Override
@@ -200,7 +275,22 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
             return;
         }
 
-        this.orderRepository.deleteById(id);
+        Order order = getById(id);
+
+        order = reducedNumberOfActiveOrdersOfMastersByOrder(order);
+        order.setStatus(OrderStatusEnum.DELETED);
+
+        update(order);
+    }
+
+    public Order reducedNumberOfActiveOrdersOfMastersByOrder(Order order) {
+        List<Master> masters = order.getMasters();
+        for (Master master : masters) {
+            master.setNumberOfActiveOrders(master.getNumberOfActiveOrders() - 1);
+        }
+        order.setMasters(masters);
+
+        return order;
     }
 
     public String getInfoOfOrder(Order order) {
@@ -210,11 +300,6 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
                 + "\ntime of created: " + order.getTimeOfCreated().toString()
                 + "\ntime of begin: " + order.getTimeOfBegin().toString()
                 + "\ntime of completion: " + order.getTimeOfCompletion().toString();
-    }
-
-    @Override
-    public List<Order> getSorted(String sortType) {
-        return getSorted(orderRepository.getAll(), sortType);
     }
 
     @Override
@@ -229,7 +314,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Override
     public List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to) {
-        return getOrdersFilteredByDateTime(this.orderRepository.getAll(), from, to);
+        return getOrdersFilteredByDateTime(this.orderRepository.findAll(), from, to);
     }
 
     @Override
@@ -245,7 +330,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Override
     public List<Order> getOrdersFilteredByStatus(OrderStatusEnum status) {
-        return getOrdersFilteredByStatus(this.orderRepository.getAll(), status);
+        return orderRepository.findOrdersByStatus(status);
     }
 
     @Override
@@ -261,7 +346,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Override
     public List<Order> getOrdersFilteredByMaster(Long masterId) {
-        return getOrdersFilteredByMaster(this.orderRepository.getAll(), masterId);
+        return getOrdersFilteredByMaster(this.orderRepository.findAll(), masterId);
     }
 
     @Override
@@ -269,7 +354,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
-                .filter(o -> o.getListOfMastersId().stream()
+                .filter(o -> o.getMasters().stream()
                         .filter(m -> m.equals(masterId))
                         .findFirst().orElse(null) != null)
                 .collect(Collectors.toList());
@@ -285,10 +370,9 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public void importOrderFromJsonFile(String path) throws IOException {
         Order orderJson = JsonUtil.importModelFromJsonFile(new Order(), path);
-        Order orderByJsonId = getById(orderJson.getId());
 
-        if (orderByJsonId != null) {
-            update(orderByJsonId, orderJson);
+        if (orderRepository.isExist(orderJson)) {
+            update(orderJson);
         } else {
             add(orderJson);
         }
@@ -296,7 +380,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     public void exportAllOrdersToJsonFile() throws IOException {
-        JsonUtil.exportModelListToJsonFile(orderRepository.getAll(),
+        JsonUtil.exportModelListToJsonFile(orderRepository.findAll(),
                 JsonUtil.JSON_CONFIGURATION_PATH + "orderList");
         log.info("All orders successful exported");
     }

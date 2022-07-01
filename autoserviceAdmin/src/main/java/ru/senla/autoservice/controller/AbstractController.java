@@ -16,7 +16,7 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
         this.defaultService = defaultService;
     }
 
-    public M getById(Long id) {
+    public M getById(Long id) throws Exception {
         return this.defaultService.getById(id);
     }
 
@@ -24,8 +24,8 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
         return defaultService.getAll();
     }
 
-    public void update(M oldModel, M newModel) {
-        defaultService.update(oldModel, newModel);
+    public void update(M changedModel) {
+        defaultService.update(changedModel);
     }
 
     public Integer size() {

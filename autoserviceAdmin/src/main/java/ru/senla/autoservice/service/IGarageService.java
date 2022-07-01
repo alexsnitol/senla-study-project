@@ -10,9 +10,10 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     void setGarageRepository(IGarageRepository garageRepository);
 
-    void addPlace(Long garageId) throws Exception;
+    Garage addPlace(Garage garage) throws Exception;
+    Garage addPlace(Garage garage, int number) throws Exception;
 
-    int deleteLastPlace(Long garageId);
+    Garage deleteLastPlace(Garage garage);
 
     List<Long> takePlace(Long orderId);
 
@@ -20,6 +21,7 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId);
 
+    Garage getByOrderId(Long orderId);
     void freePlaceByOrderId(Long orderId);
 
     List<Garage> getPlacesFilteredByAvailability(boolean isTaken);

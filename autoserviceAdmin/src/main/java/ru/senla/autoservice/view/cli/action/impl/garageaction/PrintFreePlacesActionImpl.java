@@ -14,9 +14,10 @@ public class PrintFreePlacesActionImpl implements IAction {
 
         for (Garage garage : garageController.getFreePlaces()) {
             out.println("id: " + garage.getId());
-            for (Long place : garage.getPlaces()) {
-                out.println("-- " + place);
-            }
+//            for (Long place : garage.getPlaces()) {
+//                out.println("-- " + place);
+//            }
+            // TODO
         }
     }
 }

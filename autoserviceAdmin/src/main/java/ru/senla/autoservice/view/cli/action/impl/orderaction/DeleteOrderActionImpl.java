@@ -19,6 +19,6 @@ public class DeleteOrderActionImpl implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         Long orderId = scanner.nextLong();
 
-        OrderController.getInstance().deleteById(orderId);
+        OrderController.getInstance().deleteByIdAndFreePlace(orderId);
     }
 }

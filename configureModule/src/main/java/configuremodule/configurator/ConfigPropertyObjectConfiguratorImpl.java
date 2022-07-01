@@ -1,7 +1,7 @@
 package configuremodule.configurator;
 
 import configuremodule.ApplicationContext;
-import configuremodule.ConfigProperty;
+import configuremodule.annotation.ConfigProperty;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

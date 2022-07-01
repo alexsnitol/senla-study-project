@@ -38,21 +38,7 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
     }
 
     public List<Master> getMastersByOrder(Long orderId) {
-        List<Long> listOfMastersId = orderRepository.getById(orderId).getListOfMastersId();
-        List<Master> mastersByOrder = new ArrayList<>();
-
-        for (Master master : getAll()) {
-            if (listOfMastersId.contains(master.getId())) {
-                mastersByOrder.add(master);
-            }
-        }
-
-        return mastersByOrder;
-    }
-
-    @Override
-    public List<Master> getSorted(String sortType) {
-        return getSorted(masterRepository.getAll(), sortType);
+        return orderRepository.findById(orderId).getMasters();
     }
 
     @Override
@@ -81,10 +67,9 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
 
     public void importMasterFromJsonFile(String path) throws IOException {
         Master masterJson = JsonUtil.importModelFromJsonFile(new Master(), path);
-        Master masterByJsonId = getById(masterJson.getId());
 
-        if (masterByJsonId != null) {
-            update(masterByJsonId, masterJson);
+        if (masterRepository.isExist(masterJson)) {
+            update(masterJson);
         } else {
             add(masterJson);
         }
@@ -92,7 +77,7 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
     }
 
     public void exportAllMastersToJsonFile() throws IOException {
-        JsonUtil.exportModelListToJsonFile(masterRepository.getAll(),
+        JsonUtil.exportModelListToJsonFile(masterRepository.findAll(),
                 JsonUtil.JSON_CONFIGURATION_PATH + "masterList");
         log.info("All masters successful exported");
     }

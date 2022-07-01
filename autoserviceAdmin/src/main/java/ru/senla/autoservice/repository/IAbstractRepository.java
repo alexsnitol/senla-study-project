@@ -7,17 +7,14 @@ import java.util.List;
 public interface IAbstractRepository<M extends AbstractModel> {
 
     void setRepository(List<M> repository);
-
-    List<M> getAll();
-
-    M getById(Long id);
-
-    boolean deleteById(Long id);
-
-    void add(M model);
-
-    void update(M oldModel, M newModel);
-
+    List<M> findAll();
+    List<M> findAllSorted(String sortType);
+    M findById(Long id);
+    void delete(M model);
+    void deleteById(Long id);
+    M create(M newModel);
+    void update(M changedModel);
     Integer size();
+    boolean isExist(M model);
 
 }

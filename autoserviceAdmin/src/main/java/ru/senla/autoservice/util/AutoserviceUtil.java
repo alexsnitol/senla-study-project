@@ -16,6 +16,10 @@ import java.util.List;
 
 public class AutoserviceUtil {
 
+    private AutoserviceUtil() {
+
+    }
+
     public static int getNumberOfFreePlacesByDate(LocalDate date) {
         GarageController garageController = GarageController.getInstance();
         MasterController masterController = MasterController.getInstance();
@@ -36,12 +40,12 @@ public class AutoserviceUtil {
                 ordersOnDate,
                 OrderStatusEnum.POSTPONED);
 
-        List<Long> listOfMastersIdOnAllOrders = new ArrayList<>();
+        List<Master> listOfMastersIdOnAllOrders = new ArrayList<>();
         for (Order order : ordersOnDate) {
             if (order.getStatus() == OrderStatusEnum.IN_PROCESS || order.getStatus() == OrderStatusEnum.POSTPONED) {
-                for (Long masterId : order.getListOfMastersId()) {
-                    if (!listOfMastersIdOnAllOrders.contains(masterId)) {
-                        listOfMastersIdOnAllOrders.add(masterId);
+                for (Master master : order.getMasters()) {
+                    if (!listOfMastersIdOnAllOrders.contains(master)) {
+                        listOfMastersIdOnAllOrders.add(master);
                     }
                 }
             }
