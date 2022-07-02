@@ -280,14 +280,45 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garageById;
     }
 
+    @Override
+    public List<Garage> getAll() {
+        List<Garage> garages = garageRepository.findAll();
+        for (Garage garage : garages) {
+            garage = setupPlaces(garage);
+        }
+        return garages;
+    }
+
     public Garage getByOrderId(Long orderId) {
         Garage garageByOrderId = garageRepository.findByOrderId(orderId);
         garageByOrderId = setupPlaces(garageByOrderId);
         return garageByOrderId;
     }
 
-    public List<Garage> getPlacesFilteredByAvailability(boolean isTaken) {
-        return this.garageRepository.getPlacesFilteredByAvailability(isTaken);
+    public List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken) {
+        List<List<Long>> garagesIdAndNumbersOfFilteredPlaces = new ArrayList<>(size());
+        List<Long> numbersOfFilteredPlaces;
+
+        for (Garage garage : getAll()) {
+            numbersOfFilteredPlaces = new ArrayList<>(garage.getSize());
+
+            for (int i = 0; i < garage.getSize(); i++) {
+                if ((garage.getPlaces().get(i) != null) == isTaken) {
+                    numbersOfFilteredPlaces.add(Integer.toUnsignedLong(i));
+                }
+            }
+
+            if (!numbersOfFilteredPlaces.isEmpty()) {
+                List<Long> garageIdWithNumbersOfFilteredPlaces = new ArrayList<>(numbersOfFilteredPlaces.size());
+
+                garageIdWithNumbersOfFilteredPlaces.add(garage.getId());
+                garageIdWithNumbersOfFilteredPlaces.addAll(numbersOfFilteredPlaces);
+
+                garagesIdAndNumbersOfFilteredPlaces.add(garageIdWithNumbersOfFilteredPlaces);
+            }
+        }
+
+        return garagesIdAndNumbersOfFilteredPlaces;
     }
 
     @Override

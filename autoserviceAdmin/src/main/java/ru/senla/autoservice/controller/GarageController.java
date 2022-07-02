@@ -68,7 +68,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         garageService.update(garage);
     }
 
-    public List<Garage> getFreePlaces() {
+    public List<List<Long>> getFreePlaces() {
         return garageService.getPlacesFilteredByAvailability(false);
     }
 

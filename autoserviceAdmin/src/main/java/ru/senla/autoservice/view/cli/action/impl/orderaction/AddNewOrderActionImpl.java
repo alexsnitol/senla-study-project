@@ -40,7 +40,7 @@ public class AddNewOrderActionImpl implements IAction {
         LocalDateTime timeOfBegin = LocalDateTime.of(year, month, day, hours, minutes, seconds);
         newOrder.setTimeOfBegin(timeOfBegin);
 
-        List<Long> garageIdAndTakenPlace = orderController.add(newOrder);
+        List<Long> garageIdAndTakenPlace = orderController.addOrderAndTakePlace(newOrder);
 
         out.println("enter time of completed order in minutes");
         out.print(MenuController.CONSOLE_POINTER);

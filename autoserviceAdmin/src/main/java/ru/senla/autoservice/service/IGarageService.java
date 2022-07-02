@@ -24,7 +24,10 @@ public interface IGarageService extends IAbstractService<Garage> {
     Garage getByOrderId(Long orderId);
     void freePlaceByOrderId(Long orderId);
 
-    List<Garage> getPlacesFilteredByAvailability(boolean isTaken);
+    /**
+    * @return list of list where index 0 is garage id and other index is place number
+    **/
+    List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken);
 
     void exportGarageToJsonFile(Long garageId, String fileName) throws IOException;
 

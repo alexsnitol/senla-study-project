@@ -34,7 +34,7 @@ public class Order extends AbstractModel {
     private Long id;
 
     @Column(name = "time_of_created")
-    private LocalDateTime timeOfCreated;
+    private LocalDateTime timeOfCreated = LocalDateTime.now();
     @Column(name = "time_of_begin")
     private LocalDateTime timeOfBegin;
     @Column(name = "time_of_completion")

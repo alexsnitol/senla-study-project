@@ -54,7 +54,7 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         this.masterService = masterService;
     }
 
-    public List<Long> add(Order order) {
+    public List<Long> addOrderAndTakePlace(Order order) {
         log.info("Adding new order with id {}", order.getId());
         return orderService.addOrderAndTakePlace(order);
     }
@@ -158,28 +158,45 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         return orderService.getInfoOfOrder(order);
     }
 
-    public List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to) {
-        return orderService.getOrdersFilteredByDateTime(orderService.getAll(), from, to);
+    public List<Order> getAllByTimeOfCompletion(LocalDateTime from, LocalDateTime to) {
+        return orderService.getOrdersByTimeOfCompletion(orderService.getAll(), from, to);
     }
 
-    public List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to) {
-        return orderService.getOrdersFilteredByDateTime(orders, from, to);
+    public List<Order> getAllByTimeOfCompletion(List<Order> orders, LocalDateTime from, LocalDateTime to) {
+        return orderService.getOrdersByTimeOfCompletion(orders, from, to);
     }
 
-    public List<Order> getOrdersFilteredByStatus(OrderStatusEnum status) {
-        return orderService.getOrdersFilteredByStatus(orderService.getAll(), status);
+    public List<Order> getAllByStatus(OrderStatusEnum status) {
+        return orderService.getOrdersByStatus(orderService.getAll(), status);
     }
 
-    public List<Order> getOrdersFilteredByStatus(List<Order> orders, OrderStatusEnum status) {
-        return orderService.getOrdersFilteredByStatus(orders, status);
+    public List<Order> getAllByStatus(List<Order> orders, OrderStatusEnum status) {
+        return orderService.getOrdersByStatus(orders, status);
     }
 
-    public List<Order> getOrdersFilteredByMaster(Long masterId) {
-        return orderService.getOrdersFilteredByMaster(orderService.getAll(), masterId);
+    public List<Order> getAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId) {
+        return orderService.getAllByStatusAndMasterId(orderStatus, masterId);
     }
 
-    public List<Order> getOrdersFilteredByMaster(List<Order> orders, Long masterId) {
-        return orderService.getOrdersFilteredByMaster(orders, masterId);
+    public List<Order> getAllByMasterId(Long masterId) {
+        return orderService.getOrdersByMasterId(orderService.getAll(), masterId);
+    }
+
+    public List<Order> getAllByMasterId(List<Order> orders, Long masterId) {
+        return orderService.getOrdersByMasterId(orders, masterId);
+    }
+    public List<Order> getAllByStatusSorted(OrderStatusEnum orderStatus, String sortType) {
+        return orderService.getAllByStatusSorted(orderStatus, sortType);
+    }
+    public List<Order> getAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType) {
+        return orderService.getAllByStatusesSorted(orderStatuses, sortType);
+    }
+    public List<Order> getAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType) {
+        return orderService.getAllByTimeOfCompletionSorted(from, to, sortType);
+    }
+
+    public List<Order> getAllByMasterIdSorted(Long masterId, String sortType) {
+        return orderService.getAllByMasterIdSorted(masterId, sortType);
     }
 
     public List<Order> getSorted(String sortType) {
@@ -204,11 +221,10 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         log.info("Export all orders to json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
         orderService.exportAllOrdersToJsonFile();
     }
-
 //    @PostConstruct
+
     public void importAllOrdersFromJsonFile() throws IOException {
         log.info("Import all orders from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
         orderService.importAllOrdersFromJsonFile();
     }
-
 }

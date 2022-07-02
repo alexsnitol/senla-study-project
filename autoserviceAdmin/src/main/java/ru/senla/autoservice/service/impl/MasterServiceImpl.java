@@ -37,7 +37,7 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
         this.masterRepository = masterRepository;
     }
 
-    public List<Master> getMastersByOrder(Long orderId) {
+    public List<Master> getMastersByOrderId(Long orderId) {
         return orderRepository.findById(orderId).getMasters();
     }
 

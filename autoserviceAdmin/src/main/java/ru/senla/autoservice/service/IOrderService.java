@@ -29,16 +29,22 @@ public interface IOrderService extends IAbstractService<Order> {
     Order shiftTimeOfCompletion(Order order, int shiftMinutes);
     String getInfoOfOrder(Order order);
 
-    List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to);
-    List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to);
-    List<Order> getOrdersFilteredByStatus(OrderStatusEnum status);
-    List<Order> getOrdersFilteredByStatus(List<Order> orders, OrderStatusEnum status);
-    List<Order> getOrdersFilteredByMaster(Long masterId);
-    List<Order> getOrdersFilteredByMaster(List<Order> orders, Long masterId);
+    List<Order> getOrdersByTimeOfCompletion(LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByTimeOfCompletion(List<Order> orders, LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByStatus(OrderStatusEnum status);
+    List<Order> getOrdersByStatus(List<Order> orders, OrderStatusEnum status);
+    List<Order> getAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId);
+    List<Order> getOrdersByMasterId(Long masterId);
 
+    List<Order> getOrdersByMasterId(List<Order> orders, Long masterId);
+    List<Order> getAllByStatusSorted(OrderStatusEnum orderStatus, String sortType);
+    List<Order> getAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType);
+    List<Order> getAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType);
+
+    List<Order> getAllByMasterIdSorted(Long masterId, String sortType);
     void exportOrderToJsonFile(Long orderId, String fileName) throws IOException;
     void importOrderFromJsonFile(String path) throws IOException;
     void exportAllOrdersToJsonFile() throws IOException;
-    void importAllOrdersFromJsonFile() throws IOException;
 
+    void importAllOrdersFromJsonFile() throws IOException;
 }

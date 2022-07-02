@@ -32,11 +32,11 @@ public class AutoserviceUtil {
         LocalDateTime from = LocalDateTime.of(date, LocalTime.of(0, 0, 0, 0));
         LocalDateTime to = from.plusDays(1);
 
-        List<Order> ordersOnDate = orderController.getOrdersFilteredByDateTime(orders, from, to);
-        List<Order> ordersInProcessOnDate = orderController.getOrdersFilteredByStatus(
+        List<Order> ordersOnDate = orderController.getAllByTimeOfCompletion(orders, from, to);
+        List<Order> ordersInProcessOnDate = orderController.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.IN_PROCESS);
-        List<Order> ordersPostponedOnDate = orderController.getOrdersFilteredByStatus(
+        List<Order> ordersPostponedOnDate = orderController.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.POSTPONED);
 

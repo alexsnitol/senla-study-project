@@ -5,8 +5,9 @@ import configuremodule.annotation.Singleton;
 import jakarta.persistence.Query;
 import ru.senla.autoservice.repository.IMasterRepository;
 import ru.senla.autoservice.repository.model.Master;
+import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.query.sort.ISortQueryMap;
-import ru.senla.autoservice.repository.query.sort.impl.MasterSortQueryMapImpl;
+import ru.senla.autoservice.repository.query.sort.impl.MasterSortFullQueryMapImpl;
 
 import java.util.List;
 
@@ -20,11 +21,20 @@ public class MasterRepositoryImpl extends AbstractRepositoryImpl<Master> impleme
 
     @Override
     public List<Master> findAllSorted(String sortType) {
-        ISortQueryMap sortQueryMap = new MasterSortQueryMapImpl();
+        ISortQueryMap sortQueryMap = new MasterSortFullQueryMapImpl();
         Query query = entityManager
                 .createQuery(sortQueryMap.getQuery(sortType));
 
         return query.getResultList();
+    }
+
+    @Override
+    public List<Master> findMastersByOrderId(Long orderId) {
+        Order order = entityManager.createQuery(
+                "from Order where id = " + orderId
+        ).unwrap(Order.class);
+
+        return order.getMasters();
     }
 
 }

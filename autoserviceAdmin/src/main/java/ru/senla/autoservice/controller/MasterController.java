@@ -49,7 +49,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     public List<Master> getMastersByOrder(Long orderId) {
-        return masterService.getMastersByOrder(orderId);
+        return masterService.getMastersByOrderId(orderId);
     }
 
     public String getFullName(Master master) {

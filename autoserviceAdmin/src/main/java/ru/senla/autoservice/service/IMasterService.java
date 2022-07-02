@@ -13,7 +13,7 @@ public interface IMasterService extends IAbstractService<Master> {
 
     void setOrderRepository(IOrderRepository orderRepository);
 
-    List<Master> getMastersByOrder(Long idOrder);
+    List<Master> getMastersByOrderId(Long orderId);
 
     String getFullName(Master master);
 

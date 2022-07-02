@@ -238,7 +238,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
             List<Master> listOfMastersByOrder = order.getMasters();
 
-            for (Order tmpOrder : orderRepository.findOrdersByStatus(OrderStatusEnum.POSTPONED)) {
+            for (Order tmpOrder : orderRepository.findAllByStatus(OrderStatusEnum.POSTPONED)) {
                 for (Master master : listOfMastersByOrder) {
                     if (tmpOrder.getMasters().stream()
                             .filter(m -> m.equals(master))
@@ -313,12 +313,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     @Override
-    public List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to) {
-        return getOrdersFilteredByDateTime(this.orderRepository.findAll(), from, to);
+    public List<Order> getOrdersByTimeOfCompletion(LocalDateTime from, LocalDateTime to) {
+        return getOrdersByTimeOfCompletion(this.orderRepository.findAll(), from, to);
     }
 
     @Override
-    public List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to) {
+    public List<Order> getOrdersByTimeOfCompletion(List<Order> orders, LocalDateTime from, LocalDateTime to) {
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
@@ -329,12 +329,12 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     @Override
-    public List<Order> getOrdersFilteredByStatus(OrderStatusEnum status) {
-        return orderRepository.findOrdersByStatus(status);
+    public List<Order> getOrdersByStatus(OrderStatusEnum status) {
+        return orderRepository.findAllByStatus(status);
     }
 
     @Override
-    public List<Order> getOrdersFilteredByStatus(List<Order> orders, OrderStatusEnum status) {
+    public List<Order> getOrdersByStatus(List<Order> orders, OrderStatusEnum status) {
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
@@ -345,12 +345,17 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     }
 
     @Override
-    public List<Order> getOrdersFilteredByMaster(Long masterId) {
-        return getOrdersFilteredByMaster(this.orderRepository.findAll(), masterId);
+    public List<Order> getAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId) {
+        return orderRepository.findAllByStatusAndMasterId(orderStatus, masterId);
     }
 
     @Override
-    public List<Order> getOrdersFilteredByMaster(List<Order> orders, Long masterId) {
+    public List<Order> getOrdersByMasterId(Long masterId) {
+        return orderRepository.findAllByMasterId(masterId);
+    }
+
+    @Override
+    public List<Order> getOrdersByMasterId(List<Order> orders, Long masterId) {
         List<Order> filteredOrders;
 
         filteredOrders = orders.stream()
@@ -360,6 +365,30 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
                 .collect(Collectors.toList());
 
         return filteredOrders;
+    }
+
+    @Override
+    public List<Order> getAllByStatusSorted(OrderStatusEnum orderStatus, String sortType) {
+        return orderRepository.findAllByStatusSorted(orderStatus, sortType);
+    }
+
+    @Override
+    public List<Order> getAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType) {
+        return orderRepository.findAllByStatusesSorted(orderStatuses, sortType);
+    }
+
+    @Override
+    public List<Order> getAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType) {
+        return orderRepository.findAllByTimeOfCompletionSorted(from, to, sortType);
+    }
+
+    @Override
+    public List<Order> getAllByMasterIdSorted(Long masterId, String sortType) {
+        return orderRepository.findAllByMasterIdSorted(masterId, sortType);
+    }
+
+    public List<Order> getOrdersByStatusSorted(OrderStatusEnum status, String sortType) {
+        return orderRepository.findAllByStatusSorted(status, sortType);
     }
 
     public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {

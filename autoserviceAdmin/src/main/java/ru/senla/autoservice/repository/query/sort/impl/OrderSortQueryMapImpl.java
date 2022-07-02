@@ -6,28 +6,28 @@ public class OrderSortQueryMapImpl extends AbstractSortQueryMapImpl implements I
 
     public OrderSortQueryMapImpl() {
         sortQueryMap.put("TimeOfCreated",
-                "from Order order by timeOfCreated"
+                " order by timeOfCreated"
         );
         sortQueryMap.put("TimeOfCreatedDesc",
-                "from Order order by timeOfCreated desc"
+                " order by timeOfCreated desc"
         );
         sortQueryMap.put("TimeOfBegin",
-                "from Order order by timeOfBegin"
+                " order by timeOfBegin"
         );
         sortQueryMap.put("TimeOfBeginDesc",
-                "from Order order by timeOfBegin desc"
+                " order by timeOfBegin desc"
         );
         sortQueryMap.put("TimeOfCompletion",
-                "from Order order by timeOfCompletion"
+                " order by timeOfCompletion"
         );
         sortQueryMap.put("TimeOfCompletionDesc",
-                "from Order order by timeOfCompletion desc"
+                " order by timeOfCompletion desc"
         );
         sortQueryMap.put("Price",
-                "from Order order by price"
+                " order by price"
         );
         sortQueryMap.put("PriceDesc",
-                "from Order order by price desc"
+                " order by price desc"
         );
     }
 
