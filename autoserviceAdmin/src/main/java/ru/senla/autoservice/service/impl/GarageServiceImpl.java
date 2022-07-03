@@ -15,6 +15,7 @@ import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderGarage;
 import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.service.IGarageService;
+import ru.senla.autoservice.util.EntityManagerUtil;
 import ru.senla.autoservice.util.JsonUtil;
 import ru.senla.autoservice.util.PropertyUtil;
 
@@ -202,7 +203,7 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
             orderGarage.setGarage(garage);
             orderGarage.setPlace(indexOfPlace);
 
-            EntityManager entityManager = createEntityManager();
+            EntityManager entityManager = EntityManagerUtil.getEntityManager();
             EntityTransaction transaction =  entityManager.getTransaction();
             try {
                 transaction.begin();
@@ -248,7 +249,7 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     private Garage setupPlaces(Garage garage) {
-        Query query = createEntityManager()
+        Query query = EntityManagerUtil.getEntityManager()
                 .createQuery(
                         "from OrderGarage where garage.id = " + garage.getId()
                                 + " and (order.status = '" + OrderStatusEnum.IN_PROCESS + "'"

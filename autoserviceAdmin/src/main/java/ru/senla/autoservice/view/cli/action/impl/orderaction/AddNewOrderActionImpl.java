@@ -3,7 +3,6 @@ package ru.senla.autoservice.view.cli.action.impl.orderaction;
 
 import ru.senla.autoservice.controller.OrderController;
 import ru.senla.autoservice.repository.model.Order;
-import ru.senla.autoservice.util.IdDistributorUtil;
 import ru.senla.autoservice.view.cli.MenuController;
 import ru.senla.autoservice.view.cli.action.IAction;
 
@@ -20,7 +19,6 @@ public class AddNewOrderActionImpl implements IAction {
         Scanner scanner = new Scanner(System.in);
 
         Order newOrder = new Order();
-        newOrder.setId(IdDistributorUtil.getNewId());
 
         Integer year;
         Integer month;

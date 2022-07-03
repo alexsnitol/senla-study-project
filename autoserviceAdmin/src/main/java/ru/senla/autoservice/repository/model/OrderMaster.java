@@ -33,4 +33,14 @@ public class OrderMaster extends AbstractModel {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Master master;
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

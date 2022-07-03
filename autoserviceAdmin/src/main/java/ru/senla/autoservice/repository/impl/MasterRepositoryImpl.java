@@ -8,6 +8,7 @@ import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.query.sort.ISortQueryMap;
 import ru.senla.autoservice.repository.query.sort.impl.MasterSortFullQueryMapImpl;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class MasterRepositoryImpl extends AbstractRepositoryImpl<Master> impleme
     @Override
     public List<Master> findAllSorted(String sortType) {
         ISortQueryMap sortQueryMap = new MasterSortFullQueryMapImpl();
-        Query query = entityManager
+        Query query = EntityManagerUtil.getEntityManager()
                 .createQuery(sortQueryMap.getQuery(sortType));
 
         return query.getResultList();
@@ -30,7 +31,7 @@ public class MasterRepositoryImpl extends AbstractRepositoryImpl<Master> impleme
 
     @Override
     public List<Master> findMastersByOrderId(Long orderId) {
-        Order order = entityManager.createQuery(
+        Order order = EntityManagerUtil.getEntityManager().createQuery(
                 "from Order where id = " + orderId
         ).unwrap(Order.class);
 

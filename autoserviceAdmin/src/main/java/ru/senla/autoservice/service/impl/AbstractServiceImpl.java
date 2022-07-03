@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.senla.autoservice.repository.IAbstractRepository;
 import ru.senla.autoservice.repository.model.AbstractModel;
 import ru.senla.autoservice.service.IAbstractService;
-import ru.senla.autoservice.util.HibernateSessionFactoryUtil;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.util.List;
 
@@ -31,7 +31,7 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
     }
 
     public void delete(M model) {
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -52,7 +52,7 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
     public void deleteById(Long id) {
         M model = this.defaultRepository.findById(id);
 
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -71,18 +71,16 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
     }
 
     public M add(M newModel) {
-        M createdModel = null;
-
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
 
-            createdModel = this.defaultRepository.create(newModel);
+            this.defaultRepository.create(newModel);
 
             transaction.commit();
 
-            log.info("Model {} with id {} successful added", createdModel.getClass(), createdModel.getId());
+            log.info("Model {} with id {} successful added", newModel.getClass(), newModel.getId());
         } catch (Exception e) {
             log.error(e.toString());
             transaction.rollback();
@@ -90,11 +88,11 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
             entityManager.close();
         }
 
-        return createdModel;
+        return newModel;
     }
 
     public void update(M changedModel) {
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -119,10 +117,6 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
 
     public List<M> getSorted(String sortType) {
         return defaultRepository.findAllSorted(sortType);
-    }
-
-    public EntityManager createEntityManager() {
-        return HibernateSessionFactoryUtil.createEntityManager();
     }
 
 }

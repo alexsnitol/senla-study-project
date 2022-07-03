@@ -3,7 +3,6 @@ package ru.senla.autoservice.view.cli.action.impl.garageaction;
 
 import ru.senla.autoservice.controller.GarageController;
 import ru.senla.autoservice.repository.model.Garage;
-import ru.senla.autoservice.util.IdDistributorUtil;
 import ru.senla.autoservice.view.cli.MenuController;
 import ru.senla.autoservice.view.cli.action.IAction;
 
@@ -22,7 +21,6 @@ public class AddNewGarageActionImpl implements IAction {
         int size = scanner.nextInt();
 
         Garage newGarage = new Garage(size);
-        newGarage.setId(IdDistributorUtil.getNewId());
         GarageController.getInstance().add(newGarage);
     }
 }

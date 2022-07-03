@@ -4,6 +4,7 @@ import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
 import ru.senla.autoservice.repository.IOrderGarageRepository;
 import ru.senla.autoservice.repository.model.OrderGarage;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.util.List;
 
@@ -17,21 +18,21 @@ public class OrderGarageRepositoryImpl extends AbstractRepositoryImpl<OrderGarag
 
     @Override
     public OrderGarage findByOrderId(Long orderId) {
-        return entityManager
+        return EntityManagerUtil.getEntityManager()
                 .createQuery("from OrderGarage where order.id = " + orderId)
                 .unwrap(clazz);
     }
 
     @Override
     public List<OrderGarage> findByGarageId(Long garageId) {
-        return entityManager
+        return EntityManagerUtil.getEntityManager()
                 .createQuery("from OrderGarage where garage.id = " + garageId)
                 .getResultList();
     }
 
     @Override
     public OrderGarage findByOrderIdAndByGarageId(Long orderId, Long garageId) {
-        return entityManager
+        return EntityManagerUtil.getEntityManager()
                 .createQuery("from OrderGarage"
                 + " where order.id = " + orderId + " and garage.id = " + garageId)
                 .unwrap(clazz);

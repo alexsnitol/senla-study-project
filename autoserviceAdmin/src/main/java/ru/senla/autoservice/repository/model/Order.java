@@ -71,4 +71,14 @@ public class Order extends AbstractModel {
         this.timeOfCompletion = timeOfCompletion;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

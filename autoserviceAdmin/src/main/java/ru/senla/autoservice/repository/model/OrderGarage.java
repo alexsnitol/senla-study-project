@@ -31,5 +31,15 @@ public class OrderGarage extends AbstractModel {
     private Garage garage;
     private Integer place;
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }
 

@@ -51,6 +51,16 @@ public class Master extends AbstractModel {
         this.patronymic = patronymic;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @PostLoad
     private void setDefaultValueForNumberOfActiveOrders() {
         if (this.numberOfActiveOrders == null) {

@@ -18,6 +18,7 @@ import ru.senla.autoservice.service.IGarageService;
 import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.service.IOrderService;
 import ru.senla.autoservice.service.comparator.MapOrderComparator;
+import ru.senla.autoservice.util.EntityManagerUtil;
 import ru.senla.autoservice.util.JsonUtil;
 import ru.senla.autoservice.util.PropertyUtil;
 
@@ -62,7 +63,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
     public List<Long> addOrderAndTakePlace(Order order) {
         List<Long> place = Collections.emptyList();
 
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -83,7 +84,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Override
     public void deleteByIdAndFreePlace(Long orderId) {
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             transaction.begin();
@@ -230,7 +231,7 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
             return order;
         }
 
-        EntityManager entityManager = createEntityManager();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
             order = shiftTimeOfCompletionOneOrder(order, shiftMinutes);

@@ -41,6 +41,16 @@ public class Garage extends AbstractModel {
         }
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public void setPlaces(List<Order> places) {
         this.places = places;
         this.size = places.size();

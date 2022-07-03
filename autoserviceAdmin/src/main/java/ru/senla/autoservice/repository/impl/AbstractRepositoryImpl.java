@@ -1,10 +1,9 @@
 package ru.senla.autoservice.repository.impl;
 
-import jakarta.persistence.EntityManager;
 import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import ru.senla.autoservice.repository.IAbstractRepository;
 import ru.senla.autoservice.repository.model.AbstractModel;
-import ru.senla.autoservice.util.HibernateSessionFactoryUtil;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +11,7 @@ import java.util.List;
 public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements IAbstractRepository<M> {
 
     protected List<M> repository = new ArrayList<>();
-    protected EntityManager entityManager = HibernateSessionFactoryUtil.createEntityManager();
+
     protected Class<M> clazz;
 
     public void setRepository(List<M> repository) {
@@ -26,17 +25,17 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
     @Override
     @SuppressWarnings("unchecked")
     public List<M> findAll() {
-        return entityManager.createQuery("from " + clazz.getName()).getResultList();
+        return EntityManagerUtil.getEntityManager().createQuery("from " + clazz.getName()).getResultList();
     }
 
     @Override
     public M findById(Long id) {
-        return entityManager.find(clazz, id);
+        return EntityManagerUtil.getEntityManager().find(clazz, id);
     }
 
     @Override
     public void delete(M model) {
-        entityManager.remove(model);
+        EntityManagerUtil.getEntityManager().remove(model);
     }
 
     @Override
@@ -46,14 +45,13 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
     }
 
     @Override
-    public M create(M newModel) {
-        entityManager.persist(newModel);
-        return newModel;
+    public void create(M newModel) {
+        EntityManagerUtil.getEntityManager().persist(newModel);
     }
 
     @Override
     public void update(M changedModel) {
-        entityManager.merge(changedModel);
+        EntityManagerUtil.getEntityManager().merge(changedModel);
     }
 
     @Override
@@ -63,6 +61,6 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
 
     @Override
     public boolean isExist(M model) {
-        return entityManager.contains(model);
+        return EntityManagerUtil.getEntityManager().contains(model);
     }
 }

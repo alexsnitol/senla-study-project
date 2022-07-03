@@ -12,7 +12,7 @@ public interface IAbstractRepository<M extends AbstractModel> {
     M findById(Long id);
     void delete(M model);
     void deleteById(Long id);
-    M create(M newModel);
+    void create(M newModel);
     void update(M changedModel);
     Integer size();
     boolean isExist(M model);

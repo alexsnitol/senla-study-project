@@ -4,6 +4,7 @@ import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
 import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.model.Garage;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class GarageRepositoryImpl extends AbstractRepositoryImpl<Garage> impleme
     }
 
     public Garage findByOrderId(Long orderId) {
-        return entityManager.createQuery(
+        return EntityManagerUtil.getEntityManager().createQuery(
                 "select garage from OrderGarage where order.id = " + orderId
         ).unwrap(Garage.class);
     }

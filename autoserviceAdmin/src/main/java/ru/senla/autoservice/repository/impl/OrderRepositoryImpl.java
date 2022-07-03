@@ -10,6 +10,7 @@ import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.repository.query.sort.ISortQueryMap;
 import ru.senla.autoservice.repository.query.sort.impl.OrderSortFullQueryMapImpl;
 import ru.senla.autoservice.repository.query.sort.impl.OrderSortQueryMapImpl;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,7 +28,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
     @Override
     public List<Order> findAllSorted(String sortType) {
         ISortQueryMap sortQueryMap = new OrderSortFullQueryMapImpl();
-        Query query = entityManager
+        Query query = EntityManagerUtil.getEntityManager()
                 .createQuery(sortQueryMap.getQuery(sortType));
 
         return query.getResultList();
@@ -35,7 +36,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
 
     @Override
     public List<Order> findAllByStatus(OrderStatusEnum orderStatus) {
-        return entityManager.createQuery(
+        return EntityManagerUtil.getEntityManager().createQuery(
                 "from Order where status = " + orderStatus.toString()
         ).getResultList();
     }
@@ -52,12 +53,12 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
             }
         }
 
-        return entityManager.createQuery(query).getResultList();
+        return EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
     }
 
     @Override
     public List<Order> findAllByTimeOfCompletion(LocalDateTime from, LocalDateTime to) {
-        return entityManager.createQuery(
+        return EntityManagerUtil.getEntityManager().createQuery(
                 "from Order where timeOfCompletion between :from and :to"
         )
                 .setParameter("from", from)
@@ -82,7 +83,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
 
     @Override
     public List<Order> findAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId) {
-        List<Order> orders = entityManager.createQuery(
+        List<Order> orders = EntityManagerUtil.getEntityManager().createQuery(
                 "from Order where status = " + orderStatus.toString()
         ).getResultList();
 
@@ -100,7 +101,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
     @Override
     public List<Order> findAllByStatusSorted(OrderStatusEnum orderStatus, String sortType) {
         ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
-        Query query = entityManager
+        Query query = EntityManagerUtil.getEntityManager()
                 .createQuery(
                         "from Order"
                                 + " where status = " + orderStatus.toString()
@@ -125,7 +126,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
 
         query += sortQueryMap.getQuery(sortType);
 
-        return entityManager.createQuery(query).getResultList();
+        return EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
     }
 
     @Override
@@ -136,7 +137,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
         query += "timeOfCompletion between :from and :to";
         query += sortQueryMap.getQuery(sortType);
 
-        return entityManager.createQuery(query)
+        return EntityManagerUtil.getEntityManager().createQuery(query)
                 .setParameter("from", from)
                 .setParameter("to", to)
                 .getResultList();
@@ -147,7 +148,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
         ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
         String query = sortQueryMap.getQuery(sortType);
 
-        List<Order> orders = entityManager.createQuery(query).getResultList();
+        List<Order> orders = EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
         orders = orders.stream()
                 .filter(o -> o.getMasters()
                         .stream()
