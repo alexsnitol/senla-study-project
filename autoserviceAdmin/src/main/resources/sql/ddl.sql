@@ -4,15 +4,6 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS masters;
 DROP TABLE IF EXISTS garages;
 
-CREATE TYPE order_status AS ENUM(
-    'COMPLETED',
-    'IN_PROCESS',
-    'POSTPONED',
-    'CANCELLED',
-    'PAUSED',
-    'DELETED'
-    );
-
 
 CREATE SEQUENCE orders_id_seq START WITH 100 INCREMENT BY 1;
 CREATE SEQUENCE masters_id_seq START WITH 100 INCREMENT BY 1;
@@ -27,7 +18,7 @@ CREATE TABLE orders (
   time_of_begin      TIMESTAMP,
   time_of_completion TIMESTAMP,
   price              FLOAT4 DEFAULT 0,
-  status             order_status DEFAULT 'IN_PROCESS'
+  status             VARCHAR(10) DEFAULT 'IN_PROCESS'
   );
 
 CREATE TABLE masters (
