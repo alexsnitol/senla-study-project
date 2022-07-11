@@ -2,19 +2,20 @@ package ru.senla.autoservice.repository.impl;
 
 import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
-import jakarta.persistence.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import ru.senla.autoservice.repository.IOrderRepository;
+import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderStatusEnum;
-import ru.senla.autoservice.repository.query.sort.ISortQueryMap;
-import ru.senla.autoservice.repository.query.sort.impl.OrderSortFullQueryMapImpl;
-import ru.senla.autoservice.repository.query.sort.impl.OrderSortQueryMapImpl;
 import ru.senla.autoservice.util.EntityManagerUtil;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Singleton
 @Slf4j
@@ -26,138 +27,188 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
     }
 
     @Override
-    public List<Order> findAllSorted(String sortType) {
-        ISortQueryMap sortQueryMap = new OrderSortFullQueryMapImpl();
-        Query query = EntityManagerUtil.getEntityManager()
-                .createQuery(sortQueryMap.getQuery(sortType));
+    public void sortCriteriaQuery(CriteriaQuery<Order> cr, Root<Order> root, String sortType) {
+        CriteriaBuilder criteriaBuilder = EntityManagerUtil.getEntityManager().getCriteriaBuilder();
 
-        return query.getResultList();
+        switch (sortType) {
+            case "TimeOfCreated":
+            case "TimeOfCreatedAsc":
+                cr.orderBy(criteriaBuilder.asc(root.get("timeOfCreated")));
+                break;
+            case "TimeOfCreatedDesc":
+                cr.orderBy(criteriaBuilder.desc(root.get("timeOfCreated")));
+                break;
+            case "TimeOfBegin":
+            case "TimeOfBeginAsc":
+                cr.orderBy(criteriaBuilder.asc(root.get("timeOfBegin")));
+                break;
+            case "TimeOfBeginDesc":
+                cr.orderBy(criteriaBuilder.desc(root.get("timeOfBegin")));
+                break;
+            case "TimeOfCompletion":
+            case "TimeOfCompletionAsc":
+                cr.orderBy(criteriaBuilder.asc(root.get("timeOfCompletion")));
+                break;
+            case "TimeOfCompletionDesc":
+                cr.orderBy(criteriaBuilder.desc(root.get("timeOfCompletion")));
+                break;
+            case "Price":
+            case "PriceAsc":
+                cr.orderBy(criteriaBuilder.asc(root.get("price")));
+                break;
+            case "PriceDesc":
+                cr.orderBy(criteriaBuilder.desc(root.get("price")));
+                break;
+        }
     }
 
     @Override
     public List<Order> findAllByStatus(OrderStatusEnum orderStatus) {
-        return EntityManagerUtil.getEntityManager().createQuery(
-                "from Order where status = " + orderStatus.toString()
-        ).getResultList();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
+
+        criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.equal(root.get("status"), orderStatus));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByStatuses(List<OrderStatusEnum> orderStatuses) {
-        String query = "from Order where ";
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        for (int i = 0; i < orderStatuses.size(); i++) {
-            query += "status = " + orderStatuses.get(i).toString();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
 
-            if (i != orderStatuses.size() - 1) {
-                query += " or ";
-            }
-        }
+        criteriaQuery
+                .select(root)
+                .where(root.get("status").in(orderStatuses));
 
-        return EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByTimeOfCompletion(LocalDateTime from, LocalDateTime to) {
-        return EntityManagerUtil.getEntityManager().createQuery(
-                "from Order where timeOfCompletion between :from and :to"
-        )
-                .setParameter("from", from)
-                .setParameter("to", to)
-                .getResultList();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
+
+        criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.between(root.get("timeOfCompletion"), from, to));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByMasterId(Long masterId) {
-        List<Order> orders = findAll();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        orders = orders.stream()
-                .filter(o -> o.getMasters()
-                        .stream()
-                        .filter(m -> m.getId().equals(masterId))
-                        .findFirst()
-                        .orElse(null) != null)
-                .collect(Collectors.toList());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> order = criteriaQuery.from(clazz);
+        Join<Order, Master> master = order.join("masters");
 
-        return orders;
+        criteriaQuery
+                .select(order)
+                .where(criteriaBuilder.gt(master.get("id"), masterId));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId) {
-        List<Order> orders = EntityManagerUtil.getEntityManager().createQuery(
-                "from Order where status = " + orderStatus.toString()
-        ).getResultList();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        orders = orders.stream()
-                .filter(o -> o.getMasters()
-                        .stream()
-                        .filter(m -> m.getId().equals(masterId))
-                        .findFirst()
-                        .orElse(null) != null)
-                .collect(Collectors.toList());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> order = criteriaQuery.from(clazz);
+        Join<Order, Master> master = order.join("masters");
 
-        return orders;
+        criteriaQuery
+                .select(order)
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.equal(master.get("id"), masterId),
+                        criteriaBuilder.equal(order.get("status"), orderStatus)
+                ));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByStatusSorted(OrderStatusEnum orderStatus, String sortType) {
-        ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
-        Query query = EntityManagerUtil.getEntityManager()
-                .createQuery(
-                        "from Order"
-                                + " where status = " + orderStatus.toString()
-                                + sortQueryMap.getQuery(sortType)
-                );
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        return query.getResultList();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
+
+        criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.equal(root.get("status"), orderStatus));
+
+        sortCriteriaQuery(criteriaQuery, root, sortType);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType) {
-        ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
-        String query = "from Order where ";
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        for (int i = 0; i < orderStatuses.size(); i++) {
-            query += "status = " + orderStatuses.get(i).toString();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
 
-            if (i != orderStatuses.size() - 1) {
-                query += " or ";
-            }
-        }
+        criteriaQuery
+                .select(root)
+                .where(root.get("status").in(orderStatuses));
 
-        query += sortQueryMap.getQuery(sortType);
+        sortCriteriaQuery(criteriaQuery, root, sortType);
 
-        return EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType) {
-        ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
-        String query = "from Order where ";
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        query += "timeOfCompletion between :from and :to";
-        query += sortQueryMap.getQuery(sortType);
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> root = criteriaQuery.from(clazz);
 
-        return EntityManagerUtil.getEntityManager().createQuery(query)
-                .setParameter("from", from)
-                .setParameter("to", to)
-                .getResultList();
+        criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.between(root.get("timeOfCompletion"), from, to));
+
+        sortCriteriaQuery(criteriaQuery, root, sortType);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public List<Order> findAllByMasterIdSorted(Long masterId, String sortType) {
-        ISortQueryMap sortQueryMap = new OrderSortQueryMapImpl();
-        String query = sortQueryMap.getQuery(sortType);
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
 
-        List<Order> orders = EntityManagerUtil.getEntityManager().createQuery(query).getResultList();
-        orders = orders.stream()
-                .filter(o -> o.getMasters()
-                        .stream()
-                        .filter(m -> m.getId().equals(masterId))
-                        .findFirst()
-                        .orElse(null) != null)
-                .collect(Collectors.toList());
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<Order> order = criteriaQuery.from(clazz);
+        Join<Order, Master> master = order.join("masters");
 
-        return orders;
+        criteriaQuery
+                .select(order)
+                .where(criteriaBuilder.gt(master.get("id"), masterId));
+
+        sortCriteriaQuery(criteriaQuery, criteriaQuery.from(clazz), sortType);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
 }

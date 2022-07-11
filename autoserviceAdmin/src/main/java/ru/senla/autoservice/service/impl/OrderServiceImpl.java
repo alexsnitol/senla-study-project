@@ -117,6 +117,21 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         return order;
     }
 
+    @Override
+    public Order setTimeOfCompletionInOrderByIdAndUpdate(Long orderId, int minutes) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        order = setTimeOfCompletion(order, minutes);
+        update(order);
+
+        return order;
+    }
+
     public Order setStatus(Order order, OrderStatusEnum newStatus) {
         OrderStatusEnum currentStatus = order.getStatus();
         List<Master> mastersByOrder = order.getMasters();
@@ -144,6 +159,21 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
         return order;
     }
 
+    @Override
+    public Order setStatusInOrderByIdAndUpdate(Long orderId, OrderStatusEnum newStatus) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        order = setStatus(order, newStatus);
+        update(order);
+
+        return order;
+    }
+
     public Order assignMasterById(Order order, Long masterId) {
         Master masterById = masterRepository.findById(masterId);
         Long orderId = order.getId();
@@ -164,6 +194,21 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
             log.error("Assigning master for order with id {} cancelled, because master with id {} not exist",
                     orderId, masterId);
         }
+
+        return order;
+    }
+
+    @Override
+    public Order assignMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        order = assignMasterById(order, masterId);
+        update(order);
 
         return order;
     }
@@ -195,6 +240,21 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
             log.error("Removing master for order with id {} cancelled, because master with id {} not exist",
                     orderId, masterId);
         }
+
+        return order;
+    }
+
+    @Override
+    public Order removeMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        order = removeMasterById(order, masterId);
+        update(order);
 
         return order;
     }
@@ -264,6 +324,21 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     public Order setPrice(Order order, float price) {
         order.setPrice(price);
+        return order;
+    }
+
+    @Override
+    public Order setPriceInOrderByIdAndUpdate(Long orderId, float price) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        order = setPrice(order, price);
+        update(order);
+
         return order;
     }
 
@@ -420,6 +495,18 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
                 JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
         orderRepository.setRepository(orderList);
         log.info("All orders successful imported");
+    }
+
+    @Override
+    public void shiftTimeOfCompletionInOrderById(Long orderId, int shiftMinutes) {
+        Order order;
+        try {
+            order = getById(orderId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return;
+        }
+        shiftTimeOfCompletion(order, shiftMinutes);
     }
 
 }

@@ -12,16 +12,18 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     Garage addPlace(Garage garage) throws Exception;
     Garage addPlace(Garage garage, int number) throws Exception;
+    Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception;
 
     Garage deleteLastPlace(Garage garage);
+    Garage deleteLastPlaceInGarageByIdAndUpdate(Long garageId);
 
     List<Long> takePlace(Long orderId);
 
     List<Long> takePlaceByGarageId(Long garageId, Long orderId);
 
     List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId);
-
     Garage getByOrderId(Long orderId);
+
     void freePlaceByOrderId(Long orderId);
 
     /**
@@ -36,5 +38,4 @@ public interface IGarageService extends IAbstractService<Garage> {
     void exportAllGaragesToJsonFile() throws IOException;
 
     void importAllGaragesFromJsonFile() throws IOException;
-
 }

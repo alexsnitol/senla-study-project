@@ -5,7 +5,10 @@ import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.IOrderGarageRepository;
@@ -80,6 +83,14 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garage;
     }
 
+    public Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception {
+        Garage garage = getById(garageId);
+        garage = addPlace(garage);
+        update(garage);
+
+        return garage;
+    }
+
 
     public Garage deleteLastPlace(Garage garage) {
         try {
@@ -102,6 +113,21 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
                 log.info("In garage with id {} last place successful deleted", garage.getId());
             }
         }
+
+        return garage;
+    }
+
+    @Override
+    public Garage deleteLastPlaceInGarageByIdAndUpdate(Long garageId) {
+        Garage garage;
+        try {
+            garage = getById(garageId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        garage = deleteLastPlace(garage);
+        update(garage);
 
         return garage;
     }
@@ -249,13 +275,22 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     private Garage setupPlaces(Garage garage) {
-        Query query = EntityManagerUtil.getEntityManager()
-                .createQuery(
-                        "from OrderGarage where garage.id = " + garage.getId()
-                                + " and (order.status = '" + OrderStatusEnum.IN_PROCESS + "'"
-                                + " or order.status = '" + OrderStatusEnum.POSTPONED + "')"
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(OrderGarage.class);
+        Root<OrderGarage> orderGarageRoot = criteriaQuery.from(OrderGarage.class);
+        Join<OrderGarage, Garage> garageJoin = orderGarageRoot.join("garage");
+        Join<OrderGarage, Order> orderJoin = orderGarageRoot.join("order");
+
+        criteriaQuery.select(orderGarageRoot)
+                .where(criteriaBuilder.equal(garageJoin.get("id"), garage.getId()),
+                        criteriaBuilder.or(
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.IN_PROCESS),
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.POSTPONED)
+                        )
                 );
-        List<OrderGarage> orderGarageList = query.getResultList();
+
+        List<OrderGarage> orderGarageList = entityManager.createQuery(criteriaQuery).getResultList();
 
         try {
             garage = addPlace(garage, garage.getSize());

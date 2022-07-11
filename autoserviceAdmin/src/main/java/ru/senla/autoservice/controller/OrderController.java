@@ -80,78 +80,31 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     }
 
     public void setTimeOfCompletion(Long orderId, int minutes) {
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        order = orderService.setTimeOfCompletion(order, minutes);
-        orderService.update(order);
+        orderService.setTimeOfCompletionInOrderByIdAndUpdate(orderId, minutes);
     }
 
     public void setStatus(Long orderId, OrderStatusEnum newStatus) {
         log.info("Setting new status for order with id {}", orderId);
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        order = orderService.setStatus(order, newStatus);
-        orderService.update(order);
+        orderService.setStatusInOrderByIdAndUpdate(orderId, newStatus);
     }
 
     public void assignMasterById(Long orderId, Long masterId) {
         log.info("Assign master with id {} on order with id {}", masterId, orderId);
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        order = orderService.assignMasterById(order, masterId);
-        orderService.update(order);
+        orderService.assignMasterByIdInOrderByIdAndUpdate(orderId, masterId);
     }
 
     public void removeMasterById(Long orderId, Long masterId) {
         log.info("Remove master with id {} from order with id {}", masterId, orderId);
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        order = orderService.removeMasterById(order, masterId);
-        orderService.update(order);
+        orderService.removeMasterByIdInOrderByIdAndUpdate(orderId, masterId);
     }
 
     public void shiftTimeOfCompletion(Long orderId, int shiftMinutes) {
         log.info("Shifting time of completion of order with id {} on {} minutes", orderId, shiftMinutes);
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        orderService.shiftTimeOfCompletion(order, shiftMinutes);
+        orderService.shiftTimeOfCompletionInOrderById(orderId, shiftMinutes);
     }
 
     public void setPrice(Long orderId, float price) {
-        Order order;
-        try {
-            order = orderService.getById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
-        order = orderService.setPrice(order, price);
-        orderService.update(order);
+        orderService.setPriceInOrderByIdAndUpdate(orderId, price);
     }
 
     public String getInfoOfOrder(Order order) {

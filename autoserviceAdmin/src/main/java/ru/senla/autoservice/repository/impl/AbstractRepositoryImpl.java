@@ -1,5 +1,9 @@
 package ru.senla.autoservice.repository.impl;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
 import ru.senla.autoservice.repository.IAbstractRepository;
 import ru.senla.autoservice.repository.model.AbstractModel;
@@ -25,12 +29,35 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
     @Override
     @SuppressWarnings("unchecked")
     public List<M> findAll() {
-        return EntityManagerUtil.getEntityManager().createQuery("from " + clazz.getName()).getResultList();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<M> root = criteriaQuery.from(clazz);
+
+        criteriaQuery.select(root);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public M findById(Long id) {
         return EntityManagerUtil.getEntityManager().find(clazz, id);
+    }
+
+    @Override
+    public List<M> findAllSorted(String sortType) {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<M> root = criteriaQuery.from(clazz);
+
+        criteriaQuery
+                .select(root);
+        sortCriteriaQuery(criteriaQuery, root, sortType);
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override

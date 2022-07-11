@@ -2,7 +2,14 @@ package ru.senla.autoservice.repository.impl;
 
 import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import ru.senla.autoservice.repository.IOrderGarageRepository;
+import ru.senla.autoservice.repository.model.Garage;
+import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderGarage;
 import ru.senla.autoservice.util.EntityManagerUtil;
 
@@ -18,28 +25,62 @@ public class OrderGarageRepositoryImpl extends AbstractRepositoryImpl<OrderGarag
 
     @Override
     public OrderGarage findByOrderId(Long orderId) {
-        return EntityManagerUtil.getEntityManager()
-                .createQuery("from OrderGarage where order.id = " + orderId)
-                .unwrap(clazz);
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<OrderGarage> orderGarage = criteriaQuery.from(OrderGarage.class);
+        Join<OrderGarage, Order> order = orderGarage.join("order");
+
+        criteriaQuery
+                .select(orderGarage)
+                .where(criteriaBuilder.gt(order.get("id"), orderId));
+
+        return entityManager.createQuery(criteriaQuery).unwrap(clazz);
     }
 
     @Override
     public List<OrderGarage> findByGarageId(Long garageId) {
-        return EntityManagerUtil.getEntityManager()
-                .createQuery("from OrderGarage where garage.id = " + garageId)
-                .getResultList();
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<OrderGarage> root = criteriaQuery.from(OrderGarage.class);
+
+        criteriaQuery
+                .select(root)
+                .where(criteriaBuilder.gt(root.get("garage").get("id"), garageId));
+
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public OrderGarage findByOrderIdAndByGarageId(Long orderId, Long garageId) {
-        return EntityManagerUtil.getEntityManager()
-                .createQuery("from OrderGarage"
-                + " where order.id = " + orderId + " and garage.id = " + garageId)
-                .unwrap(clazz);
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<OrderGarage> orderGarage = criteriaQuery.from(OrderGarage.class);
+        Join<OrderGarage, Order> order = orderGarage.join("order");
+        Join<OrderGarage, Garage> garage = orderGarage.join("garage");
+
+        criteriaQuery
+                .select(orderGarage)
+                .where(criteriaBuilder.and(
+                        criteriaBuilder.gt(order.get("id"), orderId),
+                        criteriaBuilder.gt(garage.get("id"), garageId)
+                ));
+
+        return entityManager.createQuery(criteriaQuery).unwrap(clazz);
     }
 
     @Override
     public List<OrderGarage> findAllSorted(String sortType) {
         return findAll();
+    }
+
+    @Override
+    public void sortCriteriaQuery(CriteriaQuery<OrderGarage> cr, Root<OrderGarage> root, String sortType) {
+        return;
     }
 }

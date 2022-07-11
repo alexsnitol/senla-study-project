@@ -21,12 +21,19 @@ public interface IOrderService extends IAbstractService<Order> {
     List<Long> addOrderAndTakePlace(Order order);
     void deleteByIdAndFreePlace(Long orderId);
     Order setTimeOfCompletion(Order order, int minutes);
+    Order setTimeOfCompletionInOrderByIdAndUpdate(Long orderId, int minutes);
     Order setStatus(Order order, OrderStatusEnum newStatus);
+    Order setStatusInOrderByIdAndUpdate(Long orderId, OrderStatusEnum newStatus);
     Order setPrice(Order order, float price);
+    Order setPriceInOrderByIdAndUpdate(Long orderId, float price);
+
     Order assignMasterById(Order order, Long masterId);
+    Order assignMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId);
     Order removeMasterById(Order order, Long masterId);
+    Order removeMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId);
     Order reducedNumberOfActiveOrdersOfMastersByOrder(Order order);
     Order shiftTimeOfCompletion(Order order, int shiftMinutes);
+    void shiftTimeOfCompletionInOrderById(Long orderId, int shiftMinutes);
     String getInfoOfOrder(Order order);
 
     List<Order> getOrdersByTimeOfCompletion(LocalDateTime from, LocalDateTime to);
