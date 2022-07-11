@@ -1,15 +1,14 @@
 package ru.senla.autoservice;
 
-import configuremodule.ApplicationContext;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import ru.senla.autoservice.view.cli.MenuController;
-
-import java.util.HashMap;
 
 public class Application {
     public static void main(String[] args) throws Exception {
-        ApplicationContext context = configuremodule.Application.run("ru.senla.autoservice", new HashMap<>());
+        ApplicationContext context = new AnnotationConfigApplicationContext("ru.senla.autoservice");
 
-        MenuController menuController = context.getObject(MenuController.class);
+        MenuController menuController = context.getBean(MenuController.class);
         menuController.run();
     }
 }

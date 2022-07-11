@@ -1,5 +1,6 @@
 package ru.senla.autoservice.util;
 
+import lombok.experimental.UtilityClass;
 import ru.senla.autoservice.exception.PropertyAccessDeniedException;
 
 import java.io.FileInputStream;
@@ -10,6 +11,7 @@ import java.util.Properties;
 
 import static java.lang.System.err;
 
+@UtilityClass
 public class PropertyUtil {
 
     private static final String ROOT_PATH = Paths.get("").toAbsolutePath().toString() +
@@ -17,11 +19,8 @@ public class PropertyUtil {
     private static final String APP_PROPS_PATH = ROOT_PATH + "\\configuration\\property\\app.xml";
     private static final String DEFAULT_PROPS_PATH = ROOT_PATH + "\\configuration\\property\\default.xml";
 
-
-    private PropertyUtil() {
-    }
-
-    private static Properties getPropertiesXML() {
+    
+    private Properties getPropertiesXML() {
         Properties properties = new Properties();
 
         try (FileInputStream file = new FileInputStream(APP_PROPS_PATH)) {
@@ -41,7 +40,7 @@ public class PropertyUtil {
         return properties;
     }
 
-    public static void getAccessProperty(String property) throws PropertyAccessDeniedException {
+    public void getAccessProperty(String property) throws PropertyAccessDeniedException {
         Properties properties = getPropertiesXML();
 
         if (properties.equals(Collections.emptyMap())) {
@@ -55,15 +54,15 @@ public class PropertyUtil {
         }
     }
 
-    public static void getPropertyAddAndDeleteFreePlaces() throws PropertyAccessDeniedException {
+    public void getPropertyAddAndDeleteFreePlaces() throws PropertyAccessDeniedException {
         getAccessProperty("AddAndDeleteFreePlaces");
     }
 
-    public static void getPropertyShiftTimeOfCompletion() throws PropertyAccessDeniedException {
+    public void getPropertyShiftTimeOfCompletion() throws PropertyAccessDeniedException {
         getAccessProperty("ShiftTimeOfCompletion");
     }
 
-    public static void getPropertyDeleteOrder() throws PropertyAccessDeniedException {
+    public void getPropertyDeleteOrder() throws PropertyAccessDeniedException {
         getAccessProperty("DeleteOrder");
     }
 

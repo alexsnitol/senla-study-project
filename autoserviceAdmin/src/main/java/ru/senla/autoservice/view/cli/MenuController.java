@@ -1,11 +1,13 @@
 package ru.senla.autoservice.view.cli;
 
+import org.springframework.stereotype.Component;
 import ru.senla.autoservice.view.cli.builder.impl.BuilderImpl;
 
 import java.util.Scanner;
 
 import static java.lang.System.out;
 
+@Component
 public class MenuController {
 
     private BuilderImpl builder;

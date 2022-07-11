@@ -1,13 +1,12 @@
 package ru.senla.autoservice.service.impl;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.IMasterRepository;
 import ru.senla.autoservice.repository.IOrderRepository;
@@ -22,6 +21,7 @@ import ru.senla.autoservice.util.EntityManagerUtil;
 import ru.senla.autoservice.util.JsonUtil;
 import ru.senla.autoservice.util.PropertyUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,32 +31,33 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.err;
 
-@Singleton
 @Setter
 @Slf4j
+@Service
 public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepository> implements IOrderService {
 
-    @Autowired
-    private IOrderRepository orderRepository;
-    @Autowired
-    private IMasterRepository masterRepository;
-    @Autowired
-    private IGarageRepository garageRepository;
+    private final IOrderRepository orderRepository;
+    private final IMasterRepository masterRepository;
+    private final IGarageRepository garageRepository;
+
+    private final IGarageService garageService;
+    private final IMasterService masterService;
 
     @Autowired
-    private IGarageService garageService;
-    @Autowired
-    private IMasterService masterService;
+    public OrderServiceImpl(IOrderRepository orderRepository, IMasterRepository masterRepository,
+                            IGarageRepository garageRepository, IGarageService garageService,
+                            IMasterService masterService) {
+        this.orderRepository = orderRepository;
+        this.masterRepository = masterRepository;
+        this.garageRepository = garageRepository;
+        this.garageService = garageService;
+        this.masterService = masterService;
+    }
 
 
     @PostConstruct
     public void init() {
         this.defaultRepository = orderRepository;
-    }
-
-    public void setOrderRepository(IOrderRepository orderRepository) {
-        this.defaultRepository = orderRepository;
-        this.orderRepository = orderRepository;
     }
 
     @Override

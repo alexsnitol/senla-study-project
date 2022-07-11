@@ -1,23 +1,27 @@
 package ru.senla.autoservice.controller;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import ru.senla.autoservice.repository.model.Garage;
 import ru.senla.autoservice.service.IGarageService;
 import ru.senla.autoservice.util.JsonUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
-@Singleton
 @Slf4j
+@Controller
 public class GarageController extends AbstractController<Garage, IGarageService> {
 
     public static GarageController instance;
+    private final IGarageService garageService;
+
     @Autowired
-    private IGarageService garageService;
+    public GarageController(IGarageService garageService) {
+        this.garageService = garageService;
+    }
 
     @PostConstruct
     public void setInstance() {
@@ -31,11 +35,6 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     @PostConstruct
     public void init() {
         this.defaultService = garageService;
-    }
-
-    public void setGarageService(IGarageService garageService) {
-        this.defaultService = garageService;
-        this.garageService = garageService;
     }
 
     public void deleteById(Long garageId) {
@@ -77,7 +76,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         garageService.exportAllGaragesToJsonFile();
     }
 
-//    @PostConstruct
+    //    @PostConstruct
     public void importAllGaragesFromJsonFile() throws IOException {
         log.info("Import all garages from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "garageList.json");
         garageService.importAllGaragesFromJsonFile();

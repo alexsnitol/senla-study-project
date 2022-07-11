@@ -1,8 +1,5 @@
 package ru.senla.autoservice.service;
 
-import ru.senla.autoservice.repository.IGarageRepository;
-import ru.senla.autoservice.repository.IMasterRepository;
-import ru.senla.autoservice.repository.IOrderRepository;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderStatusEnum;
 
@@ -11,12 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface IOrderService extends IAbstractService<Order> {
-
-    void setOrderRepository(IOrderRepository orderRepository);
-    void setMasterRepository(IMasterRepository masterRepository);
-    void setGarageRepository(IGarageRepository garageRepository);
-    void setGarageService(IGarageService garageService);
-    void setMasterService(IMasterService masterService);
 
     List<Long> addOrderAndTakePlace(Order order);
     void deleteByIdAndFreePlace(Long orderId);

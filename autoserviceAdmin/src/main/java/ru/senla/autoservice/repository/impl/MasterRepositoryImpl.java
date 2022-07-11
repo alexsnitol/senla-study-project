@@ -1,19 +1,19 @@
 package ru.senla.autoservice.repository.impl;
 
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import org.springframework.stereotype.Repository;
 import ru.senla.autoservice.repository.IMasterRepository;
 import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.util.EntityManagerUtil;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 
-@Singleton
+@Repository
 public class MasterRepositoryImpl extends AbstractRepositoryImpl<Master> implements IMasterRepository {
 
     @PostConstruct

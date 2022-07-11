@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.experimental.UtilityClass;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,17 +14,15 @@ import java.util.List;
 
 import static java.lang.System.err;
 
+@UtilityClass
 public class JsonUtil {
 
     public static final String ROOT_PATH = Paths.get("").toAbsolutePath().toString() +
             "\\autoserviceAdmin\\src\\main\\java\\ru\\senla\\autoservice";
     public static final String JSON_CONFIGURATION_PATH = ROOT_PATH + "\\configuration\\json\\";
 
-    private JsonUtil() {
-    }
 
-
-    public static <T> T importModelFromJsonFile(T model, String path) throws IOException {
+    public <T> T importModelFromJsonFile(T model, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -37,7 +36,7 @@ public class JsonUtil {
         }
     }
 
-    public static <T> void exportModelToJsonFile(T model, String fileName) throws IOException {
+    public <T> void exportModelToJsonFile(T model, String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -48,7 +47,7 @@ public class JsonUtil {
         }
     }
 
-    public static <T> List<T> importModelListFromJsonFile(T model, String path) throws IOException {
+    public <T> List<T> importModelListFromJsonFile(T model, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
@@ -62,7 +61,7 @@ public class JsonUtil {
         }
     }
 
-    public static <T> void exportModelListToJsonFile(List<T> modelList, String fileName) throws IOException {
+    public <T> void exportModelListToJsonFile(List<T> modelList, String fileName) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 

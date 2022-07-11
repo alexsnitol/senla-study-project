@@ -1,8 +1,5 @@
 package ru.senla.autoservice.service.impl;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -10,6 +7,8 @@ import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.IOrderGarageRepository;
 import ru.senla.autoservice.repository.IOrderRepository;
@@ -22,6 +21,7 @@ import ru.senla.autoservice.util.EntityManagerUtil;
 import ru.senla.autoservice.util.JsonUtil;
 import ru.senla.autoservice.util.PropertyUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,26 +29,25 @@ import java.util.List;
 
 import static java.lang.System.err;
 
-@Singleton
 @Slf4j
+@Service
 public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageRepository> implements IGarageService {
 
-    @Autowired
-    private IGarageRepository garageRepository;
-    @Autowired
-    private IOrderRepository orderRepository;
-    @Autowired
-    private IOrderGarageRepository orderGarageRepository;
+    private final IGarageRepository garageRepository;
+    private final IOrderRepository orderRepository;
+    private final IOrderGarageRepository orderGarageRepository;
 
+    @Autowired
+    public GarageServiceImpl(IGarageRepository garageRepository, IOrderRepository orderRepository,
+                             IOrderGarageRepository orderGarageRepository) {
+        this.garageRepository = garageRepository;
+        this.orderRepository = orderRepository;
+        this.orderGarageRepository = orderGarageRepository;
+    }
 
     @PostConstruct
     public void init() {
         this.defaultRepository = garageRepository;
-    }
-
-    public void setGarageRepository(IGarageRepository garageRepository) {
-        this.defaultRepository = garageRepository;
-        this.garageRepository = garageRepository;
     }
 
     public Garage addPlace(Garage garage) throws Exception {
