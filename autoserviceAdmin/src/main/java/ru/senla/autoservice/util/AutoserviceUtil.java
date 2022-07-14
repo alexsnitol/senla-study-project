@@ -16,6 +16,10 @@ import java.util.List;
 
 public class AutoserviceUtil {
 
+    private AutoserviceUtil() {
+
+    }
+
     public static int getNumberOfFreePlacesByDate(LocalDate date) {
         GarageController garageController = GarageController.getInstance();
         MasterController masterController = MasterController.getInstance();
@@ -28,20 +32,20 @@ public class AutoserviceUtil {
         LocalDateTime from = LocalDateTime.of(date, LocalTime.of(0, 0, 0, 0));
         LocalDateTime to = from.plusDays(1);
 
-        List<Order> ordersOnDate = orderController.getOrdersFilteredByDateTime(orders, from, to);
-        List<Order> ordersInProcessOnDate = orderController.getOrdersFilteredByStatus(
+        List<Order> ordersOnDate = orderController.getAllByTimeOfCompletion(orders, from, to);
+        List<Order> ordersInProcessOnDate = orderController.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.IN_PROCESS);
-        List<Order> ordersPostponedOnDate = orderController.getOrdersFilteredByStatus(
+        List<Order> ordersPostponedOnDate = orderController.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.POSTPONED);
 
-        List<Long> listOfMastersIdOnAllOrders = new ArrayList<>();
+        List<Master> listOfMastersIdOnAllOrders = new ArrayList<>();
         for (Order order : ordersOnDate) {
             if (order.getStatus() == OrderStatusEnum.IN_PROCESS || order.getStatus() == OrderStatusEnum.POSTPONED) {
-                for (Long masterId : order.getListOfMastersId()) {
-                    if (!listOfMastersIdOnAllOrders.contains(masterId)) {
-                        listOfMastersIdOnAllOrders.add(masterId);
+                for (Master master : order.getMasters()) {
+                    if (!listOfMastersIdOnAllOrders.contains(master)) {
+                        listOfMastersIdOnAllOrders.add(master);
                     }
                 }
             }

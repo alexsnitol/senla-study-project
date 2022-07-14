@@ -3,7 +3,6 @@ package ru.senla.autoservice.view.cli.action.impl.orderaction;
 
 import ru.senla.autoservice.controller.OrderController;
 import ru.senla.autoservice.repository.model.Order;
-import ru.senla.autoservice.util.IdDistributorUtil;
 import ru.senla.autoservice.view.cli.MenuController;
 import ru.senla.autoservice.view.cli.action.IAction;
 
@@ -20,7 +19,6 @@ public class AddNewOrderActionImpl implements IAction {
         Scanner scanner = new Scanner(System.in);
 
         Order newOrder = new Order();
-        newOrder.setId(IdDistributorUtil.getNewId());
 
         Integer year;
         Integer month;
@@ -40,7 +38,7 @@ public class AddNewOrderActionImpl implements IAction {
         LocalDateTime timeOfBegin = LocalDateTime.of(year, month, day, hours, minutes, seconds);
         newOrder.setTimeOfBegin(timeOfBegin);
 
-        List<Long> garageIdAndTakenPlace = orderController.add(newOrder);
+        List<Long> garageIdAndTakenPlace = orderController.addOrderAndTakePlace(newOrder);
 
         out.println("enter time of completed order in minutes");
         out.print(MenuController.CONSOLE_POINTER);

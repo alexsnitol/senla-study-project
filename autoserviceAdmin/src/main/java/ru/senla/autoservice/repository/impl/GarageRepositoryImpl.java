@@ -1,47 +1,50 @@
 package ru.senla.autoservice.repository.impl;
 
+import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.model.Garage;
+import ru.senla.autoservice.repository.model.Order;
+import ru.senla.autoservice.repository.model.OrderGarage;
+import ru.senla.autoservice.util.EntityManagerUtil;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
 public class GarageRepositoryImpl extends AbstractRepositoryImpl<Garage> implements IGarageRepository {
 
-    public List<Garage> getPlacesFilteredByAvailability(boolean isTaken) {
-        List<Garage> garagesWithNumbersOfFilteredPlaces = new ArrayList<>(this.repository.size());
-        List<Long> numbersOfFilteredPlaces;
-
-        for (Garage garage : this.repository) {
-            numbersOfFilteredPlaces = new ArrayList<>(garage.getSize());
-
-            for (Integer i = 0; i < garage.getSize(); i++) {
-                if (isTaken) {
-                    if (garage.getPlaces().get(i) >= 0) {
-                        numbersOfFilteredPlaces.add((i.longValue()));
-                    }
-                } else {
-                    if (garage.getPlaces().get(i) == null) {
-                        numbersOfFilteredPlaces.add((i.longValue()));
-                    }
-                }
-            }
-
-            if (numbersOfFilteredPlaces.size() != 0) {
-                Garage garageWithNumbersOfFilteredPlaces = new Garage();
-                garageWithNumbersOfFilteredPlaces.setId(garage.getId());
-                garageWithNumbersOfFilteredPlaces.setPlaces(numbersOfFilteredPlaces);
-
-                garagesWithNumbersOfFilteredPlaces.add(garageWithNumbersOfFilteredPlaces);
-            }
-        }
-
-        return garagesWithNumbersOfFilteredPlaces;
+    @PostConstruct
+    public void init() {
+        setClazz(Garage.class);
     }
 
-    public Garage getByOrderId(Long orderId) {
-        return repository.stream().filter(g -> g.findByOrderId(orderId) != null).findFirst().orElse(null);
+    public Garage findByOrderId(Long orderId) {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Garage> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<OrderGarage> root = criteriaQuery.from(OrderGarage.class);
+        Join<OrderGarage, Order> order = root.join("order");
+
+        criteriaQuery
+                .select(root.get("garage"))
+                .where(criteriaBuilder.gt(order.get("id"), orderId));
+
+        return entityManager.createQuery(criteriaQuery).unwrap(clazz);
+    }
+
+    @Override
+    public List<Garage> findAllSorted(String sortType) {
+        return findAll();
+    }
+
+    @Override
+    public void sortCriteriaQuery(CriteriaQuery<Garage> cr, Root<Garage> root, String sortType) {
+        return;
     }
 }

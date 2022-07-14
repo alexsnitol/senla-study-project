@@ -7,7 +7,6 @@ import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.view.cli.MenuController;
 import ru.senla.autoservice.view.cli.action.IAction;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -18,12 +17,14 @@ public class PrintOrdersSortedByDateTimeOfCreatedFilteredByCustomStatusAndByCust
     public void execute() {
         Scanner scanner = new Scanner(System.in);
         OrderController orderController = OrderController.getInstance();
-        List<Order> orders = OrderController.getInstance().getAll();
 
         out.println("filter by status? (y/n)");
         out.print(MenuController.CONSOLE_POINTER);
+        char filter = scanner.next().charAt(0);
 
-        if (scanner.next().charAt(0) == 'y') {
+        OrderStatusEnum orderStatus = null;
+
+        if (filter == 'y') {
             out.println("enter index of order status");
 
             for (int i = 0; i < OrderStatusEnum.values().length; i++) {
@@ -33,19 +34,23 @@ public class PrintOrdersSortedByDateTimeOfCreatedFilteredByCustomStatusAndByCust
             out.print(MenuController.CONSOLE_POINTER);
             int statusIndex = scanner.nextInt();
 
-            OrderStatusEnum orderStatus = OrderStatusEnum.values()[statusIndex];
-
-            orders = orderController.getOrdersFilteredByStatus(orderStatus);
+            orderStatus = OrderStatusEnum.values()[statusIndex - 1];
         }
 
         out.println("sort order? (a/d)");
         out.print(MenuController.CONSOLE_POINTER);
         char sortOrder = scanner.next().charAt(0);
 
-        List<Order> resultOrders = orderController.getSorted(orders, "DateTimeOfCreated");
+        List<Order> resultOrders;
 
-        if (sortOrder == 'd') {
-            Collections.reverse(resultOrders);
+        if (filter == 'y') {
+            resultOrders = orderController.getAllByStatusSorted(orderStatus, "TimeOfCreated");
+        } else {
+            if (sortOrder == 'd') {
+                resultOrders = orderController.getSorted("TimeOfCreatedDesc");
+            } else {
+                resultOrders = orderController.getSorted("TimeOfCreated");
+            }
         }
 
         for (Order order : resultOrders) {

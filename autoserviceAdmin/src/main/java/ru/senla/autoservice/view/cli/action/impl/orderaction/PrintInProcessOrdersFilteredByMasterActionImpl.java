@@ -17,13 +17,12 @@ public class PrintInProcessOrdersFilteredByMasterActionImpl implements IAction {
     public void execute() {
         Scanner scanner = new Scanner(System.in);
         OrderController orderController = OrderController.getInstance();
-        List<Order> orders = orderController.getOrdersFilteredByStatus(OrderStatusEnum.IN_PROCESS);
 
         out.println("enter id of master");
         out.print(MenuController.CONSOLE_POINTER);
         Long masterId = scanner.nextLong();
 
-        orders = orderController.getOrdersFilteredByMaster(orders, masterId);
+        List<Order> orders = orderController.getAllByStatusAndMasterId(OrderStatusEnum.IN_PROCESS, masterId);
 
         for (Order order : orders) {
             out.println(orderController.getInfoOfOrder(order));

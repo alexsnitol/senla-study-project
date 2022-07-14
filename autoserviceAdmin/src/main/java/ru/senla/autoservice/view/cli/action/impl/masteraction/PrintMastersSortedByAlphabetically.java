@@ -6,7 +6,6 @@ import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.view.cli.MenuController;
 import ru.senla.autoservice.view.cli.action.IAction;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,10 +21,12 @@ public class PrintMastersSortedByAlphabetically implements IAction {
         out.print(MenuController.CONSOLE_POINTER);
         char sortOrder = scanner.next().charAt(0);
 
-        List<Master> sortedMasters = masterController.getSorted("Alphabetically");
+        List<Master> sortedMasters;
 
         if (sortOrder == 'd') {
-            Collections.reverse(sortedMasters);
+            sortedMasters = masterController.getSorted("AlphabeticallyDesc");
+        } else {
+            sortedMasters = masterController.getSorted("Alphabetically");
         }
 
         for (Master master : sortedMasters) {

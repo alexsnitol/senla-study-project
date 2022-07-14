@@ -18,12 +18,14 @@ public class PrintOrdersSortedByPriceFilteredByCustomStatusAndByCustomDateTime i
     public void execute() {
         Scanner scanner = new Scanner(System.in);
         OrderController orderController = OrderController.getInstance();
-        List<Order> orders = OrderController.getInstance().getAll();
 
         out.println("filter by status? (y/n)");
         out.print(MenuController.CONSOLE_POINTER);
+        char filter = scanner.next().charAt(0);
 
-        if (scanner.next().charAt(0) == 'y') {
+        OrderStatusEnum orderStatus = null;
+
+        if (filter == 'y') {
             out.println("enter index of order status");
 
             for (int i = 0; i < OrderStatusEnum.values().length; i++) {
@@ -33,16 +35,24 @@ public class PrintOrdersSortedByPriceFilteredByCustomStatusAndByCustomDateTime i
             out.print(MenuController.CONSOLE_POINTER);
             int statusIndex = scanner.nextInt();
 
-            OrderStatusEnum orderStatus = OrderStatusEnum.values()[statusIndex];
-
-            orders = orderController.getOrdersFilteredByStatus(orderStatus);
+            orderStatus = OrderStatusEnum.values()[statusIndex - 1];
         }
 
         out.println("sort order? (a/d)");
         out.print(MenuController.CONSOLE_POINTER);
         char sortOrder = scanner.next().charAt(0);
 
-        List<Order> resultOrders = orderController.getSorted(orders, "Price");
+        List<Order> resultOrders;
+
+        if (filter == 'y') {
+            resultOrders = orderController.getAllByStatusSorted(orderStatus, "Price");
+        } else {
+            if (sortOrder == 'd') {
+                resultOrders = orderController.getSorted("Price");
+            } else {
+                resultOrders = orderController.getSorted("Price");
+            }
+        }
 
         if (sortOrder == 'd') {
             Collections.reverse(resultOrders);

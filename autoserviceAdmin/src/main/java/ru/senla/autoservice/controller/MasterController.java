@@ -48,8 +48,8 @@ public class MasterController extends AbstractController<Master, IMasterService>
         masterService.add(newMaster);
     }
 
-    public List<Master> getMastersByOrder(Long idOrder) {
-        return masterService.getMastersByOrder(idOrder);
+    public List<Master> getMastersByOrder(Long orderId) {
+        return masterService.getMastersByOrderId(orderId);
     }
 
     public String getFullName(Master master) {
@@ -83,7 +83,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
         masterService.exportAllMastersToJsonFile();
     }
 
-    @PostConstruct
+//    @PostConstruct
     public void importAllMastersFromJsonFile() throws IOException {
         log.info("Import all masters from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "masterList.json");
         masterService.importAllMastersFromJsonFile();

@@ -13,47 +13,45 @@ import java.util.List;
 public interface IOrderService extends IAbstractService<Order> {
 
     void setOrderRepository(IOrderRepository orderRepository);
-
     void setMasterRepository(IMasterRepository masterRepository);
-
     void setGarageRepository(IGarageRepository garageRepository);
-
     void setGarageService(IGarageService garageService);
-
     void setMasterService(IMasterService masterService);
 
-    void setTimeOfCompletion(Long orderId, int minutes);
+    List<Long> addOrderAndTakePlace(Order order);
+    void deleteByIdAndFreePlace(Long orderId);
+    Order setTimeOfCompletion(Order order, int minutes);
+    Order setTimeOfCompletionInOrderByIdAndUpdate(Long orderId, int minutes);
+    Order setStatus(Order order, OrderStatusEnum newStatus);
+    Order setStatusInOrderByIdAndUpdate(Long orderId, OrderStatusEnum newStatus);
+    Order setPrice(Order order, float price);
+    Order setPriceInOrderByIdAndUpdate(Long orderId, float price);
 
-    void setStatus(Long idOrder, OrderStatusEnum newStatus);
-
-    void setPrice(Long orderId, float price);
-
-    void assignMasterById(Long orderId, Long masterId);
-
-    void removeMasterById(Long orderId, Long masterId);
-
-    void shiftTimeOfCompletion(Long orderId, int shiftMinutes);
-
+    Order assignMasterById(Order order, Long masterId);
+    Order assignMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId);
+    Order removeMasterById(Order order, Long masterId);
+    Order removeMasterByIdInOrderByIdAndUpdate(Long orderId, Long masterId);
+    Order reducedNumberOfActiveOrdersOfMastersByOrder(Order order);
+    Order shiftTimeOfCompletion(Order order, int shiftMinutes);
+    void shiftTimeOfCompletionInOrderById(Long orderId, int shiftMinutes);
     String getInfoOfOrder(Order order);
 
-    List<Order> getOrdersFilteredByDateTime(LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByTimeOfCompletion(LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByTimeOfCompletion(List<Order> orders, LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByStatus(OrderStatusEnum status);
+    List<Order> getOrdersByStatus(List<Order> orders, OrderStatusEnum status);
+    List<Order> getAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId);
+    List<Order> getOrdersByMasterId(Long masterId);
 
-    List<Order> getOrdersFilteredByDateTime(List<Order> orders, LocalDateTime from, LocalDateTime to);
+    List<Order> getOrdersByMasterId(List<Order> orders, Long masterId);
+    List<Order> getAllByStatusSorted(OrderStatusEnum orderStatus, String sortType);
+    List<Order> getAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType);
+    List<Order> getAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType);
 
-    List<Order> getOrdersFilteredByStatus(OrderStatusEnum status);
-
-    List<Order> getOrdersFilteredByStatus(List<Order> orders, OrderStatusEnum status);
-
-    List<Order> getOrdersFilteredByMaster(Long masterId);
-
-    List<Order> getOrdersFilteredByMaster(List<Order> orders, Long masterId);
-
+    List<Order> getAllByMasterIdSorted(Long masterId, String sortType);
     void exportOrderToJsonFile(Long orderId, String fileName) throws IOException;
-
     void importOrderFromJsonFile(String path) throws IOException;
-
     void exportAllOrdersToJsonFile() throws IOException;
 
     void importAllOrdersFromJsonFile() throws IOException;
-
 }

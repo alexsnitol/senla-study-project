@@ -10,19 +10,26 @@ public interface IGarageService extends IAbstractService<Garage> {
 
     void setGarageRepository(IGarageRepository garageRepository);
 
-    void addPlace(Long garageId) throws Exception;
+    Garage addPlace(Garage garage) throws Exception;
+    Garage addPlace(Garage garage, int number) throws Exception;
+    Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception;
 
-    int deleteLastPlace(Long garageId);
+    Garage deleteLastPlace(Garage garage);
+    Garage deleteLastPlaceInGarageByIdAndUpdate(Long garageId);
 
     List<Long> takePlace(Long orderId);
 
     List<Long> takePlaceByGarageId(Long garageId, Long orderId);
 
     List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId);
+    Garage getByOrderId(Long orderId);
 
     void freePlaceByOrderId(Long orderId);
 
-    List<Garage> getPlacesFilteredByAvailability(boolean isTaken);
+    /**
+    * @return list of list where index 0 is garage id and other index is place number
+    **/
+    List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken);
 
     void exportGarageToJsonFile(Long garageId, String fileName) throws IOException;
 
@@ -31,5 +38,4 @@ public interface IGarageService extends IAbstractService<Garage> {
     void exportAllGaragesToJsonFile() throws IOException;
 
     void importAllGaragesFromJsonFile() throws IOException;
-
 }

@@ -3,10 +3,22 @@ package ru.senla.autoservice.service.impl;
 import configuremodule.annotation.Autowired;
 import configuremodule.annotation.PostConstruct;
 import configuremodule.annotation.Singleton;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import ru.senla.autoservice.repository.IGarageRepository;
+import ru.senla.autoservice.repository.IOrderGarageRepository;
+import ru.senla.autoservice.repository.IOrderRepository;
 import ru.senla.autoservice.repository.model.Garage;
+import ru.senla.autoservice.repository.model.Order;
+import ru.senla.autoservice.repository.model.OrderGarage;
+import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.service.IGarageService;
+import ru.senla.autoservice.util.EntityManagerUtil;
 import ru.senla.autoservice.util.JsonUtil;
 import ru.senla.autoservice.util.PropertyUtil;
 
@@ -23,6 +35,10 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
 
     @Autowired
     private IGarageRepository garageRepository;
+    @Autowired
+    private IOrderRepository orderRepository;
+    @Autowired
+    private IOrderGarageRepository orderGarageRepository;
 
 
     @PostConstruct
@@ -35,64 +51,111 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         this.garageRepository = garageRepository;
     }
 
-    @Override
-    public void addPlace(Long garageId) throws Exception {
+    public Garage addPlace(Garage garage) throws Exception {
         try {
             PropertyUtil.getPropertyAddAndDeleteFreePlaces();
         } catch (Exception e) {
             err.println(e.getMessage());
         }
 
-        Garage garage = garageRepository.getById(garageId);
-        List<Long> placesOfGarage = garage.getPlaces();
+        List<Order> placesOfGarage = garage.getPlaces();
 
         placesOfGarage.add(null);
         garage.setPlaces(placesOfGarage);
+
+        return garage;
     }
 
-
-    /**
-     * @return 1 - garage is empty;
-     * 0 - place is successful delete;
-     * -1 - place is taken;
-     */
-    @Override
-    public int deleteLastPlace(Long garageId) {
+    public Garage addPlace(Garage garage, int number) throws Exception {
         try {
             PropertyUtil.getPropertyAddAndDeleteFreePlaces();
         } catch (Exception e) {
             err.println(e.getMessage());
-            return 1;
         }
 
-        Garage garage = garageRepository.getById(garageId);
+        List<Order> placesOfGarage = garage.getPlaces();
 
-        List<Long> placesOfGarage = garage.getPlaces();
-
-        if (placesOfGarage.isEmpty()) {
-            log.error("Garage with id {} is empty", garageId);
-            return 1;
+        for (int i = 0; i < number; i++) {
+            placesOfGarage.add(null);
         }
+        garage.setPlaces(placesOfGarage);
 
-        if (placesOfGarage.get(placesOfGarage.size() - 1) != null) {
-            log.error("In garage with id {} last place is taken", garageId);
-            return -1;
-        } else {
-            placesOfGarage.remove(placesOfGarage.size() - 1);
-            garage.setPlaces(placesOfGarage);
-            log.info("In garage with id {} last place successful deleted", garageId);
-            return 0;
-        }
+        return garage;
     }
 
+    public Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception {
+        Garage garage = getById(garageId);
+        garage = addPlace(garage);
+        update(garage);
+
+        return garage;
+    }
+
+
+    public Garage deleteLastPlace(Garage garage) {
+        try {
+            PropertyUtil.getPropertyAddAndDeleteFreePlaces();
+        } catch (Exception e) {
+            log.error(e.toString());
+            return garage;
+        }
+
+        List<Order> placesOfGarage = garage.getPlaces();
+
+        if (placesOfGarage.isEmpty()) {
+            log.error("Garage with id {} is empty", garage.getId());
+        } else {
+            if (placesOfGarage.get(placesOfGarage.size() - 1) != null) {
+                log.error("In garage with id {} last place is taken", garage.getId());
+            } else {
+                placesOfGarage.remove(placesOfGarage.size() - 1);
+                garage.setPlaces(placesOfGarage);
+                log.info("In garage with id {} last place successful deleted", garage.getId());
+            }
+        }
+
+        return garage;
+    }
+
+    @Override
+    public Garage deleteLastPlaceInGarageByIdAndUpdate(Long garageId) {
+        Garage garage;
+        try {
+            garage = getById(garageId);
+        } catch (Exception e) {
+            log.error(e.toString());
+            return null;
+        }
+        garage = deleteLastPlace(garage);
+        update(garage);
+
+        return garage;
+    }
+
+    /**
+     * @return
+     * list with info where: index 0 - id garage, index 1 - index of taken place;
+     */
     private List<Long> takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(Long orderId, Garage garage) {
+        List<Order> places = garage.getPlaces();
+
+        int indexOfFreePlace = places.indexOf(null);
+        Order orderById = orderRepository.findById(orderId);
+
+        OrderGarage orderGarage = new OrderGarage();
+        orderGarage.setOrder(orderById);
+        orderGarage.setGarage(garage);
+        orderGarage.setPlace(indexOfFreePlace);
+
+        try {
+            orderGarageRepository.create(orderGarage);
+        } catch (Exception e) {
+            log.error(e.toString());
+
+            return Collections.emptyList();
+        }
+
         List<Long> garagesIdAndNumberOfTakenPlace = new ArrayList<>(2);
-
-        int indexOfFreePlace = garage.getPlaces().indexOf(null);
-
-        garage.getPlaces().set(indexOfFreePlace, orderId);
-        garage.setNumberOfTakenPlaces(garage.getNumberOfTakenPlaces() + 1);
-
         garagesIdAndNumberOfTakenPlace.add(garage.getId());
         garagesIdAndNumberOfTakenPlace.add(Integer.toUnsignedLong(indexOfFreePlace));
 
@@ -106,10 +169,10 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
      * Take first free place in all garages.
      *
      * @return emptyList - all garages is full;
-     * list with info where: index 0 - id garage, index 1 - index taken place;
+     * list with info where: index 0 - id garage, index 1 - index of taken place;
      */
     public List<Long> takePlace(Long orderId) {
-        for (Garage garage : this.garageRepository.getAll()) {
+        for (Garage garage : this.garageRepository.findAll()) {
             if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
                 return takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(orderId, garage);
             }
@@ -123,10 +186,10 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
      * Take first free place in garage by id.
      *
      * @return emptyList - all places in garage is taken;
-     * list with info where: index 0 - id garage, index 1 - index taken place;
+     * list with info where: index 0 - id garage, index 1 - index of taken place;
      */
     public List<Long> takePlaceByGarageId(Long garageId, Long orderId) {
-        Garage garage = this.garageRepository.getById(garageId);
+        Garage garage = this.garageRepository.findById(garageId);
 
         if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
             return takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(orderId, garage);
@@ -140,29 +203,50 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
      * Take free place by index in garage by id.
      *
      * @return emptyList - all places in garage is taken or place is taken;
-     * list with info where: index 0 - id garage, index 1 - index taken place;
+     * list with info where: index 0 - id garage, index 1 - index of taken place;
      */
     public List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId) {
-        List<Long> garagesIdAndNumberOfTakenPlace = new ArrayList<>(2);
-        Garage garage = this.garageRepository.getById(garageId);
+        Garage garage = getById(garageId);
+        List<Order> places = garage.getPlaces();
 
         if (indexOfPlace >= garage.getSize() || indexOfPlace < 0) {
-            log.error("Index {} out of range {}", indexOfPlace, garage.getSize());
+            log.error("Index {} out of range {}", indexOfPlace, garage.getSize() - 1);
             return Collections.emptyList();
         }
 
         if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
-
-            Long takenOrderId = garage.getPlaces().get(indexOfPlace);
+            Long takenOrderId = garage.getPlaces().get(indexOfPlace).getId();
             if (takenOrderId != null) {
                 log.error("Place with index {} in garage with id {} is taken by order with id {}",
                         indexOfPlace, garageId, takenOrderId);
                 return Collections.emptyList();
             }
 
-            garage.getPlaces().set(indexOfPlace, orderId);
-            garage.setNumberOfTakenPlaces(garage.getNumberOfTakenPlaces() + 1);
+            Order orderById = orderRepository.findById(orderId);
 
+            OrderGarage orderGarage = new OrderGarage();
+            orderGarage.setOrder(orderById);
+            orderGarage.setGarage(garage);
+            orderGarage.setPlace(indexOfPlace);
+
+            EntityManager entityManager = EntityManagerUtil.getEntityManager();
+            EntityTransaction transaction =  entityManager.getTransaction();
+            try {
+                transaction.begin();
+
+                orderGarageRepository.create(orderGarage);
+
+                transaction.commit();
+            } catch (Exception e) {
+                log.error(e.toString());
+                transaction.rollback();
+
+                return Collections.emptyList();
+            } finally {
+                entityManager.close();
+            }
+
+            List<Long> garagesIdAndNumberOfTakenPlace = new ArrayList<>(2);
             garagesIdAndNumberOfTakenPlace.add(orderId);
             garagesIdAndNumberOfTakenPlace.add(indexOfPlace.longValue());
 
@@ -177,26 +261,105 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     public void freePlaceByOrderId(Long orderId) {
-        Garage garage = garageRepository.getByOrderId(orderId);
-        Integer indexOfPlace = garage.findByOrderId(orderId);
+        Garage garage = getByOrderId(orderId);
+        Integer indexOfPlace = garage.getIndexOfPlaceByOrderId(orderId);
 
-        garage.getPlaces().set(indexOfPlace, null);
+        List<Order> places = garage.getPlaces();
+        places.set(indexOfPlace, null);
+        garage.setPlaces(places);
+
+        OrderGarage orderGarage = orderGarageRepository.findByOrderId(orderId);
+        orderGarageRepository.delete(orderGarage);
 
         log.info("Place with index {} in garage with id {} successful freed", indexOfPlace, garage.getId());
     }
 
-    public List<Garage> getPlacesFilteredByAvailability(boolean isTaken) {
-        return this.garageRepository.getPlacesFilteredByAvailability(isTaken);
+    private Garage setupPlaces(Garage garage) {
+        EntityManager entityManager = EntityManagerUtil.getEntityManager();
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(OrderGarage.class);
+        Root<OrderGarage> orderGarageRoot = criteriaQuery.from(OrderGarage.class);
+        Join<OrderGarage, Garage> garageJoin = orderGarageRoot.join("garage");
+        Join<OrderGarage, Order> orderJoin = orderGarageRoot.join("order");
+
+        criteriaQuery.select(orderGarageRoot)
+                .where(criteriaBuilder.equal(garageJoin.get("id"), garage.getId()),
+                        criteriaBuilder.or(
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.IN_PROCESS),
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.POSTPONED)
+                        )
+                );
+
+        List<OrderGarage> orderGarageList = entityManager.createQuery(criteriaQuery).getResultList();
+
+        try {
+            garage = addPlace(garage, garage.getSize());
+        } catch (Exception e) {
+            log.error(e.toString());
+        }
+        List<Order> places = garage.getPlaces();
+
+        for (OrderGarage orderGarage : orderGarageList) {
+            places.set(orderGarage.getPlace(), orderGarage.getOrder());
+        }
+
+        garage.setPlaces(places);
+        garage.setNumberOfTakenPlaces(orderGarageList.size());
+
+        return garage;
     }
 
     @Override
-    public List<Garage> getSorted(String sortType) {
-        return null;
+    public Garage getById(Long id) {
+        Garage garageById = garageRepository.findById(id);
+        garageById = setupPlaces(garageById);
+        return garageById;
+    }
+
+    @Override
+    public List<Garage> getAll() {
+        List<Garage> garages = garageRepository.findAll();
+        for (Garage garage : garages) {
+            garage = setupPlaces(garage);
+        }
+        return garages;
+    }
+
+    public Garage getByOrderId(Long orderId) {
+        Garage garageByOrderId = garageRepository.findByOrderId(orderId);
+        garageByOrderId = setupPlaces(garageByOrderId);
+        return garageByOrderId;
+    }
+
+    public List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken) {
+        List<List<Long>> garagesIdAndNumbersOfFilteredPlaces = new ArrayList<>(size());
+        List<Long> numbersOfFilteredPlaces;
+
+        for (Garage garage : getAll()) {
+            numbersOfFilteredPlaces = new ArrayList<>(garage.getSize());
+
+            for (int i = 0; i < garage.getSize(); i++) {
+                if ((garage.getPlaces().get(i) != null) == isTaken) {
+                    numbersOfFilteredPlaces.add(Integer.toUnsignedLong(i));
+                }
+            }
+
+            if (!numbersOfFilteredPlaces.isEmpty()) {
+                List<Long> garageIdWithNumbersOfFilteredPlaces = new ArrayList<>(numbersOfFilteredPlaces.size());
+
+                garageIdWithNumbersOfFilteredPlaces.add(garage.getId());
+                garageIdWithNumbersOfFilteredPlaces.addAll(numbersOfFilteredPlaces);
+
+                garagesIdAndNumbersOfFilteredPlaces.add(garageIdWithNumbersOfFilteredPlaces);
+            }
+        }
+
+        return garagesIdAndNumbersOfFilteredPlaces;
     }
 
     @Override
     public List<Garage> getSorted(List<Garage> garages, String sortType) {
-        return null;
+        return garageRepository.findAll();
     }
 
     public void exportGarageToJsonFile(Long garageId, String fileName) throws IOException {
@@ -207,10 +370,9 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
 
     public void importGarageFromJsonFile(String path) throws IOException {
         Garage garageJson = JsonUtil.importModelFromJsonFile(new Garage(), path);
-        Garage garageByJsonId = getById(garageJson.getId());
 
-        if (garageByJsonId != null) {
-            update(garageByJsonId, garageJson);
+        if (garageRepository.isExist(garageJson)) {
+            update(garageJson);
         } else {
             add(garageJson);
         }
@@ -218,7 +380,7 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     public void exportAllGaragesToJsonFile() throws IOException {
-        JsonUtil.exportModelListToJsonFile(garageRepository.getAll(),
+        JsonUtil.exportModelListToJsonFile(garageRepository.findAll(),
                 JsonUtil.JSON_CONFIGURATION_PATH + "garageList");
         log.info("All garages successful exported");
     }
