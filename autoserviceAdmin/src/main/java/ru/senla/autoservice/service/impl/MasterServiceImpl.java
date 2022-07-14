@@ -1,10 +1,9 @@
 package ru.senla.autoservice.service.impl;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import ru.senla.autoservice.repository.IMasterRepository;
 import ru.senla.autoservice.repository.IOrderRepository;
 import ru.senla.autoservice.repository.model.Master;
@@ -12,29 +11,28 @@ import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.service.comparator.MapMasterComparator;
 import ru.senla.autoservice.util.JsonUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-@Singleton
 @Setter
 @Slf4j
+@Service
 public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterRepository> implements IMasterService {
 
-    @Autowired
-    private IMasterRepository masterRepository;
-    @Autowired
-    private IOrderRepository orderRepository;
+    private final IMasterRepository masterRepository;
+    private final IOrderRepository orderRepository;
 
+    @Autowired
+    public MasterServiceImpl(IMasterRepository masterRepository, IOrderRepository orderRepository) {
+        this.masterRepository = masterRepository;
+        this.orderRepository = orderRepository;
+    }
 
     @PostConstruct
     public void init() {
         this.defaultRepository = masterRepository;
-    }
-
-    public void setMasterRepository(IMasterRepository masterRepository) {
-        this.defaultRepository = masterRepository;
-        this.masterRepository = masterRepository;
     }
 
     public List<Master> getMastersByOrderId(Long orderId) {

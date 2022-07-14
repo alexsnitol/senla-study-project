@@ -1,5 +1,6 @@
 package ru.senla.autoservice.util;
 
+import lombok.experimental.UtilityClass;
 import ru.senla.autoservice.controller.GarageController;
 import ru.senla.autoservice.controller.MasterController;
 import ru.senla.autoservice.controller.OrderController;
@@ -14,13 +15,10 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@UtilityClass
 public class AutoserviceUtil {
 
-    private AutoserviceUtil() {
-
-    }
-
-    public static int getNumberOfFreePlacesByDate(LocalDate date) {
+    public int getNumberOfFreePlacesByDate(LocalDate date) {
         GarageController garageController = GarageController.getInstance();
         MasterController masterController = MasterController.getInstance();
         OrderController orderController = OrderController.getInstance();
@@ -62,7 +60,7 @@ public class AutoserviceUtil {
         return Math.min(numberOfFreePlaces, numberOfFreeMasters);
     }
 
-    public static LocalDate getNearestDate() {
+    public LocalDate getNearestDate() {
         LocalDate tmpDate = LocalDate.now();
         while (AutoserviceUtil.getNumberOfFreePlacesByDate(tmpDate) == 0) {
             tmpDate.plusDays(1);

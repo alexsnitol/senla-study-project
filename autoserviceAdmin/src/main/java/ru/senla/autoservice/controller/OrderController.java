@@ -1,9 +1,8 @@
 package ru.senla.autoservice.controller;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.service.IGarageService;
@@ -11,21 +10,26 @@ import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.service.IOrderService;
 import ru.senla.autoservice.util.JsonUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Singleton
 @Slf4j
+@Controller
 public class OrderController extends AbstractController<Order, IOrderService> {
 
     private static OrderController instance;
+    private final IOrderService orderService;
+    private final IGarageService garageService;
+    private final IMasterService masterService;
+
     @Autowired
-    private IOrderService orderService;
-    @Autowired
-    private IGarageService garageService;
-    @Autowired
-    private IMasterService masterService;
+    public OrderController(IOrderService orderService, IGarageService garageService, IMasterService masterService) {
+        this.orderService = orderService;
+        this.garageService = garageService;
+        this.masterService = masterService;
+    }
 
     @PostConstruct
     public void setInstance() {
@@ -39,19 +43,6 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     @PostConstruct
     public void init() {
         this.defaultService = orderService;
-    }
-
-    public void setOrderService(IOrderService orderService) {
-        this.defaultService = orderService;
-        this.orderService = orderService;
-    }
-
-    public void setGarageService(IGarageService garageService) {
-        this.garageService = garageService;
-    }
-
-    public void setMasterService(IMasterService masterService) {
-        this.masterService = masterService;
     }
 
     public List<Long> addOrderAndTakePlace(Order order) {

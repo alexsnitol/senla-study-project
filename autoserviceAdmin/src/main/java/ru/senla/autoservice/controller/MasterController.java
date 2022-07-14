@@ -1,23 +1,27 @@
 package ru.senla.autoservice.controller;
 
-import configuremodule.annotation.Autowired;
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.util.JsonUtil;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.List;
 
-@Singleton
 @Slf4j
+@Controller
 public class MasterController extends AbstractController<Master, IMasterService> {
 
     private static MasterController instance;
+    private final IMasterService masterService;
+
     @Autowired
-    private IMasterService masterService;
+    public MasterController(IMasterService masterService) {
+        this.masterService = masterService;
+    }
 
     @PostConstruct
     public void setInstance() {
@@ -31,11 +35,6 @@ public class MasterController extends AbstractController<Master, IMasterService>
     @PostConstruct
     public void init() {
         this.defaultService = masterService;
-    }
-
-    public void setMasterService(IMasterService masterService) {
-        this.defaultService = masterService;
-        this.masterService = masterService;
     }
 
     public void deleteById(Long masterId) {

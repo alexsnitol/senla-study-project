@@ -1,14 +1,11 @@
 package ru.senla.autoservice.service;
 
-import ru.senla.autoservice.repository.IGarageRepository;
 import ru.senla.autoservice.repository.model.Garage;
 
 import java.io.IOException;
 import java.util.List;
 
 public interface IGarageService extends IAbstractService<Garage> {
-
-    void setGarageRepository(IGarageRepository garageRepository);
 
     Garage addPlace(Garage garage) throws Exception;
     Garage addPlace(Garage garage, int number) throws Exception;

@@ -1,24 +1,24 @@
 package ru.senla.autoservice.repository.impl;
 
-import configuremodule.annotation.PostConstruct;
-import configuremodule.annotation.Singleton;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Repository;
 import ru.senla.autoservice.repository.IOrderRepository;
 import ru.senla.autoservice.repository.model.Master;
 import ru.senla.autoservice.repository.model.Order;
 import ru.senla.autoservice.repository.model.OrderStatusEnum;
 import ru.senla.autoservice.util.EntityManagerUtil;
 
+import javax.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Singleton
 @Slf4j
+@Repository
 public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implements IOrderRepository {
 
     @PostConstruct
