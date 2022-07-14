@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+    id 'com.bmuschko.tomcat' version '2.7.0'
+}
+
+group 'ru.senla'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'javax.servlet:servlet-api:2.5'
+}
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("11")
+    targetCompatibility = JavaVersion.toVersion("11")
+}
