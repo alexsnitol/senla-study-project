@@ -1,6 +1,6 @@
 package ru.senla.autoservice.service.comparator;
 
-import ru.senla.autoservice.repository.model.AbstractModel;
+import ru.senla.autoservice.model.AbstractModel;
 
 import java.util.Comparator;
 import java.util.HashMap;

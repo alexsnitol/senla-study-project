@@ -1,10 +1,14 @@
 package ru.senla.autoservice.controller;
 
-import ru.senla.autoservice.repository.model.AbstractModel;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import ru.senla.autoservice.model.AbstractModel;
 import ru.senla.autoservice.service.IAbstractService;
 
 import java.util.List;
 
+@Slf4j
 public abstract class AbstractController<M extends AbstractModel, S extends IAbstractService<M>> {
 
     protected S defaultService;
@@ -16,16 +20,39 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
         this.defaultService = defaultService;
     }
 
-    public M getById(Long id) throws Exception {
-        return this.defaultService.getById(id);
-    }
-
     public List<M> getAll() {
         return defaultService.getAll();
     }
 
-    public void update(M changedModel) {
-        defaultService.update(changedModel);
+    public List<M> getAll(MultiValueMap<String, String> requestParams) {
+        return defaultService.getAll(requestParams);
+    }
+
+    public M getById(Long id) {
+        return this.defaultService.getById(id);
+    }
+
+    public M add(M newModel) {
+        return defaultService.add(newModel);
+    }
+
+    public M update(Long id, M changedModel) {
+        changedModel.setId(id);
+        return defaultService.update(changedModel);
+    }
+
+    public ResponseEntity<String> delete(M model) {
+        log.info("Deleting model {}", model);
+        defaultService.delete(model);
+
+        return ResponseEntity.ok("Model with id " + model.getId() + " was deleted");
+    }
+
+    public ResponseEntity<String> deleteById(Long id) {
+        log.info("Deleting model with id {}", id);
+        defaultService.deleteById(id);
+
+        return ResponseEntity.ok("Model with id " + id + " was deleted");
     }
 
     public Integer size() {

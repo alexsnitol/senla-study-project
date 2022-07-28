@@ -1,30 +1,35 @@
 package ru.senla.autoservice.service.impl;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.Root;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.senla.autoservice.repository.IGarageRepository;
-import ru.senla.autoservice.repository.IOrderGarageRepository;
-import ru.senla.autoservice.repository.IOrderRepository;
-import ru.senla.autoservice.repository.model.Garage;
-import ru.senla.autoservice.repository.model.Order;
-import ru.senla.autoservice.repository.model.OrderGarage;
-import ru.senla.autoservice.repository.model.OrderStatusEnum;
+import org.springframework.util.MultiValueMap;
+import ru.senla.autoservice.dto.GarageWithPlaceNumbersDto;
+import ru.senla.autoservice.dto.TakenPlaceDto;
+import ru.senla.autoservice.model.Garage;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
+import ru.senla.autoservice.model.OrderGarage;
+import ru.senla.autoservice.model.OrderMaster;
+import ru.senla.autoservice.model.OrderStatusEnum;
+import ru.senla.autoservice.repo.IGarageRepository;
+import ru.senla.autoservice.repo.IMasterRepository;
+import ru.senla.autoservice.repo.IOrderGarageRepository;
+import ru.senla.autoservice.repo.IOrderRepository;
 import ru.senla.autoservice.service.IGarageService;
-import ru.senla.autoservice.util.EntityManagerUtil;
-import ru.senla.autoservice.util.JsonUtil;
+import ru.senla.autoservice.service.helper.EntityHelper;
 import ru.senla.autoservice.util.PropertyUtil;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Root;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import static java.lang.System.err;
@@ -34,23 +39,26 @@ import static java.lang.System.err;
 public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageRepository> implements IGarageService {
 
     private final IGarageRepository garageRepository;
+    private final IMasterRepository masterRepository;
     private final IOrderRepository orderRepository;
     private final IOrderGarageRepository orderGarageRepository;
 
     @Autowired
-    public GarageServiceImpl(IGarageRepository garageRepository, IOrderRepository orderRepository,
+    public GarageServiceImpl(IGarageRepository garageRepository, IMasterRepository masterRepository, IOrderRepository orderRepository,
                              IOrderGarageRepository orderGarageRepository) {
         this.garageRepository = garageRepository;
+        this.masterRepository = masterRepository;
         this.orderRepository = orderRepository;
         this.orderGarageRepository = orderGarageRepository;
     }
 
     @PostConstruct
     public void init() {
+        this.clazz = Garage.class;
         this.defaultRepository = garageRepository;
     }
 
-    public Garage addPlace(Garage garage) throws Exception {
+    public Garage addPlace(Garage garage) {
         try {
             PropertyUtil.getPropertyAddAndDeleteFreePlaces();
         } catch (Exception e) {
@@ -65,7 +73,7 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garage;
     }
 
-    public Garage addPlace(Garage garage, int number) throws Exception {
+    public Garage addPlace(Garage garage, int number) {
         try {
             PropertyUtil.getPropertyAddAndDeleteFreePlaces();
         } catch (Exception e) {
@@ -82,10 +90,10 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garage;
     }
 
-    public Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception {
+    public Garage addPlaceInGarageByIdAndUpdate(Long garageId) {
         Garage garage = getById(garageId);
         garage = addPlace(garage);
-        update(garage);
+        garageRepository.update(garage);
 
         return garage;
     }
@@ -126,20 +134,28 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
             return null;
         }
         garage = deleteLastPlace(garage);
-        update(garage);
+        garageRepository.update(garage);
 
         return garage;
     }
 
     /**
+     *
      * @return
-     * list with info where: index 0 - id garage, index 1 - index of taken place;
+     * Object of class TakenPlaceDto if place has been successfully taken.
+     * Null if current garage is full.
      */
-    private List<Long> takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(Long orderId, Garage garage) {
+    private TakenPlaceDto takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(Long orderId, Garage garage) {
         List<Order> places = garage.getPlaces();
 
         int indexOfFreePlace = places.indexOf(null);
+        if (indexOfFreePlace == -1) {
+            log.error("All place in garage with id {} are taken", garage.getId());
+            return null;
+        }
+
         Order orderById = orderRepository.findById(orderId);
+        EntityHelper.checkEntity(orderById, Order.class, orderId);
 
         OrderGarage orderGarage = new OrderGarage();
         orderGarage.setOrder(orderById);
@@ -151,66 +167,66 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         } catch (Exception e) {
             log.error(e.toString());
 
-            return Collections.emptyList();
+            return null;
         }
 
-        List<Long> garagesIdAndNumberOfTakenPlace = new ArrayList<>(2);
-        garagesIdAndNumberOfTakenPlace.add(garage.getId());
-        garagesIdAndNumberOfTakenPlace.add(Integer.toUnsignedLong(indexOfFreePlace));
+        TakenPlaceDto takenPlaceDto = new TakenPlaceDto(garage.getId(), indexOfFreePlace);
 
         log.info("Place in garage with id {} successful taken on index {}",
-                garagesIdAndNumberOfTakenPlace.get(0), garagesIdAndNumberOfTakenPlace.get(1));
+                takenPlaceDto.getGarageId(), takenPlaceDto.getPlaceNumber());
 
-        return garagesIdAndNumberOfTakenPlace;
+        return takenPlaceDto;
     }
 
     /**
      * Take first free place in all garages.
      *
-     * @return emptyList - all garages is full;
-     * list with info where: index 0 - id garage, index 1 - index of taken place;
+     * @return
+     * Object of class TakenPlaceDto if place has been successfully taken.
+     * Null if all garages is full.
      */
-    public List<Long> takePlace(Long orderId) {
-        for (Garage garage : this.garageRepository.findAll()) {
+    public TakenPlaceDto takePlace(Long orderId) {
+        for (Garage garage : getAll()) {
             if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
                 return takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(orderId, garage);
             }
         }
 
         log.error("All garages is full");
-        return Collections.emptyList();
+        return null;
     }
 
     /**
      * Take first free place in garage by id.
      *
-     * @return emptyList - all places in garage is taken;
-     * list with info where: index 0 - id garage, index 1 - index of taken place;
+     * @return
+     * Object of class TakenPlaceDto if place has been successfully taken.
+     * Null if current garage is full.
      */
-    public List<Long> takePlaceByGarageId(Long garageId, Long orderId) {
-        Garage garage = this.garageRepository.findById(garageId);
+    public TakenPlaceDto takePlaceByGarageId(Long garageId, Long orderId) {
+        Garage garage = getById(garageId);
 
         if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
             return takePlaceAndGetListOfGarageIdAndNumberOfTakenPlace(orderId, garage);
         }
 
         log.error("All places in garage with id {} is taken", garageId);
-        return Collections.emptyList();
+        return null;
     }
 
     /**
      * Take free place by index in garage by id.
      *
-     * @return emptyList - all places in garage is taken or place is taken;
-     * list with info where: index 0 - id garage, index 1 - index of taken place;
+     * @return
+     * Object of class TakenPlaceDto if place has been successfully taken.
+     * Null if all garage is full.
      */
-    public List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId) {
+    public TakenPlaceDto takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId) {
         Garage garage = getById(garageId);
-        List<Order> places = garage.getPlaces();
 
         if (indexOfPlace >= garage.getSize() || indexOfPlace < 0) {
             log.error("Index {} out of range {}", indexOfPlace, garage.getSize() - 1);
-            return Collections.emptyList();
+            return null;
         }
 
         if (garage.getNumberOfTakenPlaces() < garage.getSize()) {
@@ -218,45 +234,29 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
             if (takenOrderId != null) {
                 log.error("Place with index {} in garage with id {} is taken by order with id {}",
                         indexOfPlace, garageId, takenOrderId);
-                return Collections.emptyList();
+                return null;
             }
 
             Order orderById = orderRepository.findById(orderId);
+            EntityHelper.checkEntity(orderById, Order.class, orderId);
 
             OrderGarage orderGarage = new OrderGarage();
             orderGarage.setOrder(orderById);
             orderGarage.setGarage(garage);
             orderGarage.setPlace(indexOfPlace);
 
-            EntityManager entityManager = EntityManagerUtil.getEntityManager();
-            EntityTransaction transaction =  entityManager.getTransaction();
-            try {
-                transaction.begin();
+            orderGarageRepository.create(orderGarage);
 
-                orderGarageRepository.create(orderGarage);
-
-                transaction.commit();
-            } catch (Exception e) {
-                log.error(e.toString());
-                transaction.rollback();
-
-                return Collections.emptyList();
-            } finally {
-                entityManager.close();
-            }
-
-            List<Long> garagesIdAndNumberOfTakenPlace = new ArrayList<>(2);
-            garagesIdAndNumberOfTakenPlace.add(orderId);
-            garagesIdAndNumberOfTakenPlace.add(indexOfPlace.longValue());
+            TakenPlaceDto takenPlaceDto = new TakenPlaceDto(garage.getId(), indexOfPlace);
 
             log.info("Place in garage with id {} successful taken on index {}",
-                    garagesIdAndNumberOfTakenPlace.get(0), garagesIdAndNumberOfTakenPlace.get(1));
+                    takenPlaceDto.getGarageId(), takenPlaceDto.getPlaceNumber());
 
-            return garagesIdAndNumberOfTakenPlace;
+            return takenPlaceDto;
         }
 
         log.error("All places in garage with id {} is taken", garageId);
-        return Collections.emptyList();
+        return null;
     }
 
     public void freePlaceByOrderId(Long orderId) {
@@ -274,10 +274,10 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     private Garage setupPlaces(Garage garage) {
-        EntityManager entityManager = EntityManagerUtil.getEntityManager();
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<OrderGarage> criteriaQuery = criteriaBuilder.createQuery(OrderGarage.class);
         Root<OrderGarage> orderGarageRoot = criteriaQuery.from(OrderGarage.class);
+        orderGarageRoot.fetch("order", JoinType.LEFT).fetch("masters", JoinType.LEFT);
         Join<OrderGarage, Garage> garageJoin = orderGarageRoot.join("garage");
         Join<OrderGarage, Order> orderJoin = orderGarageRoot.join("order");
 
@@ -292,7 +292,9 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         List<OrderGarage> orderGarageList = entityManager.createQuery(criteriaQuery).getResultList();
 
         try {
-            garage = addPlace(garage, garage.getSize());
+            int size = garage.getSize();
+            garage.setPlaces(new ArrayList<>(garage.getSize()));
+            garage = addPlace(garage, size);
         } catch (Exception e) {
             log.error(e.toString());
         }
@@ -308,20 +310,29 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garage;
     }
 
+    public List<Garage> setupPlaces(List<Garage> garages) {
+        for (Garage garage : garages) {
+            garage = setupPlaces(garage);
+        }
+        return garages;
+    }
+
     @Override
     public Garage getById(Long id) {
-        Garage garageById = garageRepository.findById(id);
+        Garage garageById = super.getById(id);
+
         garageById = setupPlaces(garageById);
         return garageById;
     }
 
     @Override
     public List<Garage> getAll() {
-        List<Garage> garages = garageRepository.findAll();
-        for (Garage garage : garages) {
-            garage = setupPlaces(garage);
-        }
-        return garages;
+        return setupPlaces(super.getAll());
+    }
+
+    @Override
+    public List<Garage> getAll(MultiValueMap<String, String> requestParams) {
+        return setupPlaces(super.getAll(requestParams));
     }
 
     public Garage getByOrderId(Long orderId) {
@@ -330,65 +341,71 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         return garageByOrderId;
     }
 
-    public List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken) {
-        List<List<Long>> garagesIdAndNumbersOfFilteredPlaces = new ArrayList<>(size());
-        List<Long> numbersOfFilteredPlaces;
+    public List<GarageWithPlaceNumbersDto> getPlacesFilteredByAvailability(boolean isTaken) {
+        List<GarageWithPlaceNumbersDto> listOfGarageWithPlaceNumbersDto = new ArrayList<>(size());
+        List<Integer> numbersOfFilteredPlaces;
 
         for (Garage garage : getAll()) {
             numbersOfFilteredPlaces = new ArrayList<>(garage.getSize());
 
             for (int i = 0; i < garage.getSize(); i++) {
                 if ((garage.getPlaces().get(i) != null) == isTaken) {
-                    numbersOfFilteredPlaces.add(Integer.toUnsignedLong(i));
+                    numbersOfFilteredPlaces.add(i);
                 }
             }
 
             if (!numbersOfFilteredPlaces.isEmpty()) {
-                List<Long> garageIdWithNumbersOfFilteredPlaces = new ArrayList<>(numbersOfFilteredPlaces.size());
-
-                garageIdWithNumbersOfFilteredPlaces.add(garage.getId());
-                garageIdWithNumbersOfFilteredPlaces.addAll(numbersOfFilteredPlaces);
-
-                garagesIdAndNumbersOfFilteredPlaces.add(garageIdWithNumbersOfFilteredPlaces);
+                listOfGarageWithPlaceNumbersDto.add(
+                        new GarageWithPlaceNumbersDto(garage.getId(), numbersOfFilteredPlaces)
+                );
             }
         }
 
-        return garagesIdAndNumbersOfFilteredPlaces;
+        return listOfGarageWithPlaceNumbersDto;
     }
 
     @Override
     public List<Garage> getSorted(List<Garage> garages, String sortType) {
-        return garageRepository.findAll();
+        return getAll();
     }
 
-    public void exportGarageToJsonFile(Long garageId, String fileName) throws IOException {
-        Garage garageById = getById(garageId);
-        JsonUtil.exportModelToJsonFile(garageById, fileName);
-        log.info("Garage with id {} successful exported", garageId);
+    public Integer getNumberOfFreePlacesByDate(LocalDate date) {
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Master> criteriaQuery = criteriaBuilder.createQuery(Master.class);
+        Root<OrderMaster> orderMasterRoot = criteriaQuery.from(OrderMaster.class);
+        Join<OrderMaster, Order> orderJoin = orderMasterRoot.join("order");
+        Join<OrderMaster, Master> masterJoin = orderMasterRoot.join("master");
+
+        LocalDateTime from = LocalDateTime.of(date, LocalTime.of(0, 0, 0, 0));
+        LocalDateTime to = from.plusDays(1);
+
+        criteriaQuery.select(masterJoin)
+                .where(criteriaBuilder.or(
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.POSTPONED),
+                                criteriaBuilder.equal(orderJoin.get("status"), OrderStatusEnum.IN_PROCESS)
+                        ),
+                        criteriaBuilder.between(orderJoin.get("timeOfCompletion"), from, to)
+                )
+                .groupBy(masterJoin.get("id"));
+
+        List<Master> mastersOnAllActiveOrdersByDate = entityManager.createQuery(criteriaQuery).getResultList();
+
+
+        int numberOfFreePlaces = getPlacesFilteredByAvailability(false)
+                .stream().mapToInt(g -> g.getPlaceNumbers().size()).sum();
+
+        int numberOfFreeMasters = masterRepository.findAll().size() - mastersOnAllActiveOrdersByDate.size();
+
+        return Math.min(numberOfFreePlaces, numberOfFreeMasters);
     }
 
-    public void importGarageFromJsonFile(String path) throws IOException {
-        Garage garageJson = JsonUtil.importModelFromJsonFile(new Garage(), path);
-
-        if (garageRepository.isExist(garageJson)) {
-            update(garageJson);
-        } else {
-            add(garageJson);
+    public LocalDate getNearestDate() {
+        LocalDate tmpDate = LocalDate.now();
+        while (getNumberOfFreePlacesByDate(tmpDate) == 0) {
+            tmpDate.plusDays(1);
         }
-        log.info("Garage successful imported");
-    }
 
-    public void exportAllGaragesToJsonFile() throws IOException {
-        JsonUtil.exportModelListToJsonFile(garageRepository.findAll(),
-                JsonUtil.JSON_CONFIGURATION_PATH + "garageList");
-        log.info("All garages successful exported");
-    }
-
-    public void importAllGaragesFromJsonFile() throws IOException {
-        List<Garage> garageList = JsonUtil.importModelListFromJsonFile(new Garage(),
-                JsonUtil.JSON_CONFIGURATION_PATH + "garageList.json");
-        garageRepository.setRepository(garageList);
-        log.info("All garages successful imported");
+        return tmpDate;
     }
 
 }

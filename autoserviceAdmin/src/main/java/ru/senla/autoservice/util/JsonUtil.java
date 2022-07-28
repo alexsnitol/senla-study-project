@@ -19,14 +19,14 @@ public class JsonUtil {
 
     public static final String ROOT_PATH = Paths.get("").toAbsolutePath().toString() +
             "\\autoserviceAdmin\\src\\main\\java\\ru\\senla\\autoservice";
-    public static final String JSON_CONFIGURATION_PATH = ROOT_PATH + "\\configuration\\json\\";
+    public static final String JSON_CONFIGURATION_PATH = ROOT_PATH + "\\config\\json\\";
 
 
-    public <T> T importModelFromJsonFile(T model, String path) throws IOException {
+    public <T> T importModelFromJsonFile(Class<T> modelClass, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        JavaType javaType = objectMapper.getTypeFactory().constructType(model.getClass());
+        JavaType javaType = objectMapper.getTypeFactory().constructType(modelClass);
 
         try {
             return objectMapper.readValue(new File(path), javaType);
@@ -47,11 +47,11 @@ public class JsonUtil {
         }
     }
 
-    public <T> List<T> importModelListFromJsonFile(T model, String path) throws IOException {
+    public <T> List<T> importModelListFromJsonFile(Class<T> modelClass, String path) throws IOException {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
 
-        CollectionType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, model.getClass());
+        CollectionType javaType = objectMapper.getTypeFactory().constructCollectionType(List.class, modelClass);
 
         try {
             return objectMapper.readValue(new File(path), javaType);

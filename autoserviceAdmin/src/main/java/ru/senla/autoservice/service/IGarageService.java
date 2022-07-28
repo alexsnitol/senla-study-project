@@ -1,38 +1,32 @@
 package ru.senla.autoservice.service;
 
-import ru.senla.autoservice.repository.model.Garage;
+import ru.senla.autoservice.dto.GarageWithPlaceNumbersDto;
+import ru.senla.autoservice.dto.TakenPlaceDto;
+import ru.senla.autoservice.model.Garage;
 
-import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface IGarageService extends IAbstractService<Garage> {
 
-    Garage addPlace(Garage garage) throws Exception;
-    Garage addPlace(Garage garage, int number) throws Exception;
-    Garage addPlaceInGarageByIdAndUpdate(Long garageId) throws Exception;
+    Garage addPlace(Garage garage);
+    Garage addPlace(Garage garage, int number);
+    Garage addPlaceInGarageByIdAndUpdate(Long garageId);
 
     Garage deleteLastPlace(Garage garage);
     Garage deleteLastPlaceInGarageByIdAndUpdate(Long garageId);
 
-    List<Long> takePlace(Long orderId);
+    TakenPlaceDto takePlace(Long orderId);
+    TakenPlaceDto takePlaceByGarageId(Long garageId, Long orderId);
+    TakenPlaceDto takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId);
 
-    List<Long> takePlaceByGarageId(Long garageId, Long orderId);
-
-    List<Long> takePlaceByGarageIdAndPlaceIndex(Long garageId, Integer indexOfPlace, Long orderId);
     Garage getByOrderId(Long orderId);
 
     void freePlaceByOrderId(Long orderId);
 
-    /**
-    * @return list of list where index 0 is garage id and other index is place number
-    **/
-    List<List<Long>> getPlacesFilteredByAvailability(boolean isTaken);
+    List<GarageWithPlaceNumbersDto> getPlacesFilteredByAvailability(boolean isTaken);
 
-    void exportGarageToJsonFile(Long garageId, String fileName) throws IOException;
+    Integer getNumberOfFreePlacesByDate(LocalDate date);
+    LocalDate getNearestDate();
 
-    void importGarageFromJsonFile(String path) throws IOException;
-
-    void exportAllGaragesToJsonFile() throws IOException;
-
-    void importAllGaragesFromJsonFile() throws IOException;
 }

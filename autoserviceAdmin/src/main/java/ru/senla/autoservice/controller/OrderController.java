@@ -2,27 +2,37 @@ package ru.senla.autoservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import ru.senla.autoservice.repository.model.Order;
-import ru.senla.autoservice.repository.model.OrderStatusEnum;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.senla.autoservice.dto.TakenPlaceDto;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
+import ru.senla.autoservice.model.OrderStatusEnum;
 import ru.senla.autoservice.service.IGarageService;
 import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.service.IOrderService;
-import ru.senla.autoservice.util.JsonUtil;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
+@RequestMapping("/orders")
 public class OrderController extends AbstractController<Order, IOrderService> {
 
-    private static OrderController instance;
     private final IOrderService orderService;
     private final IGarageService garageService;
     private final IMasterService masterService;
+
 
     @Autowired
     public OrderController(IOrderService orderService, IGarageService garageService, IMasterService masterService) {
@@ -32,143 +42,107 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     }
 
     @PostConstruct
-    public void setInstance() {
-        instance = this;
-    }
-
-    public static OrderController getInstance() {
-        return instance;
-    }
-
-    @PostConstruct
     public void init() {
         this.defaultService = orderService;
     }
 
-    public List<Long> addOrderAndTakePlace(Order order) {
-        log.info("Adding new order with id {}", order.getId());
-        return orderService.addOrderAndTakePlace(order);
+
+    @GetMapping
+    public List<Order> getAll(@RequestParam(required = false) MultiValueMap<String, String> requestParams) {
+        return orderService.checkRequestParamsAndGetAll(requestParams);
     }
 
-    public void deleteByIdAndFreePlace(Long orderId) {
-        log.info("Deleting order with id {}", orderId);
-        try {
-            orderService.deleteByIdAndFreePlace(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
+    @Override
+    @GetMapping("/{id}")
+    public Order getById(@PathVariable Long id) {
+        return super.getById(id);
     }
 
-    public void deleteById(Long orderId) {
-        log.info("Deleting order with id {}", orderId);
-        try {
-            orderService.deleteById(orderId);
-        } catch (Exception e) {
-            log.error(e.toString());
-            return;
-        }
+    @GetMapping("/{id}/masters")
+    public List<Master> getMastersByOrderId(
+            @PathVariable String id,
+            @RequestParam(required = false) MultiValueMap<String, String> requestParams) {
+        return masterService.getAllByOrderId(id, requestParams);
     }
 
-    public void setTimeOfCompletion(Long orderId, int minutes) {
-        orderService.setTimeOfCompletionInOrderByIdAndUpdate(orderId, minutes);
+    @Override
+    @PutMapping("/add")
+    public Order add(@RequestBody Order newOrder) {
+        return super.add(newOrder);
     }
 
-    public void setStatus(Long orderId, OrderStatusEnum newStatus) {
-        log.info("Setting new status for order with id {}", orderId);
-        orderService.setStatusInOrderByIdAndUpdate(orderId, newStatus);
+    @Override
+    @PutMapping("/{id}/update")
+    public Order update(@PathVariable Long id, @RequestBody Order changedModel) {
+        return super.update(id, changedModel);
     }
 
-    public void assignMasterById(Long orderId, Long masterId) {
-        log.info("Assign master with id {} on order with id {}", masterId, orderId);
-        orderService.assignMasterByIdInOrderByIdAndUpdate(orderId, masterId);
+    @Override
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody Order model) {
+        return super.delete(model);
     }
 
-    public void removeMasterById(Long orderId, Long masterId) {
-        log.info("Remove master with id {} from order with id {}", masterId, orderId);
-        orderService.removeMasterByIdInOrderByIdAndUpdate(orderId, masterId);
+    @Override
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        return super.deleteById(id);
     }
 
-    public void shiftTimeOfCompletion(Long orderId, int shiftMinutes) {
-        log.info("Shifting time of completion of order with id {} on {} minutes", orderId, shiftMinutes);
-        orderService.shiftTimeOfCompletionInOrderById(orderId, shiftMinutes);
+    @DeleteMapping("/{id}/delete-and-free-place")
+    public ResponseEntity<String> deleteByIdAndFreePlace(@PathVariable Long id) {
+        log.info("Deleting order with id {} and freeing up taken place", id);
+        orderService.deleteByIdAndFreePlace(id);
+
+        return ResponseEntity.ok("Order with id " + id + " deleted and place freed");
     }
 
-    public void setPrice(Long orderId, float price) {
-        orderService.setPriceInOrderByIdAndUpdate(orderId, price);
+    @Override
+    @GetMapping("/size")
+    public Integer size() {
+        return super.size();
     }
 
-    public String getInfoOfOrder(Order order) {
-        return orderService.getInfoOfOrder(order);
+    @PostMapping("/add-and-take-place")
+    public TakenPlaceDto addAndTakePlace(@RequestBody Order newOrder) {
+        log.info("Adding new order: {}", newOrder.toString());
+        return orderService.addAndTakePlace(newOrder);
     }
 
-    public List<Order> getAllByTimeOfCompletion(LocalDateTime from, LocalDateTime to) {
-        return orderService.getOrdersByTimeOfCompletion(orderService.getAll(), from, to);
+    @PostMapping("/{id}/set-time-of-completion")
+    public Order setTimeOfCompletion(@PathVariable Long id, @RequestParam int minutes) {
+        log.info("Setting time of completion for order with id {} on {} min.", id, minutes);
+        return orderService.setTimeOfCompletionInOrderByIdAndUpdate(id, minutes);
     }
 
-    public List<Order> getAllByTimeOfCompletion(List<Order> orders, LocalDateTime from, LocalDateTime to) {
-        return orderService.getOrdersByTimeOfCompletion(orders, from, to);
+    @PostMapping("/{id}/set-status")
+    public Order setStatus(@PathVariable Long id, @RequestParam OrderStatusEnum status) {
+        log.info("Setting new status for order with id {}", id);
+        return orderService.setStatusInOrderByIdAndUpdate(id, status);
     }
 
-    public List<Order> getAllByStatus(OrderStatusEnum status) {
-        return orderService.getOrdersByStatus(orderService.getAll(), status);
+    @PostMapping("/{id}/set-price")
+    public Order setPrice(@PathVariable Long id, @RequestParam float price) {
+        log.info("Setting new price for order with id {} on {}", id, price);
+        return orderService.setPriceInOrderByIdAndUpdate(id, price);
     }
 
-    public List<Order> getAllByStatus(List<Order> orders, OrderStatusEnum status) {
-        return orderService.getOrdersByStatus(orders, status);
+    @PostMapping("/{id}/assign-master")
+    public Order assignMasterById(@PathVariable Long id, @RequestParam Long masterId) {
+        log.info("Assign master with id {} on order with id {}", masterId, id);
+        return orderService.assignMasterByIdInOrderByIdAndUpdate(id, masterId);
     }
 
-    public List<Order> getAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId) {
-        return orderService.getAllByStatusAndMasterId(orderStatus, masterId);
+    @PostMapping("/{id}/remove-master")
+    public Order removeMasterById(@PathVariable Long id, @RequestParam Long masterId) {
+        log.info("Remove master with id {} from order with id {}", masterId, id);
+        return orderService.removeMasterByIdInOrderByIdAndUpdate(id, masterId);
     }
 
-    public List<Order> getAllByMasterId(Long masterId) {
-        return orderService.getOrdersByMasterId(orderService.getAll(), masterId);
+    @PostMapping("/{id}/shift-time-of-completion")
+    public Order shiftTimeOfCompletion(@PathVariable Long id, @RequestParam int shiftMinutes) {
+        log.info("Shifting time of completion of order with id {} on {} minutes", id, shiftMinutes);
+        return orderService.shiftTimeOfCompletionInOrderById(id, shiftMinutes);
     }
 
-    public List<Order> getAllByMasterId(List<Order> orders, Long masterId) {
-        return orderService.getOrdersByMasterId(orders, masterId);
-    }
-    public List<Order> getAllByStatusSorted(OrderStatusEnum orderStatus, String sortType) {
-        return orderService.getAllByStatusSorted(orderStatus, sortType);
-    }
-    public List<Order> getAllByStatusesSorted(List<OrderStatusEnum> orderStatuses, String sortType) {
-        return orderService.getAllByStatusesSorted(orderStatuses, sortType);
-    }
-    public List<Order> getAllByTimeOfCompletionSorted(LocalDateTime from, LocalDateTime to, String sortType) {
-        return orderService.getAllByTimeOfCompletionSorted(from, to, sortType);
-    }
-
-    public List<Order> getAllByMasterIdSorted(Long masterId, String sortType) {
-        return orderService.getAllByMasterIdSorted(masterId, sortType);
-    }
-
-    public List<Order> getSorted(String sortType) {
-        return orderService.getSorted(sortType);
-    }
-
-    public List<Order> getSorted(List<Order> listOfOrder, String sortType) {
-        return orderService.getSorted(listOfOrder, sortType);
-    }
-
-    public void exportOrderToJsonFile(Long orderId, String fileName) throws IOException {
-        log.info("Export order with id {} to json file: {}", orderId, fileName);
-        orderService.exportOrderToJsonFile(orderId, fileName);
-    }
-
-    public void importOrderFromJsonFile(String path) throws IOException {
-        log.info("Import order from json file: {}", path);
-        orderService.importOrderFromJsonFile(path);
-    }
-
-    public void exportAllOrdersToJsonFile() throws IOException {
-        log.info("Export all orders to json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
-        orderService.exportAllOrdersToJsonFile();
-    }
-//    @PostConstruct
-
-    public void importAllOrdersFromJsonFile() throws IOException {
-        log.info("Import all orders from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "orderList.json");
-        orderService.importAllOrdersFromJsonFile();
-    }
 }

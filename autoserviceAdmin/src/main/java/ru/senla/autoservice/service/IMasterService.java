@@ -1,20 +1,19 @@
 package ru.senla.autoservice.service;
 
-import ru.senla.autoservice.repository.model.Master;
+import org.springframework.util.MultiValueMap;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface IMasterService extends IAbstractService<Master> {
 
-    List<Master> getMastersByOrderId(Long orderId);
+    List<Order> getOrdersByMasterId(Long id);
+    List<Master> getAllByOrderId(String orderIdStr, MultiValueMap<String, String> requestParams);
 
     String getFullName(Master master);
+
     String getFullNameWithId(Master master);
 
-    void exportMasterToJsonFile(Long masterId, String fileName) throws IOException;
-    void importMasterFromJsonFile(String path) throws IOException;
-    void exportAllMastersToJsonFile() throws IOException;
-    void importAllMastersFromJsonFile() throws IOException;
-
+    List<Master> checkRequestParamsAndGetAll(MultiValueMap<String, String> requestParams);
 }

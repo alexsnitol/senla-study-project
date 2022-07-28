@@ -1,13 +1,14 @@
 package ru.senla.autoservice.util;
 
-import lombok.experimental.UtilityClass;
-import ru.senla.autoservice.controller.GarageController;
-import ru.senla.autoservice.controller.MasterController;
-import ru.senla.autoservice.controller.OrderController;
-import ru.senla.autoservice.repository.model.Garage;
-import ru.senla.autoservice.repository.model.Master;
-import ru.senla.autoservice.repository.model.Order;
-import ru.senla.autoservice.repository.model.OrderStatusEnum;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.senla.autoservice.model.Garage;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
+import ru.senla.autoservice.model.OrderStatusEnum;
+import ru.senla.autoservice.service.IGarageService;
+import ru.senla.autoservice.service.IMasterService;
+import ru.senla.autoservice.service.IOrderService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,26 +16,33 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@UtilityClass
+@Component
 public class AutoserviceUtil {
 
-    public int getNumberOfFreePlacesByDate(LocalDate date) {
-        GarageController garageController = GarageController.getInstance();
-        MasterController masterController = MasterController.getInstance();
-        OrderController orderController = OrderController.getInstance();
+    private static IGarageService garageService;
+    private static IMasterService masterService;
+    private static IOrderService orderService;
 
-        List<Garage> garages = garageController.getAll();
-        List<Master> masters = masterController.getAll();
-        List<Order> orders = orderController.getAll();
+    @Autowired
+    public AutoserviceUtil(IGarageService garageService, IMasterService masterService, IOrderService orderService) {
+        this.garageService = garageService;
+        this.masterService = masterService;
+        this.orderService = orderService;
+    }
+
+    public static Integer getNumberOfFreePlacesByDate(LocalDate date) {
+        List<Garage> garages = garageService.getAll();
+        List<Master> masters = masterService.getAll();
+        List<Order> orders = orderService.getAll();
 
         LocalDateTime from = LocalDateTime.of(date, LocalTime.of(0, 0, 0, 0));
         LocalDateTime to = from.plusDays(1);
 
-        List<Order> ordersOnDate = orderController.getAllByTimeOfCompletion(orders, from, to);
-        List<Order> ordersInProcessOnDate = orderController.getAllByStatus(
+        List<Order> ordersOnDate = orderService.getAllByTimeOfCompletion(orders, from, to);
+        List<Order> ordersInProcessOnDate = orderService.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.IN_PROCESS);
-        List<Order> ordersPostponedOnDate = orderController.getAllByStatus(
+        List<Order> ordersPostponedOnDate = orderService.getAllByStatus(
                 ordersOnDate,
                 OrderStatusEnum.POSTPONED);
 
@@ -60,7 +68,7 @@ public class AutoserviceUtil {
         return Math.min(numberOfFreePlaces, numberOfFreeMasters);
     }
 
-    public LocalDate getNearestDate() {
+    public static LocalDate getNearestDate() {
         LocalDate tmpDate = LocalDate.now();
         while (AutoserviceUtil.getNumberOfFreePlacesByDate(tmpDate) == 0) {
             tmpDate.plusDays(1);

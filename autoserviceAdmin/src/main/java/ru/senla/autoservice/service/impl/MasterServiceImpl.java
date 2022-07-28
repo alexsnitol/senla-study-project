@@ -4,9 +4,11 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.senla.autoservice.repository.IMasterRepository;
-import ru.senla.autoservice.repository.IOrderRepository;
-import ru.senla.autoservice.repository.model.Master;
+import org.springframework.util.MultiValueMap;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
+import ru.senla.autoservice.repo.IMasterRepository;
+import ru.senla.autoservice.repo.IOrderRepository;
 import ru.senla.autoservice.service.IMasterService;
 import ru.senla.autoservice.service.comparator.MapMasterComparator;
 import ru.senla.autoservice.util.JsonUtil;
@@ -24,6 +26,7 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
     private final IMasterRepository masterRepository;
     private final IOrderRepository orderRepository;
 
+
     @Autowired
     public MasterServiceImpl(IMasterRepository masterRepository, IOrderRepository orderRepository) {
         this.masterRepository = masterRepository;
@@ -32,11 +35,25 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
 
     @PostConstruct
     public void init() {
+        this.clazz = Master.class;
         this.defaultRepository = masterRepository;
     }
 
-    public List<Master> getMastersByOrderId(Long orderId) {
-        return orderRepository.findById(orderId).getMasters();
+
+    @Override
+    public List<Order> getOrdersByMasterId(Long id) {
+        Master master = getById(id);
+        return master.getOrders();
+    }
+
+    @Override
+    public List<Master> getAllByOrderId(String orderIdStr, MultiValueMap<String, String> requestParams) {
+        if (requestParams.containsKey("orderId")) {
+            requestParams.set("orderId", orderIdStr);
+        } else {
+            requestParams.add("orderId", orderIdStr);
+        }
+        return getAll(requestParams);
     }
 
     @Override
@@ -57,21 +74,16 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
         return getFullName(master) + " [id: " + master.getId() + "]";
     }
 
+    @Override
+    public List<Master> checkRequestParamsAndGetAll(MultiValueMap<String, String> requestParams) {
+        requestParams.remove("orderId");
+        return getAll(requestParams);
+    }
+
     public void exportMasterToJsonFile(Long masterId, String fileName) throws IOException {
         Master masterById = getById(masterId);
         JsonUtil.exportModelToJsonFile(masterById, fileName);
         log.info("Master with id {} successful exported", masterId);
-    }
-
-    public void importMasterFromJsonFile(String path) throws IOException {
-        Master masterJson = JsonUtil.importModelFromJsonFile(new Master(), path);
-
-        if (masterRepository.isExist(masterJson)) {
-            update(masterJson);
-        } else {
-            add(masterJson);
-        }
-        log.info("Master successful imported");
     }
 
     public void exportAllMastersToJsonFile() throws IOException {
@@ -80,10 +92,4 @@ public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterReposi
         log.info("All masters successful exported");
     }
 
-    public void importAllMastersFromJsonFile() throws IOException {
-        List<Master> masterList = JsonUtil.importModelListFromJsonFile(new Master(),
-                JsonUtil.JSON_CONFIGURATION_PATH + "masterList.json");
-        masterRepository.setRepository(masterList);
-        log.info("All masters successful imported");
-    }
 }
