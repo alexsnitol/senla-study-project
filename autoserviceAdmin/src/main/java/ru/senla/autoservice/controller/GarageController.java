@@ -23,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/garages")
+@RequestMapping("/api/garages")
 public class GarageController extends AbstractController<Garage, IGarageService> {
 
     private final IGarageService garageService;
@@ -80,8 +80,8 @@ public class GarageController extends AbstractController<Garage, IGarageService>
 
     @Override
     @PutMapping("/add")
-    public Garage add(Garage newGarage) {
-        log.info("Adding new garage with id {}", newGarage.getId());
+    public Garage add(@RequestBody Garage newGarage) {
+        log.info("Adding new garage: {}", newGarage);
 
         return super.add(newGarage);
     }

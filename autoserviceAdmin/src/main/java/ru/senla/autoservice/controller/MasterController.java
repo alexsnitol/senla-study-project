@@ -23,7 +23,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/masters")
+@RequestMapping("/api/masters")
 public class MasterController extends AbstractController<Master, IMasterService> {
 
     private final IMasterService masterService;
@@ -89,7 +89,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
     @Override
     @PutMapping(value = "/add")
     public Master add(@RequestBody Master newMaster) {
-        log.info("Adding new master with id {}", newMaster.getId());
+        log.info("Adding new master: {}", newMaster);
 
         return super.add(newMaster);
     }

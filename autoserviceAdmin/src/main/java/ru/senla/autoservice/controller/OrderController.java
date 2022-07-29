@@ -26,7 +26,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/orders")
+@RequestMapping("/api/orders")
 public class OrderController extends AbstractController<Order, IOrderService> {
 
     private final IOrderService orderService;
