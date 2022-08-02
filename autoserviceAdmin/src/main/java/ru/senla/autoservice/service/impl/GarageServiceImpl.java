@@ -1,7 +1,7 @@
 package ru.senla.autoservice.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import ru.senla.autoservice.dto.GarageWithPlaceNumbersDto;
@@ -18,7 +18,6 @@ import ru.senla.autoservice.repo.IOrderGarageRepository;
 import ru.senla.autoservice.repo.IOrderRepository;
 import ru.senla.autoservice.service.IGarageService;
 import ru.senla.autoservice.service.helper.EntityHelper;
-import ru.senla.autoservice.util.PropertyUtil;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -32,9 +31,8 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static java.lang.System.err;
-
 @Slf4j
+@AllArgsConstructor
 @Service
 public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageRepository> implements IGarageService {
 
@@ -43,14 +41,6 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     private final IOrderRepository orderRepository;
     private final IOrderGarageRepository orderGarageRepository;
 
-    @Autowired
-    public GarageServiceImpl(IGarageRepository garageRepository, IMasterRepository masterRepository, IOrderRepository orderRepository,
-                             IOrderGarageRepository orderGarageRepository) {
-        this.garageRepository = garageRepository;
-        this.masterRepository = masterRepository;
-        this.orderRepository = orderRepository;
-        this.orderGarageRepository = orderGarageRepository;
-    }
 
     @PostConstruct
     public void init() {
@@ -58,13 +48,8 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
         this.defaultRepository = garageRepository;
     }
 
-    public Garage addPlace(Garage garage) {
-        try {
-            PropertyUtil.getPropertyAddAndDeleteFreePlaces();
-        } catch (Exception e) {
-            err.println(e.getMessage());
-        }
 
+    public Garage addPlace(Garage garage) {
         List<Order> placesOfGarage = garage.getPlaces();
 
         placesOfGarage.add(null);
@@ -74,12 +59,6 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
     }
 
     public Garage addPlace(Garage garage, int number) {
-        try {
-            PropertyUtil.getPropertyAddAndDeleteFreePlaces();
-        } catch (Exception e) {
-            err.println(e.getMessage());
-        }
-
         List<Order> placesOfGarage = garage.getPlaces();
 
         for (int i = 0; i < number; i++) {
@@ -100,13 +79,6 @@ public class GarageServiceImpl extends AbstractServiceImpl<Garage, IGarageReposi
 
 
     public Garage deleteLastPlace(Garage garage) {
-        try {
-            PropertyUtil.getPropertyAddAndDeleteFreePlaces();
-        } catch (Exception e) {
-            log.error(e.toString());
-            return garage;
-        }
-
         List<Order> placesOfGarage = garage.getPlaces();
 
         if (placesOfGarage.isEmpty()) {

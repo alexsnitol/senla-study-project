@@ -1,9 +1,9 @@
 package ru.senla.autoservice.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import ru.senla.autoservice.dto.TakenPlaceDto;
@@ -17,7 +17,6 @@ import ru.senla.autoservice.service.IOrderService;
 import ru.senla.autoservice.service.comparator.MapOrderComparator;
 import ru.senla.autoservice.service.helper.EntityHelper;
 import ru.senla.autoservice.util.JsonUtil;
-import ru.senla.autoservice.util.PropertyUtil;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
@@ -27,10 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.lang.System.err;
-
 @Setter
 @Slf4j
+@AllArgsConstructor
 @Service
 public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepository> implements IOrderService {
 
@@ -39,15 +37,6 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     private final IGarageService garageService;
 
-
-    @Autowired
-    public OrderServiceImpl(IOrderRepository orderRepository,
-                            IMasterRepository masterRepository,
-                            IGarageService garageService) {
-        this.orderRepository = orderRepository;
-        this.masterRepository = masterRepository;
-        this.garageService = garageService;
-    }
 
     @PostConstruct
     public void init() {
@@ -257,13 +246,6 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Transactional
     public Order shiftTimeOfCompletion(@NonNull Order order, int shiftMinutes) {
-        try {
-            PropertyUtil.getPropertyShiftTimeOfCompletion();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return null;
-        }
-
         Long orderId = order.getId();
 
         if (order.getStatus() != OrderStatusEnum.IN_PROCESS) {
@@ -325,13 +307,6 @@ public class OrderServiceImpl extends AbstractServiceImpl<Order, IOrderRepositor
 
     @Override
     public void deleteById(Long id) {
-        try {
-            PropertyUtil.getPropertyDeleteOrder();
-        } catch (Exception e) {
-            err.println(e.getMessage());
-            return;
-        }
-
         Order order = getById(id);
 
         order = reducedNumberOfActiveOrdersOfMastersByOrder(order);

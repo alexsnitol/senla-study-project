@@ -1,8 +1,7 @@
 package ru.senla.autoservice.model;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,8 +15,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "order_master")

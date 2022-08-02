@@ -1,5 +1,6 @@
 package ru.senla.autoservice.repo.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class OrderGarageRepositoryImpl extends AbstractRepositoryImpl<OrderGarage> implements IOrderGarageRepository {
 

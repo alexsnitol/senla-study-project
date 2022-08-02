@@ -30,6 +30,7 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
         setClazz(Order.class);
     }
 
+
     @Override
     public Order findById(Long id) {
         CriteriaQuery<Order> criteriaQuery = criteriaBuilder.createQuery(clazz);

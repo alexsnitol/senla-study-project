@@ -5,6 +5,11 @@ CREATE SEQUENCE masters_id_seq START WITH 100 INCREMENT BY 1;
 CREATE SEQUENCE garages_id_seq START WITH 100 INCREMENT BY 1;
 CREATE SEQUENCE order_master_id_seq START WITH 100 INCREMENT BY 1;
 CREATE SEQUENCE order_garage_id_seq START WITH 100 INCREMENT BY 1;
+CREATE SEQUENCE users_id_seq START WITH 100 INCREMENT BY 1;
+CREATE SEQUENCE roles_id_seq START WITH 100 INCREMENT BY 1;
+CREATE SEQUENCE authorities_id_seq START WITH 100 INCREMENT BY 1;
+CREATE SEQUENCE user_role_id_seq START WITH 100 INCREMENT BY 1;
+CREATE SEQUENCE role_authority_id_seq START WITH 100 INCREMENT BY 1;
 
 
 CREATE TABLE orders (
@@ -47,12 +52,52 @@ CREATE TABLE order_garage (
   FOREIGN KEY (garage_id) REFERENCES garages (id)
   );
 
+CREATE TABLE users (
+  id        INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('users_id_seq'),
+  username  VARCHAR(255) NOT NULL UNIQUE,
+  password  VARCHAR(255) NOT NULL,
+  enabled   BOOLEAN NOT NULL DEFAULT TRUE
+  );
+
+CREATE TABLE roles (
+  id        INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('roles_id_seq'),
+  name      VARCHAR(255) NOT NULL
+  );
+
+CREATE TABLE authorities (
+  id        INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('authorities_id_seq'),
+  name      VARCHAR(255) NOT NULL
+  );
+
+CREATE TABLE user_role (
+  id        INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('user_role_id_seq'),
+  user_id   INT8 NOT NULL,
+  role_id   INT8 NOT NULL,
+
+  FOREIGN KEY (user_id) REFERENCES users (id),
+  FOREIGN KEY (role_id) REFERENCES roles (id)
+  );
+
+CREATE TABLE role_authority (
+  id        INTEGER PRIMARY KEY NOT NULL DEFAULT nextval('role_authority_id_seq'),
+  role_id   INT8 NOT NULL,
+  authority_id INT8 NOT NULL,
+
+  FOREIGN KEY (role_id) REFERENCES roles (id),
+  FOREIGN KEY (authority_id) REFERENCES authorities (id)
+  );
+
 
 ALTER SEQUENCE orders_id_seq OWNED BY orders.id;
 ALTER SEQUENCE masters_id_seq OWNED BY masters.id;
 ALTER SEQUENCE garages_id_seq OWNED BY garages.id;
 ALTER SEQUENCE order_master_id_seq OWNED BY order_master.id;
 ALTER SEQUENCE order_garage_id_seq OWNED BY order_garage.id;
+ALTER SEQUENCE users_id_seq OWNED BY users.id;
+ALTER SEQUENCE roles_id_seq OWNED BY roles.id;
+ALTER SEQUENCE authorities_id_seq OWNED BY authorities.id;
+ALTER SEQUENCE user_role_id_seq OWNED BY user_role.id;
+ALTER SEQUENCE role_authority_id_seq OWNED BY role_authority.id;
 
 
 -- Insert data
@@ -100,4 +145,34 @@ VALUES (100, 100),
        (102, 104),
        (103, 105),
        (104, 106)
+;
+
+INSERT INTO users(username, password)
+VALUES ('admin', '$2a$12$6bofBjw./veoSOd1YS8yN.ll5Xk4FOQL6OIOjoxmRRZPxvmJb4v/.'),
+       ('user',  '$2a$12$nonCtCbG.eLIYzPaxtAZD.Yu1CRNOWPq5kfhSyFhKNLy5couQw6sa'),
+       ('manager', '$2a$12$.vikqzGqyaPZqL7JQlOqMu1V4W8YZU/3.wsgx2R6JsltOTAY9yuXa')
+;
+
+INSERT INTO roles(name)
+VALUES ('ROLE_ADMIN'),
+       ('ROLE_USER'),
+       ('ROLE_MANAGER')
+;
+
+INSERT INTO user_role(user_id, role_id)
+VALUES (100, 100),
+       (101, 101),
+       (102, 102)
+;
+
+INSERT INTO authorities(name)
+VALUES ('ADD_AND_DELETE_FREE_PLACES'),
+       ('SHIFT_TIME_OF_COMPLETION'),
+       ('DELETE_ORDER')
+;
+
+INSERT INTO role_authority(role_id, authority_id)
+VALUES (102, 100),
+       (102, 101),
+       (102, 102)
 ;

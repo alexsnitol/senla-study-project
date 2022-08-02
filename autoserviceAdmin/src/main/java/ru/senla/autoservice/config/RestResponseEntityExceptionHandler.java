@@ -3,6 +3,7 @@ package ru.senla.autoservice.config;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -20,6 +21,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return handleExceptionInternal(ex, exceptionDto, new HttpHeaders(), httpStatus, request);
     }
 
+
     @ExceptionHandler(value = {EntityNotFoundException.class})
     protected ResponseEntity<Object> handleEntityNotFound(Exception ex, WebRequest request) {
         return handle(ex, request, HttpStatus.NOT_FOUND);
@@ -27,6 +29,11 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
     @ExceptionHandler(value = {PropertyAccessDeniedException.class})
     protected ResponseEntity<Object> handlePropertyAccessDenied(Exception ex, WebRequest request) {
+        return handle(ex, request, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = {AccessDeniedException.class})
+    protected ResponseEntity<Object> handleAccessDenied(Exception ex, WebRequest request) {
         return handle(ex, request, HttpStatus.FORBIDDEN);
     }
 

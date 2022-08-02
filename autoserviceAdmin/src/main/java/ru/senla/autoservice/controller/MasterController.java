@@ -1,7 +1,7 @@
 package ru.senla.autoservice.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/masters")
 public class MasterController extends AbstractController<Master, IMasterService> {
@@ -29,12 +30,6 @@ public class MasterController extends AbstractController<Master, IMasterService>
     private final IMasterService masterService;
     private final IOrderService orderService;
 
-
-    @Autowired
-    public MasterController(IMasterService masterService, IOrderService orderService) {
-        this.masterService = masterService;
-        this.orderService = orderService;
-    }
 
     @PostConstruct
     public void init() {

@@ -1,7 +1,6 @@
 package ru.senla.autoservice.repo;
 
 import org.springframework.util.MultiValueMap;
-import ru.senla.autoservice.model.AbstractModel;
 
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Join;
@@ -11,8 +10,11 @@ import javax.persistence.criteria.Root;
 import java.util.List;
 import java.util.Map;
 
-public interface IAbstractRepository<M extends AbstractModel> {
+public interface IAbstractRepository<M> {
 
+    M findOne(MultiValueMap<String, String> requestParams);
+    M findOneFiltered(CriteriaQuery<M> cr, Root<M> root, List<Predicate> predicates);
+    <T> M findOneFiltered(CriteriaQuery<M> cr, Join<T, M> join, List<Predicate> predicates);
     List<M> findAll();
     List<M> findAll(MultiValueMap<String, String> requestParams);
     List<M> findAllFiltered(CriteriaQuery<M> cr, Root<M> root, List<Predicate> predicates);
