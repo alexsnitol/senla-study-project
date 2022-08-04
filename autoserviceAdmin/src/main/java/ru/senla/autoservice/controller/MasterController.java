@@ -56,19 +56,19 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     @Override
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public Master update(@PathVariable Long id, @RequestBody Master changedModel) {
         return super.update(id, changedModel);
     }
 
     @Override
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> delete(@RequestBody Master model) {
         return super.delete(model);
     }
 
     @Override
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         log.info("Deleting master with id {}", id);
 
@@ -82,7 +82,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     @Override
-    @PutMapping(value = "/add")
+    @PostMapping
     public Master add(@RequestBody Master newMaster) {
         log.info("Adding new master: {}", newMaster);
 

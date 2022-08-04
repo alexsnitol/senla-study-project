@@ -60,25 +60,25 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     }
 
     @Override
-    @PutMapping("/add")
+    @PostMapping
     public Order add(@RequestBody Order newOrder) {
         return super.add(newOrder);
     }
 
     @Override
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public Order update(@PathVariable Long id, @RequestBody Order changedModel) {
         return super.update(id, changedModel);
     }
 
     @Override
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> delete(@RequestBody Order model) {
         return super.delete(model);
     }
 
     @Override
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         return super.deleteById(id);
     }

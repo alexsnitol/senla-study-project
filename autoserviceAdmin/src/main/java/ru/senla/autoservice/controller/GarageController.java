@@ -49,7 +49,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public Garage update(@PathVariable Long id, Garage changedModel) {
         return super.update(id, changedModel);
     }
@@ -61,13 +61,13 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> delete(Garage model) {
         return super.delete(model);
     }
 
     @Override
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Long garageId) {
         log.info("Deleting garage with id {}", garageId);
 
@@ -75,7 +75,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @PutMapping("/add")
+    @PostMapping
     public Garage add(@RequestBody Garage newGarage) {
         log.info("Adding new garage: {}", newGarage);
 
