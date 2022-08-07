@@ -1,6 +1,6 @@
 package ru.senla.autoservice.service.comparator.ordercomparator;
 
-import ru.senla.autoservice.repository.model.Order;
+import ru.senla.autoservice.model.Order;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;

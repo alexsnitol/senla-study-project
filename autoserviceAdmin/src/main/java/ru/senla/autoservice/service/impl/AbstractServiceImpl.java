@@ -1,14 +1,20 @@
 package ru.senla.autoservice.service.impl;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import ru.senla.autoservice.repository.IAbstractRepository;
-import ru.senla.autoservice.repository.model.AbstractModel;
+import org.postgresql.shaded.com.ongres.scram.common.util.Preconditions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.MultiValueMap;
+import ru.senla.autoservice.model.AbstractModel;
+import ru.senla.autoservice.repo.IAbstractRepository;
 import ru.senla.autoservice.service.IAbstractService;
-import ru.senla.autoservice.util.EntityManagerUtil;
+import ru.senla.autoservice.service.helper.EntityHelper;
+import ru.senla.autoservice.util.JsonUtil;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.List;
 
 @Slf4j
@@ -17,98 +23,62 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
         implements IAbstractService<M> {
 
     protected R defaultRepository = null;
+    @PersistenceContext
+    protected EntityManager entityManager;
+    protected Class<M> clazz;
 
+
+    @Autowired
     protected AbstractServiceImpl(R defaultRepository) {
         this.defaultRepository = defaultRepository;
     }
 
+    public void setClazz(final Class<M> clazzToSet) {
+        clazz = Preconditions.checkNotNull(clazzToSet, null);
+    }
+
     public M getById(Long id) {
-        return this.defaultRepository.findById(id);
+        M model = this.defaultRepository.findById(id);
+        EntityHelper.checkEntity(model, clazz, id);
+        return model;
     }
 
     public List<M> getAll() {
         return defaultRepository.findAll();
     }
 
-    public void delete(M model) {
-        EntityManager entityManager = EntityManagerUtil.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            this.defaultRepository.delete(model);
-
-            transaction.commit();
-
-            log.info("Model {} with id {} successful deleted", model.getClass(), model.getId());
-        } catch (Exception e) {
-            log.error(e.toString());
-            transaction.rollback();
-        } finally {
-            entityManager.close();
-        }
+    public List<M> getAll(MultiValueMap<String, String> requestParams) {
+        return defaultRepository.findAll(requestParams);
     }
 
+    @Transactional
+    public void delete(M model) {
+        this.defaultRepository.delete(model);
+        log.info("Model {} with id {} successful deleted", model.getClass(), model.getId());
+    }
+
+    @Transactional
     public void deleteById(Long id) {
         M model = this.defaultRepository.findById(id);
+        EntityHelper.checkEntity(model, clazz, id);
 
-        EntityManager entityManager = EntityManagerUtil.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            this.defaultRepository.deleteById(id);
-
-            transaction.commit();
-
-            log.info("Model {} with id {} successful deleted", model.getClass(), id);
-        } catch (Exception e) {
-            log.error(e.toString());
-            transaction.rollback();
-        } finally {
-            entityManager.close();
-        }
+        this.defaultRepository.delete(model);
+        log.info("Model with id {} successful deleted", id);
     }
 
+    @Transactional
     public M add(M newModel) {
-        EntityManager entityManager = EntityManagerUtil.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            this.defaultRepository.create(newModel);
-
-            transaction.commit();
-
-            log.info("Model {} with id {} successful added", newModel.getClass(), newModel.getId());
-        } catch (Exception e) {
-            log.error(e.toString());
-            transaction.rollback();
-        } finally {
-            entityManager.close();
-        }
-
+        this.defaultRepository.create(newModel);
+        log.info("Model {} with id {} successful added", newModel.getClass(), newModel.getId());
         return newModel;
     }
 
-    public void update(M changedModel) {
-        EntityManager entityManager = EntityManagerUtil.getEntityManager();
-        EntityTransaction transaction = entityManager.getTransaction();
-        try {
-            transaction.begin();
-
-            defaultRepository.update(changedModel);
-
-            transaction.commit();
-
-            log.info("Model {} with id {} successful updated on model with id {}",
-                    changedModel.getClass(), changedModel.getId(), changedModel.getId());
-        } catch (Exception e) {
-            log.error(e.toString());
-            transaction.rollback();
-        } finally {
-            entityManager.close();
-        }
+    @Transactional
+    public M update(M changedModel) {
+        defaultRepository.update(changedModel);
+        log.info("Model {} with id {} successful updated on model with id {}",
+                changedModel.getClass(), changedModel.getId(), changedModel.getId());
+        return changedModel;
     }
 
     public Integer size() {
@@ -116,7 +86,49 @@ public abstract class AbstractServiceImpl<M extends AbstractModel, R extends IAb
     }
 
     public List<M> getSorted(String sortType) {
-        return defaultRepository.findAllSorted(sortType);
+        return defaultRepository.findAllSortedByType(sortType);
+    }
+
+    @Transactional
+    @Override
+    public void importModelFromJsonFile(String path) throws IOException {
+        M modelJson = JsonUtil.importModelFromJsonFile(clazz, path);
+
+        if (defaultRepository.isExist(modelJson)) {
+            update(modelJson);
+        } else {
+            add(modelJson);
+        }
+
+        log.info("{} successful imported", clazz.getSimpleName());
+    }
+
+    @Transactional
+    @Override
+    public void importAllFromJsonFile(String path) throws IOException {
+        List<M> modelList = JsonUtil.importModelListFromJsonFile(clazz, path);
+
+        modelList.forEach(garage -> {
+            if (defaultRepository.isExist(garage)) {
+                update(garage);
+            } else {
+                add(garage);
+            }
+        });
+
+        log.info("All garages successful imported");
+    }
+
+    @Override
+    public void exportModelToJsonFile(Long id, String fileName) throws IOException {
+        JsonUtil.exportModelToJsonFile(getById(id), fileName);
+        log.info("{} with id {} successful exported", clazz.getSimpleName(), id);
+    }
+
+    @Override
+    public void exportAllToJsonFile(String path) throws IOException {
+        JsonUtil.exportModelListToJsonFile(defaultRepository.findAll(), path);
+        log.info("List of {} successful exported", clazz.getSimpleName());
     }
 
 }

@@ -1,6 +1,6 @@
 package ru.senla.autoservice.service.comparator;
 
-import ru.senla.autoservice.repository.model.Order;
+import ru.senla.autoservice.model.Order;
 import ru.senla.autoservice.service.comparator.ordercomparator.OrderPriceComparator;
 import ru.senla.autoservice.service.comparator.ordercomparator.OrderTimeOfBeginComparator;
 import ru.senla.autoservice.service.comparator.ordercomparator.OrderTimeOfCompletionComparator;

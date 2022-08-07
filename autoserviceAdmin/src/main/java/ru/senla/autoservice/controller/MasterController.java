@@ -2,34 +2,38 @@ package ru.senla.autoservice.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import ru.senla.autoservice.repository.model.Master;
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import ru.senla.autoservice.model.Master;
+import ru.senla.autoservice.model.Order;
 import ru.senla.autoservice.service.IMasterService;
-import ru.senla.autoservice.util.JsonUtil;
+import ru.senla.autoservice.service.IOrderService;
 
 import javax.annotation.PostConstruct;
-import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-@Controller
+@RestController
+@RequestMapping("/api/masters")
 public class MasterController extends AbstractController<Master, IMasterService> {
 
-    private static MasterController instance;
     private final IMasterService masterService;
+    private final IOrderService orderService;
+
 
     @Autowired
-    public MasterController(IMasterService masterService) {
+    public MasterController(IMasterService masterService, IOrderService orderService) {
         this.masterService = masterService;
-    }
-
-    @PostConstruct
-    public void setInstance() {
-        instance = this;
-    }
-
-    public static MasterController getInstance() {
-        return instance;
+        this.orderService = orderService;
     }
 
     @PostConstruct
@@ -37,55 +41,67 @@ public class MasterController extends AbstractController<Master, IMasterService>
         this.defaultService = masterService;
     }
 
-    public void deleteById(Long masterId) {
-        log.info("Deleting master with id {}", masterId);
-        masterService.deleteById(masterId);
+
+    @GetMapping
+    public List<Master> getAll(@RequestParam(required = false) MultiValueMap<String, String> requestParams) {
+        return masterService.checkRequestParamsAndGetAll(requestParams);
     }
 
-    public void add(Master newMaster) {
-        log.info("Adding new master with id {}", newMaster.getId());
-        masterService.add(newMaster);
+    @Override
+    @GetMapping("/{id}")
+    public Master getById(@PathVariable Long id) {
+        return super.getById(id);
     }
 
-    public List<Master> getMastersByOrder(Long orderId) {
-        return masterService.getMastersByOrderId(orderId);
+    @GetMapping("/{id}/orders")
+    public List<Order> getOrdersMyMasterId(
+            @PathVariable String id,
+            @RequestParam(required = false) MultiValueMap<String, String> requestParams) {
+        return orderService.getAllByMasterId(id, requestParams);
     }
 
-    public String getFullName(Master master) {
+    @Override
+    @PutMapping("/{id}/update")
+    public Master update(@PathVariable Long id, @RequestBody Master changedModel) {
+        return super.update(id, changedModel);
+    }
+
+    @Override
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> delete(@RequestBody Master model) {
+        return super.delete(model);
+    }
+
+    @Override
+    @DeleteMapping("/{id}/delete")
+    public ResponseEntity<String> deleteById(@PathVariable Long id) {
+        log.info("Deleting master with id {}", id);
+
+        return super.deleteById(id);
+    }
+
+    @Override
+    @GetMapping("/size")
+    public Integer size() {
+        return super.size();
+    }
+
+    @Override
+    @PutMapping(value = "/add")
+    public Master add(@RequestBody Master newMaster) {
+        log.info("Adding new master: {}", newMaster);
+
+        return super.add(newMaster);
+    }
+
+    @PostMapping("/get-full-name")
+    public String getFullName(@RequestBody Master master) {
         return masterService.getFullName(master);
     }
 
-    public String getFullNameWithId(Master master) {
+    @PostMapping("/get-full-name-with-id")
+    public String getFullNameWithId(@RequestBody Master master) {
         return masterService.getFullNameWithId(master);
-    }
-
-    public List<Master> getSorted(String sortType) {
-        return masterService.getSorted(sortType);
-    }
-
-    public List<Master> getSorted(List<Master> listOfMaster, String sortType) {
-        return masterService.getSorted(listOfMaster, sortType);
-    }
-
-    public void exportMasterToJsonFile(Long masterId, String fileName) throws IOException {
-        log.info("Export master with id {} to json file: {}", masterId, fileName);
-        masterService.exportMasterToJsonFile(masterId, fileName);
-    }
-
-    public void importMasterFromJsonFile(String path) throws IOException {
-        log.info("Import master from json file: {}", path);
-        masterService.importMasterFromJsonFile(path);
-    }
-
-    public void exportAllMastersToJsonFile() throws IOException {
-        log.info("Export all masters to json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "masterList.json");
-        masterService.exportAllMastersToJsonFile();
-    }
-
-//    @PostConstruct
-    public void importAllMastersFromJsonFile() throws IOException {
-        log.info("Import all masters from json file: {}", JsonUtil.JSON_CONFIGURATION_PATH + "masterList.json");
-        masterService.importAllMastersFromJsonFile();
     }
 
 }

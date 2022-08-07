@@ -1,6 +1,6 @@
 package ru.senla.autoservice.service.comparator.mastercomparator;
 
-import ru.senla.autoservice.repository.model.Master;
+import ru.senla.autoservice.model.Master;
 
 import java.util.Comparator;
 
