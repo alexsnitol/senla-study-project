@@ -90,18 +90,28 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/api/auth/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/api/garages/get-nearest-date").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/garages/get-number-of-free-places-by-date").permitAll()
-                .antMatchers("/api/garages/{id}/add-place").hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
-                .antMatchers("/api/garages/{id}/delete-last-place").hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
+                .antMatchers(HttpMethod.GET, "/api/garages/get-nearest-date")
+                    .permitAll()
+                .antMatchers(HttpMethod.GET, "/api/garages/get-number-of-free-places-by-date")
+                    .permitAll()
+                .antMatchers("/api/garages/{id}/add-place")
+                    .hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
+                .antMatchers("/api/garages/{id}/delete-last-place")
+                    .hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
 
-                .antMatchers(HttpMethod.GET, "/api/masters").hasAnyRole("USER", "ADMIN", "MANAGER")
-                .antMatchers(HttpMethod.GET,"/api/masters/{id}").hasAnyRole("USER", "ADMIN", "MANAGER")
+                .antMatchers(HttpMethod.GET, "/api/masters")
+                    .hasAnyRole("USER", "ADMIN", "MANAGER")
+                .antMatchers(HttpMethod.GET, "/api/masters/{id}")
+                    .hasAnyRole("USER", "ADMIN", "MANAGER")
 
-                .antMatchers(HttpMethod.GET, "/api/orders").hasAnyRole("USER", "ADMIN", "MANAGER")
-                .antMatchers(HttpMethod.GET, "/api/orders/{id}").hasAnyRole("USER", "ADMIN", "MANAGER")
-                .antMatchers("/api/orders/{id}/shift-time-of-completion").hasAnyAuthority("ROLE_ADMIN", "SHIFT_TIME_OF_COMPLETION")
-                .antMatchers(HttpMethod.DELETE, "/api/orders/{id}/delete-and-free-places").hasAnyAuthority("ROLE_ADMIN", "DELETE_ORDER")
+                .antMatchers(HttpMethod.GET, "/api/orders")
+                    .hasAnyRole("USER", "ADMIN", "MANAGER")
+                .antMatchers(HttpMethod.GET, "/api/orders/{id}")
+                    .hasAnyRole("USER", "ADMIN", "MANAGER")
+                .antMatchers("/api/orders/{id}/shift-time-of-completion")
+                    .hasAnyAuthority("ROLE_ADMIN", "SHIFT_TIME_OF_COMPLETION")
+                .antMatchers(HttpMethod.DELETE, "/api/orders/{id}/delete-and-free-places")
+                    .hasAnyAuthority("ROLE_ADMIN", "DELETE_ORDER")
                 
                 
                 .anyRequest().hasAnyRole("ADMIN", "MANAGER");

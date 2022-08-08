@@ -48,6 +48,17 @@ public class GarageRepositoryImpl extends AbstractRepositoryImpl<Garage> impleme
     }
 
     @Override
+    public Integer sumOfSizeOfAllGarages() {
+        CriteriaQuery<Number> criteriaQuery = criteriaBuilder.createQuery(Number.class);
+        Root<Garage> garageRoot = criteriaQuery.from(Garage.class);
+
+        criteriaQuery
+                .select(criteriaBuilder.sum(garageRoot.get("size")));
+
+        return (Integer) entityManager.createQuery(criteriaQuery).getSingleResult();
+    }
+
+    @Override
     public Map<String, List<javax.persistence.criteria.Order>> getSortMap(Root<Garage> root) {
         return Collections.emptyMap();
     }

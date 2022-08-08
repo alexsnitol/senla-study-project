@@ -1,5 +1,6 @@
 package ru.senla.autoservice.service.impl;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,12 +31,12 @@ public class AuthServiceImpl implements IAuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    private void authenticate(String username, String password) {
+    private void authenticate(@NonNull String username, @NonNull String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     @Override
-    public JwtResponseDto createAuthToken(JwtRequestDto authRequest) throws Exception {
+    public JwtResponseDto createAuthToken(@NonNull JwtRequestDto authRequest) throws Exception {
         try {
             authenticate(authRequest.getUsername(), authRequest.getPassword());
         } catch (BadCredentialsException ex) {

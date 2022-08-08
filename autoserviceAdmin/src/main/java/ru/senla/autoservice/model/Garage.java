@@ -56,16 +56,4 @@ public class Garage extends AbstractModel {
         this.size = places.size();
     }
 
-    // TODO
-    public Integer getIndexOfPlaceByOrderId(Long orderId) {
-        for (int i = 0; i < size; i++) {
-            if (places.get(i) != null) {
-                if (places.get(i).getId().equals(orderId)) {
-                    return i;
-                }
-            }
-        }
-
-        return null;
-    }
 }

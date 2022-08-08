@@ -33,6 +33,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     @PostConstruct
     public void init() {
         this.defaultService = garageService;
+        this.clazz = Garage.class;
     }
 
 
@@ -61,12 +62,6 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @DeleteMapping
-    public ResponseEntity<String> delete(Garage model) {
-        return super.delete(model);
-    }
-
-    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Long garageId) {
         log.info("Deleting garage with id {}", garageId);
@@ -82,38 +77,38 @@ public class GarageController extends AbstractController<Garage, IGarageService>
         return super.add(newGarage);
     }
 
-    @PostMapping("/{id}/add-place")
+    @PostMapping("/{id}/places")
     public ResponseEntity<String> addPlace(@PathVariable("id") Long garageId) {
         log.info("Adding new place in garage with id {}", garageId);
         garageService.addPlaceInGarageByIdAndUpdate(garageId);
 
-        return ResponseEntity.ok("Place added");
+        return ResponseEntity.ok("Place added in garage with id " + garageId);
     }
 
-    @DeleteMapping("/{id}/delete-last-place")
+    @DeleteMapping("/{id}/places")
     public ResponseEntity<String> deleteLastPlace(@PathVariable("id") Long garageId) {
         log.info("Deleting last place in garage with id {}", garageId);
         garageService.deleteLastPlaceInGarageByIdAndUpdate(garageId);
 
-        return ResponseEntity.ok("Last place deleted");
+        return ResponseEntity.ok("Last place deleted in garage with id " + garageId);
     }
 
-    @GetMapping("/get-free-places")
+    @GetMapping("/free-places")
     public List<GarageWithPlaceNumbersDto> getFreePlaces() {
         return garageService.getPlacesFilteredByAvailability(false);
     }
 
-    @GetMapping("/get-taken-places")
+    @GetMapping("/taken-places")
     public List<GarageWithPlaceNumbersDto> getTakenPlaces() {
         return garageService.getPlacesFilteredByAvailability(true);
     }
 
-    @PostMapping("/get-number-of-free-places-by-date")
+    @PostMapping("/number-of-free-places-by-date")
     public Integer getNumberOfFreePlacesByDate(@RequestBody LocalDate date) {
         return garageService.getNumberOfFreePlacesByDate(date);
     }
 
-    @GetMapping("/get-nearest-date")
+    @GetMapping("/nearest-date")
     public LocalDate getNearestDate() {
         return garageService.getNearestDate();
     }

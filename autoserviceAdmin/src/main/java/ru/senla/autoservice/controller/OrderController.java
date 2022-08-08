@@ -38,6 +38,7 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     @PostConstruct
     public void init() {
         this.defaultService = orderService;
+        this.clazz = Order.class;
     }
 
 
@@ -60,30 +61,12 @@ public class OrderController extends AbstractController<Order, IOrderService> {
     }
 
     @Override
-    @PostMapping
-    public Order add(@RequestBody Order newOrder) {
-        return super.add(newOrder);
-    }
-
-    @Override
     @PutMapping("/{id}")
     public Order update(@PathVariable Long id, @RequestBody Order changedModel) {
         return super.update(id, changedModel);
     }
 
-    @Override
-    @DeleteMapping
-    public ResponseEntity<String> delete(@RequestBody Order model) {
-        return super.delete(model);
-    }
-
-    @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteById(@PathVariable Long id) {
-        return super.deleteById(id);
-    }
-
-    @DeleteMapping("/{id}/delete-and-free-place")
     public ResponseEntity<String> deleteByIdAndFreePlace(@PathVariable Long id) {
         log.info("Deleting order with id {} and freeing up taken place", id);
         orderService.deleteByIdAndFreePlace(id);
@@ -97,46 +80,54 @@ public class OrderController extends AbstractController<Order, IOrderService> {
         return super.size();
     }
 
-    @PostMapping("/add-and-take-place")
+    @PostMapping
     public TakenPlaceDto addAndTakePlace(@RequestBody Order newOrder) {
         log.info("Adding new order: {}", newOrder.toString());
         return orderService.addAndTakePlace(newOrder);
     }
 
     @PostMapping("/{id}/set-time-of-completion")
-    public Order setTimeOfCompletion(@PathVariable Long id, @RequestParam int minutes) {
+    public ResponseEntity<String> setTimeOfCompletion(@PathVariable Long id, @RequestParam int minutes) {
         log.info("Setting time of completion for order with id {} on {} min.", id, minutes);
-        return orderService.setTimeOfCompletionInOrderByIdAndUpdate(id, minutes);
+        orderService.setTimeOfCompletionInOrderByIdAndUpdate(id, minutes);
+        return ResponseEntity.ok("Time of completion for order with id " + id + " set to " + minutes + " minutes");
     }
 
     @PostMapping("/{id}/set-status")
-    public Order setStatus(@PathVariable Long id, @RequestParam OrderStatusEnum status) {
+    public ResponseEntity<String> setStatus(@PathVariable Long id, @RequestParam OrderStatusEnum status) {
         log.info("Setting new status for order with id {}", id);
-        return orderService.setStatusInOrderByIdAndUpdate(id, status);
+        orderService.setStatusInOrderByIdAndUpdate(id, status);
+        return ResponseEntity.ok("Status for order with id " + id + " set to " + status);
     }
 
     @PostMapping("/{id}/set-price")
-    public Order setPrice(@PathVariable Long id, @RequestParam float price) {
+    public ResponseEntity<String> setPrice(@PathVariable Long id, @RequestParam float price) {
         log.info("Setting new price for order with id {} on {}", id, price);
-        return orderService.setPriceInOrderByIdAndUpdate(id, price);
+        orderService.setPriceInOrderByIdAndUpdate(id, price);
+        return ResponseEntity.ok("Price for order with id " + id + " set to " + price);
     }
 
     @PostMapping("/{id}/assign-master")
-    public Order assignMasterById(@PathVariable Long id, @RequestParam Long masterId) {
+    public ResponseEntity<String> assignMasterById(@PathVariable Long id, @RequestParam Long masterId) {
         log.info("Assign master with id {} on order with id {}", masterId, id);
-        return orderService.assignMasterByIdInOrderByIdAndUpdate(id, masterId);
+        orderService.assignMasterByIdInOrderByIdAndUpdate(id, masterId);
+        return ResponseEntity.ok("Master with id " + masterId + " assigned on order with id " + id);
     }
 
-    @PostMapping("/{id}/remove-master")
-    public Order removeMasterById(@PathVariable Long id, @RequestParam Long masterId) {
+    @DeleteMapping("/{id}/masters/{masterId}")
+    public ResponseEntity<String> removeMasterById(@PathVariable Long id, @PathVariable Long masterId) {
         log.info("Remove master with id {} from order with id {}", masterId, id);
-        return orderService.removeMasterByIdInOrderByIdAndUpdate(id, masterId);
+        orderService.removeMasterByIdInOrderByIdAndUpdate(id, masterId);
+        return ResponseEntity.ok("Master with id " + masterId + " removed from order with id " + id);
     }
 
     @PostMapping("/{id}/shift-time-of-completion")
-    public Order shiftTimeOfCompletion(@PathVariable Long id, @RequestParam int shiftMinutes) {
+    public ResponseEntity<String> shiftTimeOfCompletion(@PathVariable Long id, @RequestParam int shiftMinutes) {
         log.info("Shifting time of completion of order with id {} on {} minutes", id, shiftMinutes);
-        return orderService.shiftTimeOfCompletionInOrderById(id, shiftMinutes);
+        orderService.shiftTimeOfCompletionInOrderByIdWithUpdate(id, shiftMinutes);
+        return ResponseEntity.ok(
+                "Time of completion for order with id " + id + " shifted on " + shiftMinutes + " minutes"
+        );
     }
 
 }

@@ -61,13 +61,21 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
     }
 
     @Override
-    public List<Order> findAllFilteredAndSorted(CriteriaQuery<Order> cr, Root<Order> root, List<Predicate> predicates, List<javax.persistence.criteria.Order> orders) {
+    public List<Order> findAllFilteredAndSorted(CriteriaQuery<Order> cr,
+                                                Root<Order> root,
+                                                List<Predicate> predicates,
+                                                List<javax.persistence.criteria.Order> orders) {
+
         root.fetch("masters", JoinType.LEFT);
         return super.findAllFilteredAndSorted(cr, root, predicates, orders);
     }
 
     @Override
-    public <T> List<Order> findAllFilteredAndSorted(CriteriaQuery<Order> cr, Join<T, Order> join, List<Predicate> predicates, List<javax.persistence.criteria.Order> orders) {
+    public <T> List<Order> findAllFilteredAndSorted(CriteriaQuery<Order> cr,
+                                                    Join<T, Order> join,
+                                                    List<Predicate> predicates,
+                                                    List<javax.persistence.criteria.Order> orders) {
+
         join.fetch("masters", JoinType.LEFT);
         return super.findAllFilteredAndSorted(cr, join, predicates, orders);
     }
@@ -164,7 +172,11 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
     }
 
     private Predicate getPredicateOfStatusList(Root<Order> root, List<OrderStatusEnum> statuses) {
-        return root.get("status").in(statuses);
+        return criteriaBuilder.or(
+                statuses.stream()
+                        .map(status -> criteriaBuilder.equal(root.get("status"), status))
+                        .toArray(Predicate[]::new)
+        );
     }
 
     @Override
@@ -192,6 +204,28 @@ public class OrderRepositoryImpl extends AbstractRepositoryImpl<Order> implement
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         params.add("fromTimeOfCompletion", from.toString());
         params.add("toTimeOfCompletion", to.toString());
+        return findAll(params);
+    }
+
+    @Override
+    public List<Order> findAllByTimeOfCompletionAndStatus(LocalDateTime from, LocalDateTime to,
+                                                          OrderStatusEnum orderStatus) {
+
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("fromTimeOfCompletion", from.toString());
+        params.add("toTimeOfCompletion", to.toString());
+        params.add("status", orderStatus.name());
+        return findAll(params);
+    }
+
+    @Override
+    public List<Order> findAllByTimeOfCompletionAndStatuses(LocalDateTime from, LocalDateTime to,
+                                                            List<OrderStatusEnum> orderStatusList) {
+        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+        params.add("fromTimeOfCompletion", from.toString());
+        params.add("toTimeOfCompletion", to.toString());
+        params.addAll("status", orderStatusList.stream()
+                .map(OrderStatusEnum::name).collect(Collectors.toList()));
         return findAll(params);
     }
 
