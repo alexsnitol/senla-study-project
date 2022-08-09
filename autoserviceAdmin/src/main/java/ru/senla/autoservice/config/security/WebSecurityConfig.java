@@ -90,13 +90,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .antMatchers("/api/auth/**").permitAll()
 
-                .antMatchers(HttpMethod.GET, "/api/garages/get-nearest-date")
+                .antMatchers(HttpMethod.GET, "/api/garages/nearest-date")
                     .permitAll()
-                .antMatchers(HttpMethod.GET, "/api/garages/get-number-of-free-places-by-date")
+                .antMatchers(HttpMethod.GET, "/api/garages/number-of-free-places-by-date")
                     .permitAll()
-                .antMatchers("/api/garages/{id}/add-place")
+                .antMatchers(HttpMethod.POST, "/api/garages/{id}/places")
                     .hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
-                .antMatchers("/api/garages/{id}/delete-last-place")
+                .antMatchers(HttpMethod.DELETE, "/api/garages/{id}")
                     .hasAnyAuthority("ROLE_ADMIN", "ADD_AND_DELETE_FREE_PLACES")
 
                 .antMatchers(HttpMethod.GET, "/api/masters")
@@ -110,7 +110,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .hasAnyRole("USER", "ADMIN", "MANAGER")
                 .antMatchers("/api/orders/{id}/shift-time-of-completion")
                     .hasAnyAuthority("ROLE_ADMIN", "SHIFT_TIME_OF_COMPLETION")
-                .antMatchers(HttpMethod.DELETE, "/api/orders/{id}/delete-and-free-places")
+                .antMatchers(HttpMethod.DELETE, "/api/orders/{id}")
                     .hasAnyAuthority("ROLE_ADMIN", "DELETE_ORDER")
                 
                 

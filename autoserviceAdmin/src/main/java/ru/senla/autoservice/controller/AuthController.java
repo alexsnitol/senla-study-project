@@ -20,7 +20,7 @@ public class AuthController {
     private IAuthService authService;
 
     @PostMapping
-    public ResponseEntity<JwtResponseDto> createAuthToken(@RequestBody JwtRequestDto authRequest) throws Exception {
+    public ResponseEntity<JwtResponseDto> createAuthToken(@RequestBody JwtRequestDto authRequest) {
         return ResponseEntity.ok(authService.createAuthToken(authRequest));
     }
 
