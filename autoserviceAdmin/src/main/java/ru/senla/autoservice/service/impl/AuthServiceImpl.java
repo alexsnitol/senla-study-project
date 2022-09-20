@@ -1,7 +1,9 @@
 package ru.senla.autoservice.service.impl;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.access.AuthorizationServiceException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,18 +32,18 @@ public class AuthServiceImpl implements IAuthService {
         this.authenticationManager = authenticationManager;
     }
 
-    private void authenticate(String username, String password) {
+    private void authenticate(@NonNull String username, @NonNull String password) {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     @Override
-    public JwtResponseDto createAuthToken(JwtRequestDto authRequest) throws Exception {
+    public JwtResponseDto createAuthToken(@NonNull JwtRequestDto authRequest) {
         try {
             authenticate(authRequest.getUsername(), authRequest.getPassword());
         } catch (BadCredentialsException ex) {
             String message = "Incorrect username or password";
             log.error(message);
-            throw new Exception(message);
+            throw new AuthorizationServiceException(message);
         }
 
         UserDetails userDetails = userDetailsService.loadUserByUsername(authRequest.getUsername());

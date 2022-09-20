@@ -49,7 +49,7 @@ public class JwtTokenUtil {
         return Objects.equals(username, userDetails.getUsername()) && !isTokenExpired(token);
     }
 
-    public String generateToken(UserDetails userDetails){
+    public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
         List<String> rolesList = userDetails.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)

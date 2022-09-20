@@ -1,6 +1,7 @@
 package ru.senla.autoservice.service.impl;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.GrantedAuthority;
@@ -37,7 +38,7 @@ public class UserDetailsServiceImpl extends AbstractServiceImpl<User, IUserRepos
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username);
 
         if (user == null) {
@@ -72,11 +73,6 @@ public class UserDetailsServiceImpl extends AbstractServiceImpl<User, IUserRepos
                 .forEach(a -> authorities.add(new SimpleGrantedAuthority(a.getName()))));
 
         return authorities;
-    }
-
-    @Override
-    public List<User> getSorted(List<User> listOfModel, String sortType) {
-        return getAll();
     }
 
 }

@@ -34,9 +34,11 @@ public class MasterController extends AbstractController<Master, IMasterService>
     @PostConstruct
     public void init() {
         this.defaultService = masterService;
+        this.clazz = Master.class;
     }
 
 
+    @Override
     @GetMapping
     public List<Master> getAll(@RequestParam(required = false) MultiValueMap<String, String> requestParams) {
         return masterService.checkRequestParamsAndGetAll(requestParams);
@@ -62,12 +64,6 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     @Override
-    @DeleteMapping
-    public ResponseEntity<String> delete(@RequestBody Master model) {
-        return super.delete(model);
-    }
-
-    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         log.info("Deleting master with id {}", id);
@@ -89,12 +85,12 @@ public class MasterController extends AbstractController<Master, IMasterService>
         return super.add(newMaster);
     }
 
-    @PostMapping("/get-full-name")
+    @PostMapping("/full-name")
     public String getFullName(@RequestBody Master master) {
         return masterService.getFullName(master);
     }
 
-    @PostMapping("/get-full-name-with-id")
+    @PostMapping("/full-name-with-id")
     public String getFullNameWithId(@RequestBody Master master) {
         return masterService.getFullNameWithId(master);
     }

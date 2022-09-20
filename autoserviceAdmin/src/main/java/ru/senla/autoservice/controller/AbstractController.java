@@ -12,6 +12,7 @@ import java.util.List;
 public abstract class AbstractController<M extends AbstractModel, S extends IAbstractService<M>> {
 
     protected S defaultService;
+    protected Class<M> clazz;
 
     public AbstractController() {
     }
@@ -33,26 +34,28 @@ public abstract class AbstractController<M extends AbstractModel, S extends IAbs
     }
 
     public M add(M newModel) {
-        return defaultService.add(newModel);
+        defaultService.add(newModel);
+        return newModel;
     }
 
     public M update(Long id, M changedModel) {
         changedModel.setId(id);
-        return defaultService.update(changedModel);
+        defaultService.update(changedModel);
+        return changedModel;
     }
 
     public ResponseEntity<String> delete(M model) {
         log.info("Deleting model {}", model);
         defaultService.delete(model);
 
-        return ResponseEntity.ok("Model with id " + model.getId() + " was deleted");
+        return ResponseEntity.ok(clazz.getSimpleName() + " with id " + model.getId() + " was deleted");
     }
 
     public ResponseEntity<String> deleteById(Long id) {
         log.info("Deleting model with id {}", id);
         defaultService.deleteById(id);
 
-        return ResponseEntity.ok("Model with id " + id + " was deleted");
+        return ResponseEntity.ok(clazz.getSimpleName() + " with id " + id + " was deleted");
     }
 
     public Integer size() {

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.senla.autoservice.dto.ExceptionDto;
+import ru.senla.autoservice.exception.BusinessRuntimeException;
 import ru.senla.autoservice.exception.PropertyAccessDeniedException;
 
 import javax.persistence.EntityNotFoundException;
@@ -35,6 +36,16 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     @ExceptionHandler(value = {AccessDeniedException.class})
     protected ResponseEntity<Object> handleAccessDenied(Exception ex, WebRequest request) {
         return handle(ex, request, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(value = {IllegalArgumentException.class})
+    protected ResponseEntity<Object> handleIllegalArgument(Exception ex, WebRequest request) {
+        return handle(ex, request, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(value = {BusinessRuntimeException.class})
+    protected ResponseEntity<Object> handleBusinessRunTime(Exception ex, WebRequest request) {
+        return handle(ex, request, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {RuntimeException.class})

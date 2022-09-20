@@ -10,7 +10,7 @@ import javax.persistence.EntityNotFoundException;
 @UtilityClass
 public class EntityHelper {
 
-    public <M extends AbstractModel> void checkEntity(M model, Class<M> modelClass, Long id) {
+    public <M extends AbstractModel> void checkEntityOnNullAfterFindedById(M model, Class<M> modelClass, Long id) {
         if (model == null) {
             String message = String.format("%s with id %s not found", modelClass.getSimpleName(), id);
             log.error(message);

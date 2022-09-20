@@ -11,6 +11,9 @@ public interface IOrderRepository extends IAbstractRepository<Order> {
     List<Order> findAllByStatus(OrderStatusEnum orderStatus);
     List<Order> findAllByStatuses(List<OrderStatusEnum> orderStatuses);
     List<Order> findAllByTimeOfCompletion(LocalDateTime from, LocalDateTime to);
+    List<Order> findAllByTimeOfCompletionAndStatus(LocalDateTime from, LocalDateTime to, OrderStatusEnum orderStatus);
+    List<Order> findAllByTimeOfCompletionAndStatuses(LocalDateTime from, LocalDateTime to,
+                                                     List<OrderStatusEnum> orderStatusList);
     List<Order> findAllByMasterId(Long masterId);
     List<Order> findAllByStatusAndMasterId(OrderStatusEnum orderStatus, Long masterId);
 

@@ -14,12 +14,11 @@ public interface IAbstractService<M> {
     void delete(M model);
     void deleteById(Long id);
 
-    M add(M newModel);
-    M update(M changedModel);
+    void add(M newModel);
+    void update(M changedModel);
 
     Integer size();
     List<M> getSorted(String sortType);
-    List<M> getSorted(List<M> listOfModel, String sortType);
 
     void importModelFromJsonFile(String path) throws IOException;
     void importAllFromJsonFile(String path) throws IOException;

@@ -5,6 +5,6 @@ import ru.senla.autoservice.dto.JwtResponseDto;
 
 public interface IAuthService {
 
-    JwtResponseDto createAuthToken(JwtRequestDto authRequest) throws Exception;
+    JwtResponseDto createAuthToken(JwtRequestDto authRequest);
 
 }
