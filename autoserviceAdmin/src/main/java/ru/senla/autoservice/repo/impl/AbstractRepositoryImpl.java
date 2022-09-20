@@ -59,6 +59,16 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
     }
 
     @Override
+    public M findOne(MultiValueMap<String, String> requestParams) {
+        CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(clazz);
+        Root<M> root = criteriaQuery.from(clazz);
+
+        List<Predicate> predicates = getPredicateList(root, requestParams);
+
+        return findOneFiltered(criteriaQuery, root, predicates);
+    }
+
+    @Override
     public List<M> findAll() {
         CriteriaQuery<M> criteriaQuery = criteriaBuilder.createQuery(clazz);
         Root<M> root = criteriaQuery.from(clazz);
@@ -91,6 +101,26 @@ public abstract class AbstractRepositoryImpl<M extends AbstractModel> implements
     @Override
     public List<M> findAllFiltered(CriteriaQuery<M> cr, Root<M> root, List<Predicate> predicates) {
         return findAllFilteredAndSorted(cr, root, predicates, Collections.emptyList());
+    }
+
+    @Override
+    public M findOneFiltered(CriteriaQuery<M> cr, Root<M> root,
+                             List<Predicate> predicates) {
+        cr
+                .select(root)
+                .where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cr).setMaxResults(1).getSingleResult();
+    }
+
+    @Override
+    public <T> M findOneFiltered(CriteriaQuery<M> cr, Join<T, M> join,
+                             List<Predicate> predicates) {
+        cr
+                .select(join)
+                .where(predicates.toArray(new Predicate[0]));
+
+        return entityManager.createQuery(cr).getSingleResult();
     }
 
     @Override

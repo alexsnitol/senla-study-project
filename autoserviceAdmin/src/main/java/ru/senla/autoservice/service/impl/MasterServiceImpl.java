@@ -1,8 +1,8 @@
 package ru.senla.autoservice.service.impl;
 
+import lombok.AllArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.MultiValueMap;
 import ru.senla.autoservice.model.Master;
@@ -20,18 +20,13 @@ import java.util.List;
 
 @Setter
 @Slf4j
+@AllArgsConstructor
 @Service
 public class MasterServiceImpl extends AbstractServiceImpl<Master, IMasterRepository> implements IMasterService {
 
     private final IMasterRepository masterRepository;
     private final IOrderRepository orderRepository;
 
-
-    @Autowired
-    public MasterServiceImpl(IMasterRepository masterRepository, IOrderRepository orderRepository) {
-        this.masterRepository = masterRepository;
-        this.orderRepository = orderRepository;
-    }
 
     @PostConstruct
     public void init() {

@@ -1,7 +1,7 @@
 package ru.senla.autoservice.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,17 +22,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/garages")
 public class GarageController extends AbstractController<Garage, IGarageService> {
 
     private final IGarageService garageService;
 
-
-    @Autowired
-    public GarageController(IGarageService garageService) {
-        this.garageService = garageService;
-    }
 
     @PostConstruct
     public void init() {
@@ -53,7 +49,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public Garage update(@PathVariable Long id, Garage changedModel) {
         return super.update(id, changedModel);
     }
@@ -65,13 +61,13 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> delete(Garage model) {
         return super.delete(model);
     }
 
     @Override
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable("id") Long garageId) {
         log.info("Deleting garage with id {}", garageId);
 
@@ -79,7 +75,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @Override
-    @PutMapping("/add")
+    @PostMapping
     public Garage add(@RequestBody Garage newGarage) {
         log.info("Adding new garage: {}", newGarage);
 
@@ -87,7 +83,7 @@ public class GarageController extends AbstractController<Garage, IGarageService>
     }
 
     @PostMapping("/{id}/add-place")
-    public ResponseEntity<String> addPlace(@PathVariable("id") Long garageId) throws Exception {
+    public ResponseEntity<String> addPlace(@PathVariable("id") Long garageId) {
         log.info("Adding new place in garage with id {}", garageId);
         garageService.addPlaceInGarageByIdAndUpdate(garageId);
 

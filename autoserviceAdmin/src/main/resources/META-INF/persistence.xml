@@ -13,13 +13,16 @@
         <class>ru.senla.autoservice.model.Order</class>
         <class>ru.senla.autoservice.model.OrderGarage</class>
         <class>ru.senla.autoservice.model.OrderMaster</class>
+        <class>ru.senla.autoservice.model.Role</class>
+        <class>ru.senla.autoservice.model.User</class>
+        <class>ru.senla.autoservice.model.Authority</class>
 
         <exclude-unlisted-classes>true</exclude-unlisted-classes>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL95Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <property name="hibernate.show_sql" value="true" />
+<!--            <property name="hibernate.show_sql" value="true" />-->
             <property name="hibernate.format_sql" value="true" />
 <!--            <property name="hibernate.enable_lazy_load_no_trans" value="true"/>-->
 

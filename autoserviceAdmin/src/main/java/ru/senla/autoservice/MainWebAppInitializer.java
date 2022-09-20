@@ -1,28 +1,24 @@
 package ru.senla.autoservice;
 
-import org.springframework.web.WebApplicationInitializer;
-import org.springframework.web.context.ContextLoaderListener;
-import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.context.support.GenericWebApplicationContext;
-import org.springframework.web.servlet.DispatcherServlet;
+import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
+import ru.senla.autoservice.config.WebConfig;
+import ru.senla.autoservice.config.security.WebSecurityConfig;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRegistration;
-
-public class MainWebAppInitializer implements WebApplicationInitializer {
+public class MainWebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        AnnotationConfigWebApplicationContext root = new AnnotationConfigWebApplicationContext();
-        root.scan("ru.senla.autoservice");
+    protected String[] getServletMappings() {
+        return new String[] {"/"};
+    }
 
-        servletContext.addListener(new ContextLoaderListener(root));
+    @Override
+    protected Class<?>[] getRootConfigClasses() {
+        return new Class[] {WebSecurityConfig.class};
+    }
 
-        ServletRegistration.Dynamic appServlet = servletContext
-                .addServlet("mvc", new DispatcherServlet(new GenericWebApplicationContext()));
-        appServlet.setLoadOnStartup(1);
-        appServlet.addMapping("/");
+    @Override
+    protected Class<?>[] getServletConfigClasses() {
+        return new Class[] {WebConfig.class};
     }
 
 }

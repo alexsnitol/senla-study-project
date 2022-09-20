@@ -1,7 +1,7 @@
 package ru.senla.autoservice.controller;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -22,6 +22,7 @@ import javax.annotation.PostConstruct;
 import java.util.List;
 
 @Slf4j
+@AllArgsConstructor
 @RestController
 @RequestMapping("/api/masters")
 public class MasterController extends AbstractController<Master, IMasterService> {
@@ -29,12 +30,6 @@ public class MasterController extends AbstractController<Master, IMasterService>
     private final IMasterService masterService;
     private final IOrderService orderService;
 
-
-    @Autowired
-    public MasterController(IMasterService masterService, IOrderService orderService) {
-        this.masterService = masterService;
-        this.orderService = orderService;
-    }
 
     @PostConstruct
     public void init() {
@@ -61,19 +56,19 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     @Override
-    @PutMapping("/{id}/update")
+    @PutMapping("/{id}")
     public Master update(@PathVariable Long id, @RequestBody Master changedModel) {
         return super.update(id, changedModel);
     }
 
     @Override
-    @DeleteMapping("/delete")
+    @DeleteMapping
     public ResponseEntity<String> delete(@RequestBody Master model) {
         return super.delete(model);
     }
 
     @Override
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
         log.info("Deleting master with id {}", id);
 
@@ -87,7 +82,7 @@ public class MasterController extends AbstractController<Master, IMasterService>
     }
 
     @Override
-    @PutMapping(value = "/add")
+    @PostMapping
     public Master add(@RequestBody Master newMaster) {
         log.info("Adding new master: {}", newMaster);
 

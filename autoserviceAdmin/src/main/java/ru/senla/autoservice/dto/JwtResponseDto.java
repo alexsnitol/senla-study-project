@@ -4,12 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class ExceptionDto {
+@NoArgsConstructor
+@Data
+public class JwtResponseDto {
 
-    private String title;
-    private String description;
+    private String token;
 
 }

@@ -42,3 +42,33 @@ VALUES (100, 100),
        (103, 105),
        (104, 106)
 ;
+
+INSERT INTO users(username, password)
+VALUES ('admin', '$2a$12$6bofBjw./veoSOd1YS8yN.ll5Xk4FOQL6OIOjoxmRRZPxvmJb4v/.'),
+       ('user',  '$2a$12$nonCtCbG.eLIYzPaxtAZD.Yu1CRNOWPq5kfhSyFhKNLy5couQw6sa'),
+       ('manager', '$2a$12$.vikqzGqyaPZqL7JQlOqMu1V4W8YZU/3.wsgx2R6JsltOTAY9yuXa')
+;
+
+INSERT INTO roles(name)
+VALUES ('ROLE_ADMIN'),
+       ('ROLE_USER'),
+       ('ROLE_MANAGER')
+;
+
+INSERT INTO user_role(user_id, role_id)
+VALUES (100, 100),
+       (101, 101),
+       (102, 102)
+;
+
+INSERT INTO authorities(name)
+VALUES ('ADD_AND_DELETE_FREE_PLACES'),
+       ('SHIFT_TIME_OF_COMPLETION'),
+       ('DELETE_ORDER')
+;
+
+INSERT INTO role_authority(role_id, authority_id)
+VALUES (102, 100),
+       (102, 101),
+       (102, 102)
+;
